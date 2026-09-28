@@ -1,0 +1,7 @@
+slug,origin_iata,destination_iata,origin_city,destination_city,target_keyword
+nyc-to-lax,JFK,LAX,New York,Los Angeles,flights from new york to los angeles
+lax-to-nyc,LAX,JFK,Los Angeles,New York,flights from los angeles to new york
+chi-to-mia,ORD,MIA,Chicago,Miami,flights from chicago to miami
+mia-to-chi,MIA,ORD,Miami,Chicago,flights from miami to chicago
+nyc-to-sfo,JFK,SFO,New York,San Francisco,flights from new york to san francisco
+sfo-to-nyc,SFO,JFK,San Francisco,New York,flights from san francisco to new york
