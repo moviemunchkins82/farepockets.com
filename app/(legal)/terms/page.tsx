@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 // DRAFT — not legal advice. Have this reviewed by a lawyer before launch.
 export default function TermsPage() {
   return (
-    <main>
+    <main className="container page">
+      <div className="prose">
       <h1>Terms of use</h1>
       <p>
         <strong>Draft — pending legal review before launch.</strong>
@@ -33,6 +34,7 @@ export default function TermsPage() {
       <p>
         See <a href="/disclosure">How we make money</a> and our <a href="/privacy">privacy policy</a>.
       </p>
+      </div>
     </main>
   );
 }

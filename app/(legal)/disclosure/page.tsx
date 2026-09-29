@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function DisclosurePage() {
   return (
-    <main>
+    <main className="container page">
+      <div className="prose">
       <h1>How we make money</h1>
       <p>
         {SITE_NAME} does not sell flights directly. When you click a &quot;Search flights&quot; or booking link on
@@ -25,6 +26,7 @@ export default function DisclosurePage() {
         Prices shown on this site are cached and may not reflect the exact final price at checkout. Always confirm
         the total price on the partner&apos;s site before completing a booking.
       </p>
+      </div>
     </main>
   );
 }

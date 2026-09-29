@@ -1,40 +1,74 @@
+/* Light theme only. Accent: sky blue (matched to the search widget).
+   Deal orange is reserved for price/deal highlights.
+   Radius rule: surfaces 16px, controls 10px, badges full pill. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg: #f5f8fb;
+  --surface: #ffffff;
+  --surface-2: #edf2f7;
+  --text: #0f1b2a;
+  --text-2: #475569;
+  --text-3: #5b6878;
+  --border: #dbe3ec;
+  --accent: #0369a1;
+  --accent-hover: #075985;
+  --accent-soft: #e3f1fb;
+  --accent-contrast: #ffffff;
+  --deal: #c2410c;
+  --deal-soft: #fff1e8;
+  --hero-from: #0c4a6e;
+  --hero-to: #0284c7;
+  --shadow: 0 1px 2px rgb(15 27 42 / 0.04), 0 10px 30px rgb(15 27 42 / 0.07);
+  --radius-lg: 16px;
+  --radius: 10px;
+  --container: 1160px;
+  --header-h: 64px;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 16px);
 }
 
-html,
 body {
-  max-width: 100vw;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+main {
+  flex: 1;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 650;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 a {
@@ -42,19 +76,204 @@ a {
   text-decoration: none;
 }
 
-/* Reserves the Travelpayouts form's rendered height (measured: 186px desktop,
-   487px when its fields stack on phones) so the page doesn't jump when it loads. */
-.tp-widget {
-  min-height: 186px;
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }
-@media (max-width: 767px) {
-  .tp-widget {
-    min-height: 490px;
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Layout */
+.container {
+  width: min(100% - 32px, var(--container));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: 72px;
+}
+
+.section-head {
+  margin-bottom: 28px;
+  max-width: 62ch;
+}
+
+.section-head h2 {
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.1rem);
+}
+
+.section-head p {
+  margin-top: 8px;
+  color: var(--text-2);
+}
+
+/* Buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.button:hover {
+  background: var(--accent-hover);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.button-secondary:hover {
+  background: var(--surface-2);
+}
+
+.text-link {
+  color: var(--accent);
+  font-weight: 550;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.text-link:hover {
+  color: var(--accent-hover);
+}
+
+/* Long-form content (guides, legal pages) */
+.prose {
+  max-width: 68ch;
+  color: var(--text-2);
+}
+
+.prose h1 {
+  color: var(--text);
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  margin-bottom: 16px;
+}
+
+.prose h2 {
+  color: var(--text);
+  font-size: 1.4rem;
+  margin: 36px 0 10px;
+}
+
+.prose h3 {
+  color: var(--text);
+  font-size: 1.15rem;
+  margin: 28px 0 8px;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  margin-bottom: 16px;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.25rem;
+}
+
+.prose li {
+  margin-bottom: 6px;
+}
+
+.prose strong {
+  color: var(--text);
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.page {
+  padding-block: 48px 72px;
+}
+
+/* Reserves the Travelpayouts form's height until it draws, so the page doesn't jump.
+   The widget picks its layout from its own width (its breakpoints: 390/570/750/1100px);
+   heights below were measured for each layout in plain mode. */
+.tp-widget {
+  container-type: inline-size;
+}
+
+.tp-mount {
+  min-height: 410px;
+}
+
+@container (min-width: 390px) {
+  .tp-mount {
+    min-height: 334px;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+@container (min-width: 570px) {
+  .tp-mount {
+    min-height: 259px;
+  }
+}
+
+@container (min-width: 750px) {
+  .tp-mount {
+    min-height: 183px;
+  }
+}
+
+@container (min-width: 1100px) {
+  .tp-mount {
+    min-height: 108px;
+  }
+}
+
+.tp-widget[data-rendered] .tp-mount {
+  min-height: 0;
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding-block: 56px;
+  }
+}
+
+.widget-skeleton {
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+  color: var(--text-3);
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
   }
 }

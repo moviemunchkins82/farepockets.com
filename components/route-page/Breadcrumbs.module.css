@@ -1,0 +1,31 @@
+.nav {
+  font-size: 0.875rem;
+  color: var(--text-3);
+  margin-bottom: 20px;
+}
+
+.nav ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nav li + li::before {
+  content: "/";
+  margin-right: 6px;
+  color: var(--border);
+}
+
+.nav a {
+  color: var(--text-2);
+  transition: color 0.15s ease;
+}
+
+.nav a:hover {
+  color: var(--accent);
+}
+
+.nav [aria-current="page"] {
+  color: var(--text-3);
+}

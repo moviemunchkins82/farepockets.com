@@ -67,32 +67,43 @@ async function main() {
 
   console.log(`Seeding ${rows.length} routes from ${csvPath}...`);
 
-  await sql.begin(async (tx) => {
-    for (const row of rows) {
-      await tx`
-        INSERT INTO routes (slug, origin_iata, destination_iata, origin_city, destination_city, target_keyword, is_active)
-        VALUES (${row.slug}, ${row.origin_iata}, ${row.destination_iata}, ${row.origin_city}, ${row.destination_city}, ${row.target_keyword || null}, true)
-        ON CONFLICT (slug) DO UPDATE SET
-          origin_iata = EXCLUDED.origin_iata,
-          destination_iata = EXCLUDED.destination_iata,
-          origin_city = EXCLUDED.origin_city,
-          destination_city = EXCLUDED.destination_city,
-          target_keyword = EXCLUDED.target_keyword,
-          is_active = true,
-          updated_at = now()
-      `;
-    }
+  const col = (key: keyof CsvRow) => rows.map((r) => r[key]);
+  const slugs = col("slug");
 
-    const slugs = rows.map((r) => r.slug);
-    const deactivated = await tx`
+  // One statement, so the upsert and the deactivation apply atomically.
+  const [result] = await sql<{ upserted: number; deactivated: string[] }[]>`
+    WITH input AS (
+      SELECT * FROM unnest(
+        ${slugs}::text[], ${col("origin_iata")}::text[], ${col("destination_iata")}::text[],
+        ${col("origin_city")}::text[], ${col("destination_city")}::text[], ${col("target_keyword")}::text[]
+      ) AS t(slug, origin_iata, destination_iata, origin_city, destination_city, target_keyword)
+    ), upserted AS (
+      INSERT INTO routes (slug, origin_iata, destination_iata, origin_city, destination_city, target_keyword, is_active)
+      SELECT slug, origin_iata, destination_iata, origin_city, destination_city, NULLIF(target_keyword, ''), true
+      FROM input
+      ON CONFLICT (slug) DO UPDATE SET
+        origin_iata = EXCLUDED.origin_iata,
+        destination_iata = EXCLUDED.destination_iata,
+        origin_city = EXCLUDED.origin_city,
+        destination_city = EXCLUDED.destination_city,
+        target_keyword = EXCLUDED.target_keyword,
+        is_active = true,
+        updated_at = now()
+      RETURNING slug
+    ), deactivated AS (
       UPDATE routes SET is_active = false, updated_at = now()
       WHERE is_active = true AND slug <> ALL(${slugs}::text[])
       RETURNING slug
-    `;
-    if (deactivated.length > 0) {
-      console.log(`Deactivated ${deactivated.length} routes no longer in the CSV: ${deactivated.map((r) => r.slug).join(", ")}`);
-    }
-  });
+    )
+    SELECT
+      (SELECT count(*) FROM upserted)::int AS upserted,
+      COALESCE((SELECT array_agg(slug ORDER BY slug) FROM deactivated), '{}') AS deactivated
+  `;
+
+  console.log(`Upserted ${result.upserted} routes.`);
+  if (result.deactivated.length > 0) {
+    console.log(`Deactivated ${result.deactivated.length} routes no longer in the CSV: ${result.deactivated.join(", ")}`);
+  }
 
   console.log("Done.");
 }

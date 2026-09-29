@@ -11,9 +11,36 @@ export function formatPrice(amount: string | number | null, currency = "USD"): s
 }
 
 // Dates are stored as calendar dates; format in UTC so the day never shifts.
-export function formatDate(value: string | Date | null): string | null {
+function toDate(value: string | Date | null): Date | null {
   if (!value) return null;
   const date = typeof value === "string" ? new Date(value) : value;
-  if (Number.isNaN(date.getTime())) return null;
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(date);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+// "Oct 21, 2026"
+export function formatDate(value: string | Date | null): string | null {
+  const date = toDate(value);
+  return date
+    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(date)
+    : null;
+}
+
+// "Oct 21"
+export function formatShortDate(value: string | Date | null): string | null {
+  const date = toDate(value);
+  return date ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(date) : null;
+}
+
+// "Wed, Oct 21, 2026"
+export function formatLongDate(value: string | Date | null): string | null {
+  const date = toDate(value);
+  return date
+    ? new Intl.DateTimeFormat("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(date)
+    : null;
 }

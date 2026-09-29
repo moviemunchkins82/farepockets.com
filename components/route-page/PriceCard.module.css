@@ -1,0 +1,62 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.price {
+  margin-top: 2px;
+  font-size: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.pending {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--text-2);
+}
+
+.row svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.muted {
+  font-size: 0.875rem;
+  color: var(--text-3);
+}
+
+.muted svg {
+  color: var(--text-3);
+}
+
+.cta {
+  width: 100%;
+  margin-top: 20px;
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+.disclosure {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}

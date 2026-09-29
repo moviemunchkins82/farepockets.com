@@ -46,25 +46,40 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     script.charset = "utf-8";
     mount.appendChild(script);
 
-    // The widget first inserts an empty shadow-DOM host, then draws the form a
-    // frame or two later — wait for real height before dropping the skeleton.
+    // The widget first inserts an empty shadow-DOM host, then draws the form a frame
+    // or two later. The mount has a reserved min-height, so measure the widget's own
+    // elements (not the mount) before dropping the skeleton.
+    const contentHeight = () =>
+      Array.from(mount.children).reduce((sum, child) => sum + child.getBoundingClientRect().height, 0);
+
     const resize = new ResizeObserver(() => {
-      if (mount.getBoundingClientRect().height > 50) {
+      if (contentHeight() > 50) {
         setRendered(true);
         resize.disconnect();
+        mutations.disconnect();
       }
     });
-    resize.observe(mount);
+    const mutations = new MutationObserver(() => {
+      for (const child of Array.from(mount.children)) resize.observe(child);
+    });
+    mutations.observe(mount, { childList: true });
 
     return () => {
       resize.disconnect();
+      mutations.disconnect();
       mount.replaceChildren();
     };
   }, [inView, src, configured]);
 
   return (
-    <div ref={containerRef} aria-label={title} className="tp-widget" style={{ position: "relative" }}>
-      <div ref={mountRef} />
+    <div
+      ref={containerRef}
+      aria-label={title}
+      className="tp-widget"
+      data-rendered={rendered || undefined}
+      style={{ position: "relative" }}
+    >
+      <div ref={mountRef} className="tp-mount" />
       {!rendered && <WidgetSkeleton configured={configured} />}
     </div>
   );

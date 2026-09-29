@@ -25,11 +25,11 @@ async function main() {
   }
 
   for (const file of pending) {
+    if (!/^[\w.-]+\.sql$/.test(file)) throw new Error(`Unexpected migration filename: ${file}`);
     const body = fs.readFileSync(path.join(MIGRATIONS_DIR, file), "utf-8");
-    await sql.begin(async (tx) => {
-      await tx.unsafe(body);
-      await tx`INSERT INTO schema_migrations (filename) VALUES (${file})`;
-    });
+    // A multi-statement simple query runs as one implicit transaction, so the
+    // migration and its schema_migrations row apply together or not at all.
+    await sql.unsafe(`${body}\n;\nINSERT INTO schema_migrations (filename) VALUES ('${file}');`);
     console.log(`Applied ${file}`);
   }
 }

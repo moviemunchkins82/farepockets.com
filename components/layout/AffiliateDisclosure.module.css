@@ -1,0 +1,19 @@
+.note {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.note a {
+  color: var(--accent);
+  font-weight: 550;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.inverse {
+  color: rgb(255 255 255 / 0.88);
+}
+
+.inverse a {
+  color: #ffffff;
+}

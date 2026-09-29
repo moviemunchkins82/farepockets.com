@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 // CCPA (California users) since the plan targets US traffic broadly.
 export default function PrivacyPage() {
   return (
-    <main>
+    <main className="container page">
+      <div className="prose">
       <h1>Privacy policy</h1>
       <p>
         <strong>Draft — pending legal review before launch.</strong>
@@ -34,6 +35,7 @@ export default function PrivacyPage() {
       <p>
         See <a href="/disclosure">How we make money</a> for how our travel partner links work.
       </p>
+      </div>
     </main>
   );
 }

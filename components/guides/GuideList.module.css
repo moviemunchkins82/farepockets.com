@@ -1,0 +1,40 @@
+.list {
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 4px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.row h3 {
+  font-size: 1.15rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  transition: color 0.15s ease;
+}
+
+.row p {
+  margin-top: 4px;
+  max-width: 70ch;
+}
+
+.row svg {
+  flex-shrink: 0;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.row:hover h3,
+.row:hover svg {
+  color: var(--accent);
+}
+
+.row:hover svg {
+  transform: translateX(3px);
+}

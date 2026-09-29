@@ -7,13 +7,21 @@ if (!process.env.DATABASE_URL) {
 const url = process.env.DATABASE_URL;
 const isLocal = /@(localhost|127\.0\.0\.1|\[::1\])[:/]/.test(url);
 
-// prepare: false keeps this compatible with Supabase's transaction-mode pooler
-// (port 6543), which doesn't support prepared statements.
-const sql = postgres(url, {
-  ssl: isLocal ? false : "require",
-  max: 10,
+// Use Supabase's transaction pooler (port 6543): the session pooler caps total
+// clients (15 on small plans), which parallel build workers and the cron exhaust.
+// Transaction mode doesn't support prepared statements (prepare: false), and even
+// one pipelined query can stall there, so pipelining is off (max_pipeline: 0, a
+// runtime option postgres.js's types omit). That also disables sql.begin(): make
+// multi-step writes a single statement or a multi-statement unsafe() query instead.
+const options = {
+  ssl: isLocal ? false : ("require" as const),
+  max: 5,
+  idle_timeout: 20,
+  connect_timeout: 15,
   prepare: false,
+  max_pipeline: 0,
   onnotice: () => {},
-});
+};
+const sql = postgres(url, options);
 
 export default sql;

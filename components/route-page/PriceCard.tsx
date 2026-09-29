@@ -1,8 +1,10 @@
+import { ArrowSquareOut, CalendarBlank, ClockCounterClockwise } from "@phosphor-icons/react/ssr";
 import AffiliateLink from "@/components/AffiliateLink";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import { buildDeepLink, buildSubId, pickSearchDate } from "@/lib/travelpayouts/affiliateLinks";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatLongDate, formatPrice, formatShortDate } from "@/lib/format";
 import type { RouteRow } from "@/lib/db/schema";
+import styles from "./PriceCard.module.css";
 
 export default function PriceCard({ route }: { route: RouteRow }) {
   const subId = buildSubId(`route_${route.slug}`);
@@ -10,19 +12,37 @@ export default function PriceCard({ route }: { route: RouteRow }) {
   const href = buildDeepLink(route.origin_iata, route.destination_iata, subId, searchDate);
   const price = formatPrice(route.cheapest_price, route.cheapest_currency);
   const checked = formatDate(route.last_refreshed_at);
+  const usesCheapestDate =
+    route.cheapest_depart_date !== null && route.cheapest_depart_date.getTime() === searchDate.getTime();
 
   return (
-    <section aria-label="Flight price">
-      <p>{price ? `From ${price} one-way` : "Price data updating"}</p>
-      {checked && (
-        <p>
-          <small>Prices last checked {checked}</small>
+    <section className={styles.card} aria-label="Lowest fare">
+      <p className={styles.label}>Lowest one-way fare</p>
+      {price ? (
+        <p className={styles.price}>{price}</p>
+      ) : (
+        <p className={styles.pending}>We&apos;re checking fares for this route.</p>
+      )}
+
+      {price && usesCheapestDate && (
+        <p className={styles.row}>
+          <CalendarBlank size={18} aria-hidden="true" />
+          Departing {formatLongDate(searchDate)}
         </p>
       )}
-      <AffiliateLink href={href} subId={subId} routeSlug={route.slug}>
-        See {route.origin_city} → {route.destination_city} flights on {formatDate(searchDate)}
+
+      <AffiliateLink href={href} subId={subId} routeSlug={route.slug} className={`button ${styles.cta}`}>
+        {price && usesCheapestDate ? `See flights on ${formatShortDate(searchDate)}` : "Search flights"}
+        <ArrowSquareOut size={18} weight="bold" aria-hidden="true" />
       </AffiliateLink>
-      <AffiliateDisclosure />
+
+      {checked && (
+        <p className={`${styles.row} ${styles.muted}`}>
+          <ClockCounterClockwise size={16} aria-hidden="true" />
+          Prices last checked {checked}
+        </p>
+      )}
+      <AffiliateDisclosure className={styles.disclosure} />
     </section>
   );
 }

@@ -1,15 +1,24 @@
 import Link from "next/link";
-
-const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
+import Logo from "@/components/layout/Logo";
+import styles from "./Header.module.css";
 
 export default function Header() {
   return (
-    <header>
-      <nav>
-        <Link href="/">{SITE_NAME}</Link>
-        <Link href="/search">Search flights</Link>
-        <Link href="/guides">Guides</Link>
-      </nav>
+    <header className={styles.header}>
+      <div className={`container ${styles.inner}`}>
+        <Logo />
+        <nav className={styles.nav} aria-label="Main">
+          <Link href="/#deals" className={`${styles.link} ${styles.optional}`}>
+            Deals
+          </Link>
+          <Link href="/guides" className={styles.link}>
+            Guides
+          </Link>
+          <Link href="/search" className={`button ${styles.cta}`}>
+            Search flights
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }
