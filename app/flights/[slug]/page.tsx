@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { AirplaneInFlight } from "@phosphor-icons/react/ssr";
@@ -5,6 +6,7 @@ import { getRouteBySlug, listActiveRoutes } from "@/lib/db/queries/routes";
 import { routeMetadata } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import { formatDate, formatLongDate, formatPrice } from "@/lib/format";
+import { getCityImage } from "@/lib/cityImages";
 import PriceCard from "@/components/route-page/PriceCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import Breadcrumbs from "@/components/route-page/Breadcrumbs";
@@ -77,13 +79,25 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
 
   const related = relatedRoutes(route, await listActiveRoutes());
   const widgetSrc = buildWidgetSrc(buildSubId(`route_${route.slug}_search`));
+  const photo = getCityImage(route.destination_city);
   const origin = route.origin_iata.trim();
   const destination = route.destination_iata.trim();
 
   return (
     <main>
-      <section className={styles.hero}>
-        <div className="container">
+      <section className={`${styles.hero} ${photo ? styles.heroPhoto : ""}`}>
+        {photo && (
+          <Image
+            src={photo.src}
+            alt={photo.alt}
+            fill
+            preload
+            placeholder="blur"
+            sizes="100vw"
+            className={styles.heroImage}
+          />
+        )}
+        <div className={`container ${styles.heroInner}`}>
           <Breadcrumbs
             items={[
               { name: "Home", url: "/" },

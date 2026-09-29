@@ -34,7 +34,11 @@ export default function Footer() {
       <div className={`container ${styles.bottom}`}>
         <p>
           &copy; {new Date().getFullYear()} {SITE_NAME}. Fares are cached and may change; confirm the final price before
-          booking.
+          booking. City photos from{" "}
+          <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer">
+            Unsplash
+          </a>
+          .
         </p>
       </div>
     </footer>

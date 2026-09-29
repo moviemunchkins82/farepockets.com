@@ -5,26 +5,26 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 28px;
-  min-height: 260px;
-  padding: 24px;
+  gap: 24px;
+  min-height: 340px;
+  padding: 18px;
   border-radius: var(--radius-lg);
   color: #ffffff;
   background: linear-gradient(135deg, var(--from), var(--to));
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--from) 28%, transparent);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--from) 24%, transparent);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 16px 40px color-mix(in srgb, var(--from) 36%, transparent);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--from) 34%, transparent);
 }
 
 .card:active {
   transform: translateY(-1px);
 }
 
-/* Darker stops keep small white text above WCAG AA. */
+/* Darker stops keep white text above WCAG AA over any photo. */
 .ocean {
   --from: #0c4a6e;
   --to: #0369a1;
@@ -40,40 +40,53 @@
   --to: #c2410c;
 }
 
-.watermark {
+.photo {
+  z-index: -2;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.card:hover .photo {
+  transform: scale(1.04);
+}
+
+/* Tinted scrim: clear at the top so the photo shows, solid behind the text. */
+.card::after {
+  content: "";
   position: absolute;
-  right: -6px;
-  top: -14px;
+  inset: 0;
   z-index: -1;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 7.5rem;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: rgb(255 255 255 / 0.1);
-  user-select: none;
+  background: linear-gradient(
+    to top,
+    var(--from) 0%,
+    color-mix(in srgb, var(--from) 88%, transparent) 38%,
+    color-mix(in srgb, var(--from) 25%, transparent) 70%,
+    transparent 100%
+  );
 }
 
 .badge {
-  display: inline-block;
-  padding: 4px 10px;
+  align-self: flex-start;
+  padding: 5px 11px;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.18);
+  background: rgb(8 15 25 / 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   font-size: 0.8rem;
   font-weight: 600;
 }
 
-.route {
-  margin-top: 14px;
-  font-size: 1.45rem;
-  letter-spacing: -0.02em;
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 6px;
 }
 
-.codes {
-  margin-top: 4px;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  color: rgb(255 255 255 / 0.85);
+.route {
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
 }
 
 .bottom {
@@ -86,7 +99,7 @@
 .from {
   display: block;
   font-size: 0.85rem;
-  color: rgb(255 255 255 / 0.85);
+  color: rgb(255 255 255 / 0.88);
 }
 
 .price {
@@ -102,7 +115,7 @@
   display: block;
   margin-top: 4px;
   font-size: 0.875rem;
-  color: rgb(255 255 255 / 0.9);
+  color: rgb(255 255 255 / 0.92);
 }
 
 .cta {
@@ -116,4 +129,10 @@
   font-weight: 600;
   font-size: 0.9rem;
   white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover .photo {
+    transform: none;
+  }
 }
