@@ -1,20 +1,26 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { revalidatePath } from "next/cache";
+import { isAuthorizedCronRequest } from "@/lib/auth/cronSecret";
+import { revalidateRoutePages } from "@/lib/revalidate";
+import { isValidSlug } from "@/lib/slug";
 
-// Called at the end of scripts/refresh-prices.ts for each slug that actually
-// changed, so ISR reflects fresh prices immediately instead of waiting out
-// the 6h revalidate window.
+// Called by scripts/refresh-prices.ts after a refresh run, so cached pages show
+// fresh prices immediately instead of waiting out the ISR window.
 export async function POST(request: NextRequest) {
-  const secret = request.headers.get("x-cron-secret");
-  if (!process.env.CRON_SECRET || secret !== process.env.CRON_SECRET) {
+  if (!isAuthorizedCronRequest(request)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const { slug } = await request.json();
-  if (!slug) {
-    return NextResponse.json({ error: "missing slug" }, { status: 400 });
+  let slugs: unknown;
+  try {
+    ({ slugs } = await request.json());
+  } catch {
+    return NextResponse.json({ error: "invalid body" }, { status: 400 });
   }
 
-  revalidatePath(`/flights/${slug}`);
-  return NextResponse.json({ revalidated: true, slug });
+  if (!Array.isArray(slugs) || slugs.length > 1000 || !slugs.every(isValidSlug)) {
+    return NextResponse.json({ error: "slugs must be an array of route slugs" }, { status: 400 });
+  }
+
+  revalidateRoutePages(slugs);
+  return NextResponse.json({ revalidated: true, count: slugs.length });
 }

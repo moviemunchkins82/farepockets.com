@@ -4,6 +4,8 @@ import { listGuideSlugs } from "@/lib/content/guides";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 
+export const revalidate = 21600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = await listActiveRoutes();
   const guideSlugs = listGuideSlugs();

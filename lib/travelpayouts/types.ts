@@ -4,6 +4,8 @@ export interface CheapestPriceResult {
   price: number;
   currency: string;
   departDate: string | null;
+  airline: string | null;
+  transfers: number | null;
 }
 
 export interface PriceCalendarDay {

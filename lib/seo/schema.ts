@@ -2,6 +2,8 @@
 // Offer / Product / FlightReservation schema is built anywhere in this app —
 // only BreadcrumbList and FAQPage, which describe navigation/content, not a sale.
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
+
 export function breadcrumbSchema(items: { name: string; url: string }[]) {
   return {
     "@context": "https://schema.org",
@@ -10,7 +12,7 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: item.url,
+      item: new URL(item.url, SITE_URL).toString(),
     })),
   };
 }

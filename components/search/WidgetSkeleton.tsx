@@ -1,10 +1,10 @@
-// Reserves the exact height the loaded widget iframe will occupy — required
-// to keep CLS near 0 (see plan's Core Web Vitals verification step).
-// Adjust WIDGET_HEIGHT once the real Travelpayouts widget's rendered height is known.
-const WIDGET_HEIGHT = 400;
-
-export default function WidgetSkeleton() {
+// Overlays the widget's reserved space until the form has drawn.
+export default function WidgetSkeleton({ configured = true }: { configured?: boolean }) {
   return (
-    <div style={{ height: WIDGET_HEIGHT, width: "100%" }} aria-hidden="true" data-testid="widget-skeleton" />
+    <div className="widget-skeleton" style={{ position: "absolute", inset: 0 }} data-testid="widget-skeleton">
+      {!configured && process.env.NODE_ENV !== "production" && (
+        <p>Search widget not configured — set TRAVELPAYOUTS_WIDGET_SRC_TEMPLATE and TRAVELPAYOUTS_MARKER.</p>
+      )}
+    </div>
   );
 }

@@ -10,20 +10,20 @@ export interface RouteRow {
   destination_city: string;
   is_active: boolean;
   target_keyword: string | null;
-  cheapest_price: string | null; // numeric comes back as string from postgres.js
+  cheapest_price: string | null; // postgres.js returns NUMERIC as string, DATE/TIMESTAMPTZ as Date
   cheapest_currency: string;
-  cheapest_depart_date: string | null;
+  cheapest_depart_date: Date | null;
   price_calendar: unknown | null;
-  last_refreshed_at: string | null;
+  last_refreshed_at: Date | null;
   refresh_status: "pending" | "ok" | "stale" | "error";
   refresh_error: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface ClickEventRow {
   id: number;
-  occurred_at: string;
+  occurred_at: Date;
   route_slug: string | null;
   page_path: string;
   marker: string;

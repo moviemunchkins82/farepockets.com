@@ -17,7 +17,8 @@ Travelpayouts partner; we earn commission on the resulting booking. See `C:\User
    - `BASIC_AUTH_USER`, `BASIC_AUTH_PASS` — pre-launch access gate. Set both during the entire build phase; blank
      both only in the launch-flip deploy, together with flipping `NEXT_PUBLIC_ALLOW_INDEXING` to `true`.
    - `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_MIXPANEL_TOKEN` — analytics, optional during build.
-3. Run the migration in `db/migrations/0001_init.sql` against the Supabase instance (SQL editor or `psql`).
+3. `npm run db:migrate` — applies `db/migrations/*.sql` in order (tracked in `schema_migrations`, so it's safe
+   to re-run on every deploy). Use the Supabase **Session pooler** connection string for `DATABASE_URL`.
 4. `npm run seed:routes` — seeds `data/routes.csv` (currently 6 placeholder routes; SEO's real 30-50 route list
    replaces this file directly, no code change needed).
 5. `npm run backfill:prices` — sanity-checks the Travelpayouts Data API response shape against a couple of routes
@@ -32,7 +33,7 @@ as a manual/admin trigger fallback (`CRON_SECRET`-protected).
 
 ## Pre-launch
 
-Site is access-gated by HTTP Basic Auth (`middleware.ts`) and `noindex` (`NEXT_PUBLIC_ALLOW_INDEXING=false`) by
+Site is access-gated by HTTP Basic Auth (`proxy.ts`) and `noindex` (`NEXT_PUBLIC_ALLOW_INDEXING=false`) by
 default. Both flip together in one deploy at launch — see the plan's Build Phases / Verification sections for the
 exact checks to run before and after that flip.
 

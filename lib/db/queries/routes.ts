@@ -1,4 +1,3 @@
-import type { JSONValue } from "postgres";
 import sql from "@/lib/db/client";
 import type { RouteRow } from "@/lib/db/schema";
 
@@ -15,25 +14,35 @@ export async function getRouteBySlug(slug: string): Promise<RouteRow | null> {
   return rows[0] ?? null;
 }
 
-export async function upsertRoutePrice(params: {
+// A null price is a real answer ("no cached fares for this route right now"),
+// so it does overwrite the previous price.
+export async function recordRoutePrice(params: {
   slug: string;
   cheapestPrice: number | null;
   cheapestCurrency: string;
   cheapestDepartDate: string | null;
-  priceCalendar: JSONValue | null;
-  status: "ok" | "error";
-  error?: string;
 }): Promise<void> {
-  const { slug, cheapestPrice, cheapestCurrency, cheapestDepartDate, priceCalendar, status, error } = params;
+  const { slug, cheapestPrice, cheapestCurrency, cheapestDepartDate } = params;
   await sql`
     UPDATE routes
     SET cheapest_price = ${cheapestPrice},
         cheapest_currency = ${cheapestCurrency},
         cheapest_depart_date = ${cheapestDepartDate},
-        price_calendar = ${priceCalendar === null ? null : sql.json(priceCalendar)},
         last_refreshed_at = now(),
-        refresh_status = ${status},
-        refresh_error = ${error ?? null},
+        refresh_status = 'ok',
+        refresh_error = NULL,
+        updated_at = now()
+    WHERE slug = ${slug}
+  `;
+}
+
+// Keeps the last good price and last_refreshed_at, so a Travelpayouts outage
+// never blanks prices site-wide and the page's "last checked" date stays honest.
+export async function recordRouteRefreshError(slug: string, error: string): Promise<void> {
+  await sql`
+    UPDATE routes
+    SET refresh_status = 'error',
+        refresh_error = ${error.slice(0, 1000)},
         updated_at = now()
     WHERE slug = ${slug}
   `;

@@ -5,6 +5,7 @@ import { routeMetadata } from "@/lib/seo/metadata";
 import PriceCard from "@/components/route-page/PriceCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import Breadcrumbs from "@/components/route-page/Breadcrumbs";
+import { formatPrice } from "@/lib/format";
 
 export const revalidate = 21600; // 6h ISR window — cron refresh cadence drives real freshness
 
@@ -25,11 +26,12 @@ export default async function RoutePage({ params }: { params: Promise<{ slug: st
   const route = await getRouteBySlug(slug);
   if (!route) notFound();
 
+  const price = formatPrice(route.cheapest_price, route.cheapest_currency);
   const faqItems = [
     {
       question: `How much do flights from ${route.origin_city} to ${route.destination_city} cost?`,
-      answer: route.cheapest_price
-        ? `Fares start from $${route.cheapest_price} ${route.cheapest_currency}, based on the most recent data.`
+      answer: price
+        ? `One-way fares start from ${price}, based on the most recent cached data. Confirm the final price on our partner's site.`
         : `We're updating fare data for this route.`,
     },
   ];

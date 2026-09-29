@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { safeEqual } from "@/lib/auth/cronSecret";
 
 // Pre-launch access gate. Active whenever BASIC_AUTH_USER/PASS are set.
 // Blank both env vars in the single launch-flip deploy (alongside the
 // noindex/robots flip) to open the site — never stagger the two.
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const user = process.env.BASIC_AUTH_USER;
   const pass = process.env.BASIC_AUTH_PASS;
 
@@ -17,10 +18,10 @@ export function middleware(request: NextRequest): NextResponse {
     if (scheme === "Basic" && encoded) {
       const decoded = Buffer.from(encoded, "base64").toString("utf-8");
       const separatorIndex = decoded.indexOf(":");
-      const providedUser = decoded.slice(0, separatorIndex);
-      const providedPass = decoded.slice(separatorIndex + 1);
-      if (providedUser === user && providedPass === pass) {
-        return NextResponse.next();
+      if (separatorIndex !== -1) {
+        const userOk = safeEqual(decoded.slice(0, separatorIndex), user);
+        const passOk = safeEqual(decoded.slice(separatorIndex + 1), pass);
+        if (userOk && passOk) return NextResponse.next();
       }
     }
   }
@@ -31,6 +32,8 @@ export function middleware(request: NextRequest): NextResponse {
   });
 }
 
+// Cron/revalidate endpoints are excluded: they're called by the server's own
+// crontab and are protected by CRON_SECRET instead.
 export const config = {
-  matcher: "/((?!_next/static|_next/image|favicon.ico).*)",
+  matcher: "/((?!_next/static|_next/image|favicon.ico|api/cron|api/revalidate).*)",
 };

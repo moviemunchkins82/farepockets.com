@@ -1,69 +1,85 @@
 import { travelpayoutsGet } from "@/lib/travelpayouts/client";
 import type { CheapestPriceResult, PriceCalendarResult, PriceCalendarDay } from "@/lib/travelpayouts/types";
 
-interface CheapPriceEntry {
+// /aviasales/v3/prices_for_dates accepts city OR airport IATA codes (the legacy
+// /v1/prices/* endpoints only accept city codes, which silently returns nothing
+// for airport-based routes like JFK-LAX). Data is Aviasales' search cache.
+interface V3Ticket {
   price: number;
-  airline?: string;
-  flight_number?: number;
   departure_at?: string;
-  return_at?: string;
+  airline?: string;
+  flight_number?: string | number;
+  transfers?: number;
 }
 
-interface CheapPricesResponse {
+interface V3Response {
   success: boolean;
-  // data[destination][stopsCount] = cheapest entry for that number of stops
-  data: Record<string, Record<string, CheapPriceEntry>>;
+  data: V3Ticket[];
+  currency?: string;
+  error?: string;
 }
 
-// /v1/prices/cheap — cheapest cached fares for a route, grouped by destination then stop count.
-export async function getCheapestPrice(origin: string, destination: string): Promise<CheapestPriceResult | null> {
-  const res = await travelpayoutsGet<CheapPricesResponse>("/v1/prices/cheap", {
-    origin,
-    destination,
+async function pricesForDates(params: Record<string, string>): Promise<V3Ticket[]> {
+  const res = await travelpayoutsGet<V3Response>("/aviasales/v3/prices_for_dates", {
     currency: "usd",
+    one_way: "true",
+    sorting: "price",
+    ...params,
   });
 
-  const byStops = res.data?.[destination];
-  if (!byStops) return null;
+  if (!res || res.success !== true || !Array.isArray(res.data)) {
+    throw new Error(`Unexpected prices_for_dates response: ${JSON.stringify(res).slice(0, 300)}`);
+  }
+  for (const ticket of res.data) {
+    if (typeof ticket.price !== "number" || !Number.isFinite(ticket.price)) {
+      throw new Error(`prices_for_dates ticket missing numeric price: ${JSON.stringify(ticket).slice(0, 300)}`);
+    }
+  }
+  return res.data;
+}
 
-  const entries = Object.values(byStops);
-  if (entries.length === 0) return null;
+export async function getCheapestPrice(origin: string, destination: string): Promise<CheapestPriceResult | null> {
+  const tickets = await pricesForDates({ origin, destination, limit: "30" });
+  if (tickets.length === 0) return null;
 
-  const cheapest = entries.reduce((min, cur) => (cur.price < min.price ? cur : min));
+  const cheapest = tickets.reduce((min, cur) => (cur.price < min.price ? cur : min));
 
   return {
     origin,
     destination,
     price: cheapest.price,
     currency: "USD",
-    departDate: cheapest.departure_at ?? null,
+    departDate: cheapest.departure_at ? cheapest.departure_at.slice(0, 10) : null,
+    airline: cheapest.airline ?? null,
+    transfers: typeof cheapest.transfers === "number" ? cheapest.transfers : null,
   };
 }
 
-interface CalendarResponse {
-  success: boolean;
-  data: Record<string, { price: number }>;
-}
-
-// /v1/prices/calendar — cheapest fare per day for a month. Used to render the
-// price-calendar long-tail pages. `departureMonth` is yyyy-mm.
+// Cheapest cached fare per departure day for one month. `departureMonth` is yyyy-mm.
 export async function getPriceCalendar(
   origin: string,
   destination: string,
   departureMonth: string,
 ): Promise<PriceCalendarResult> {
-  const res = await travelpayoutsGet<CalendarResponse>("/v1/prices/calendar", {
+  const tickets = await pricesForDates({
     origin,
     destination,
-    depart_date: departureMonth,
-    calendar_type: "departure_date",
-    currency: "usd",
+    departure_at: departureMonth,
+    unique: "false",
+    limit: "1000",
   });
 
-  const days: PriceCalendarDay[] = Object.entries(res.data ?? {}).map(([date, v]) => ({
-    date,
-    price: v.price,
-  }));
+  const byDay = new Map<string, number>();
+  for (const ticket of tickets) {
+    if (!ticket.departure_at) continue;
+    const day = ticket.departure_at.slice(0, 10);
+    const existing = byDay.get(day);
+    if (existing === undefined || ticket.price < existing) byDay.set(day, ticket.price);
+  }
+
+  const days: PriceCalendarDay[] = [...byDay.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, price]) => ({ date, price }));
 
   return { origin, destination, days };
 }

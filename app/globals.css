@@ -42,6 +42,17 @@ a {
   text-decoration: none;
 }
 
+/* Reserves the Travelpayouts form's rendered height (measured: 186px desktop,
+   487px when its fields stack on phones) so the page doesn't jump when it loads. */
+.tp-widget {
+  min-height: 186px;
+}
+@media (max-width: 767px) {
+  .tp-widget {
+    min-height: 490px;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
