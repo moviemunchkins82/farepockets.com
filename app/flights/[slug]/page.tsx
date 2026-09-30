@@ -9,11 +9,13 @@ import { formatDate, formatLongDate, formatPrice } from "@/lib/format";
 import { getCityImage } from "@/lib/cityImages";
 import { hubPath } from "@/lib/cities";
 import PriceCard from "@/components/route-page/PriceCard";
+import PriceCalendar, { calendarData, monthlyLows } from "@/components/route-page/PriceCalendar";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import PhotoHero from "@/components/layout/PhotoHero";
 import RouteTicket from "@/components/routes/RouteTicket";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import type { RouteRow } from "@/lib/db/schema";
+import type { PriceCalendarData } from "@/lib/travelpayouts/types";
 import styles from "./page.module.css";
 
 export const revalidate = 21600; // 6h ISR window — cron refresh cadence drives real freshness
@@ -41,12 +43,13 @@ function relatedRoutes(route: RouteRow, all: RouteRow[]): RouteRow[] {
   return others.sort((a, b) => score(a) - score(b)).slice(0, 3);
 }
 
-function buildFaq(route: RouteRow) {
+function buildFaq(route: RouteRow, calendar: PriceCalendarData | null) {
   const from = route.origin_city;
   const to = route.destination_city;
   const price = formatPrice(route.cheapest_price, route.cheapest_currency);
   const cheapestDate = formatLongDate(route.cheapest_depart_date);
   const checked = formatDate(route.last_refreshed_at);
+  const lows = calendar ? monthlyLows(calendar) : [];
 
   const items = [
     {
@@ -61,6 +64,18 @@ function buildFaq(route: RouteRow) {
     items.push({
       question: `What is the cheapest date to fly from ${from} to ${to}?`,
       answer: `The lowest recent one-way fare we found departs on ${cheapestDate}. Try nearby dates too, since fares can differ by the day.`,
+    });
+  }
+
+  if (lows.length >= 2) {
+    const best = lows.reduce((a, b) => (b.price < a.price ? b : a));
+    const others = lows
+      .filter((l) => l.month !== best.month)
+      .map((l) => `${l.label} from ${formatPrice(l.price)}`)
+      .join(" and ");
+    items.push({
+      question: `What is the cheapest month to fly from ${from} to ${to}?`,
+      answer: `Of the next ${lows.length} months, ${best.label} has the lowest fare we've seen: ${formatPrice(best.price)} on ${formatLongDate(best.date)}. For comparison, ${others}.`,
     });
   }
 
@@ -79,6 +94,8 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
   if (!route) notFound();
 
   const related = relatedRoutes(route, await listActiveRoutes());
+  const calendar = calendarData(route);
+  const hasCalendarFares = !!calendar?.months.some((m) => m.days.length > 0);
   const widgetSrc = buildWidgetSrc(buildSubId(`route_${route.slug}_search`));
   const origin = route.origin_iata.trim();
   const destination = route.destination_iata.trim();
@@ -104,7 +121,21 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
         aside={<PriceCard route={route} />}
       />
 
-      <section className="section">
+      {calendar && hasCalendarFares && (
+        <section className="section">
+          <div className="container">
+            <div className="section-head">
+              <h2>
+                Cheapest days to fly {route.origin_city} to {route.destination_city}
+              </h2>
+              <p>The lowest one-way fare found for each day over the next few months.</p>
+            </div>
+            <PriceCalendar route={route} calendar={calendar} />
+          </div>
+        </section>
+      )}
+
+      <section className="section band-surface">
         <div className="container">
           <div className="section-head">
             <h2>Search other dates</h2>
@@ -127,7 +158,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
       </section>
 
       {related.length > 0 && (
-        <section className="section band-surface">
+        <section className="section">
           <div className="container">
             <div className="section-head">
               <h2>More routes</h2>
@@ -144,7 +175,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
       <section className="section">
         <div className="container">
           <div className="faq-wrap">
-            <RouteFAQ items={buildFaq(route)} />
+            <RouteFAQ items={buildFaq(route, calendar)} />
           </div>
         </div>
       </section>

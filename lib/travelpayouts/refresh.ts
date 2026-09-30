@@ -1,11 +1,40 @@
-import { listActiveRoutes, recordRoutePrice, recordRouteRefreshError } from "@/lib/db/queries/routes";
-import { getCheapestPrice } from "@/lib/travelpayouts/dataApi";
+import {
+  listActiveRoutes,
+  recordRouteCalendar,
+  recordRoutePrice,
+  recordRouteRefreshError,
+} from "@/lib/db/queries/routes";
+import { getCheapestPrice, getPriceCalendar } from "@/lib/travelpayouts/dataApi";
 import { sleep } from "@/lib/travelpayouts/client";
+import type { PriceCalendarData } from "@/lib/travelpayouts/types";
+
+export const CALENDAR_MONTHS = 3;
+const REQUEST_GAP_MS = 150; // ~6-7 req/sec, under the 10 req/sec Data API limit
 
 export interface RefreshResult {
   slug: string;
   status: "ok" | "error";
+  calendar?: "ok" | "error";
   error?: string;
+}
+
+// "yyyy-mm" for the month containing tomorrow (UTC) and the following months.
+export function upcomingMonths(count = CALENDAR_MONTHS, now = new Date()): string[] {
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + i, 1));
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  });
+}
+
+async function fetchCalendar(origin: string, destination: string): Promise<PriceCalendarData> {
+  const months: PriceCalendarData["months"] = [];
+  for (const month of upcomingMonths()) {
+    const { days } = await getPriceCalendar(origin, destination, month);
+    months.push({ month, days });
+    await sleep(REQUEST_GAP_MS);
+  }
+  return { updatedAt: new Date().toISOString(), months };
 }
 
 // Shared by scripts/refresh-prices.ts (system crontab, the primary mechanism)
@@ -15,22 +44,37 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
   const results: RefreshResult[] = [];
 
   for (const route of routes) {
+    const origin = route.origin_iata.trim();
+    const destination = route.destination_iata.trim();
+    let result: RefreshResult;
+
     try {
-      const result = await getCheapestPrice(route.origin_iata.trim(), route.destination_iata.trim());
+      const cheapest = await getCheapestPrice(origin, destination);
       await recordRoutePrice({
         slug: route.slug,
-        cheapestPrice: result?.price ?? null,
-        cheapestCurrency: result?.currency ?? "USD",
-        cheapestDepartDate: result?.departDate ?? null,
+        cheapestPrice: cheapest?.price ?? null,
+        cheapestCurrency: cheapest?.currency ?? "USD",
+        cheapestDepartDate: cheapest?.departDate ?? null,
       });
-      results.push({ slug: route.slug, status: "ok" });
+      result = { slug: route.slug, status: "ok" };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       await recordRouteRefreshError(route.slug, message);
       results.push({ slug: route.slug, status: "error", error: message });
+      await sleep(REQUEST_GAP_MS);
+      continue;
     }
+    await sleep(REQUEST_GAP_MS);
 
-    await sleep(150); // ~6-7 req/sec, under the 10 req/sec Data API limit
+    // A failed calendar keeps the previous one; it doesn't fail the route.
+    try {
+      await recordRouteCalendar(route.slug, await fetchCalendar(origin, destination));
+      result.calendar = "ok";
+    } catch (err) {
+      result.calendar = "error";
+      result.error = `calendar: ${err instanceof Error ? err.message : String(err)}`;
+    }
+    results.push(result);
   }
 
   return results;

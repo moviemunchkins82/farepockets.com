@@ -1,5 +1,7 @@
+import type { JSONValue } from "postgres";
 import sql from "@/lib/db/client";
 import type { RouteRow } from "@/lib/db/schema";
+import type { PriceCalendarData } from "@/lib/travelpayouts/types";
 
 export async function listActiveRoutes(): Promise<RouteRow[]> {
   return sql<RouteRow[]>`
@@ -31,6 +33,15 @@ export async function recordRoutePrice(params: {
         last_refreshed_at = now(),
         refresh_status = 'ok',
         refresh_error = NULL,
+        updated_at = now()
+    WHERE slug = ${slug}
+  `;
+}
+
+export async function recordRouteCalendar(slug: string, calendar: PriceCalendarData): Promise<void> {
+  await sql`
+    UPDATE routes
+    SET price_calendar = ${sql.json(calendar as unknown as JSONValue)},
         updated_at = now()
     WHERE slug = ${slug}
   `;

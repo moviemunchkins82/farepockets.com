@@ -10,12 +10,13 @@ interface AffiliateLinkProps {
   routeSlug: string | null;
   children: React.ReactNode;
   className?: string;
+  ariaLabel?: string;
 }
 
 // The one place outbound affiliate clicks get logged. Fires a beacon to
 // /api/click (survives page unload) plus GA4 + Mixpanel, then lets the
 // normal <a> navigation proceed — no preventDefault, no blocking the click.
-export default function AffiliateLink({ href, subId, routeSlug, children, className }: AffiliateLinkProps) {
+export default function AffiliateLink({ href, subId, routeSlug, children, className, ariaLabel }: AffiliateLinkProps) {
   function handleClick() {
     const pagePath = window.location.pathname;
     const sessionId = getSessionId();
@@ -39,7 +40,14 @@ export default function AffiliateLink({ href, subId, routeSlug, children, classN
   }
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer sponsored" onClick={handleClick} className={className}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer sponsored"
+      onClick={handleClick}
+      className={className}
+      aria-label={ariaLabel}
+    >
       {children}
     </a>
   );

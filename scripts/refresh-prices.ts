@@ -8,8 +8,10 @@ async function main() {
   const errors = results.filter((r) => r.status === "error");
   const okSlugs = results.filter((r) => r.status === "ok").map((r) => r.slug);
 
-  console.log(`Refreshed ${results.length} routes, ${errors.length} errors.`);
-  for (const e of errors) console.error(`  ${e.slug}: ${e.error}`);
+  const calendarErrors = results.filter((r) => r.calendar === "error");
+
+  console.log(`Refreshed ${results.length} routes, ${errors.length} errors, ${calendarErrors.length} calendar errors.`);
+  for (const e of [...errors, ...calendarErrors]) console.error(`  ${e.slug}: ${e.error}`);
 
   if (okSlugs.length > 0) {
     try {

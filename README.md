@@ -30,8 +30,10 @@ Travelpayouts partner; we earn commission on the resulting booking. See `C:\User
 ## Cron
 
 Production price refresh is `npm run refresh:prices` (`scripts/refresh-prices.ts`), run on a Hostinger hPanel
-crontab entry twice daily — **not** a Vercel/serverless cron. `app/api/cron/refresh-prices/route.ts` exists only
-as a manual/admin trigger fallback (`CRON_SECRET`-protected).
+crontab entry twice daily — **not** a Vercel/serverless cron. Each route makes 4 Data API calls (cheapest fare plus
+3 months of daily fares for the route page calendar), so 40 routes take about 2.5 minutes; it grows linearly with
+routes. `app/api/cron/refresh-prices/route.ts` exists only as a manual/admin trigger fallback (`CRON_SECRET`-protected)
+and can exceed serverless time limits at this size.
 
 ## Pre-launch
 
