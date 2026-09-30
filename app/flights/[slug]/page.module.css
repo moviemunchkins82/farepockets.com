@@ -1,127 +1,24 @@
-.hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: linear-gradient(180deg, #e6f1fa 0%, var(--bg) 100%);
-  padding-block: 32px 48px;
-  border-bottom: 1px solid var(--border);
+.hubLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-.heroInner {
-  position: relative;
-}
-
-/* Destination photo behind the header: dark on the left for the white text,
-   lighter on the right where the white price card sits. */
-.heroImage {
-  z-index: -2;
-  object-fit: cover;
-}
-
-.heroPhoto {
-  background: #0b1f33;
-  color: #ffffff;
-  padding-block: 32px 56px;
-  border-bottom: 0;
-}
-
-.heroPhoto::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(
-    90deg,
-    rgb(6 22 40 / 0.9) 0%,
-    rgb(6 22 40 / 0.72) 50%,
-    rgb(6 22 40 / 0.3) 100%
-  );
-}
-
-.heroPhoto .codes {
-  color: #bae6fd;
-}
-
-.heroPhoto .lead {
-  color: rgb(255 255 255 / 0.9);
-}
-
-.heroPhoto nav[aria-label="Breadcrumb"],
-.heroPhoto nav[aria-label="Breadcrumb"] a,
-.heroPhoto nav[aria-label="Breadcrumb"] [aria-current="page"] {
-  color: rgb(255 255 255 / 0.85);
-}
-
-.heroPhoto nav[aria-label="Breadcrumb"] li + li::before {
-  color: rgb(255 255 255 / 0.5);
-}
-
-@media (max-width: 899px) {
-  .heroPhoto::after {
-    background: rgb(6 22 40 / 0.78);
-  }
-}
-
-.heroGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr);
-  align-items: center;
-  gap: 48px;
-}
-
-.codes {
+.hubLinks a {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-  margin-bottom: 14px;
-}
-
-.hero h1 {
-  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.1rem);
-  letter-spacing: -0.035em;
-  max-width: 18ch;
-}
-
-.lead {
-  margin-top: 16px;
-  font-size: 1.1rem;
-  color: var(--text-2);
-  max-width: 48ch;
-}
-
-.relatedBand {
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   background: var(--surface);
-  border-block: 1px solid var(--border);
-  --ticket-cutout: var(--surface);
+  font-weight: 550;
+  font-size: 0.925rem;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
-.relatedGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.faq {
-  max-width: 820px;
-}
-
-@media (max-width: 899px) {
-  .heroGrid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-  .relatedGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 639px) {
-  .relatedGrid {
-    grid-template-columns: 1fr;
-  }
+.hubLinks a:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 }

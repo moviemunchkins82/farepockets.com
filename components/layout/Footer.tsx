@@ -19,7 +19,7 @@ export default function Footer() {
         <nav aria-label="Explore" className={styles.col}>
           <h2>Explore</h2>
           <Link href="/search">Search flights</Link>
-          <Link href="/#deals">Flight deals</Link>
+          <Link href="/flights">Flight deals</Link>
           <Link href="/guides">Travel guides</Link>
         </nav>
 

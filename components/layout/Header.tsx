@@ -8,7 +8,7 @@ export default function Header() {
       <div className={`container ${styles.inner}`}>
         <Logo />
         <nav className={styles.nav} aria-label="Main">
-          <Link href="/#deals" className={`${styles.link} ${styles.optional}`}>
+          <Link href="/flights" className={`${styles.link} ${styles.optional}`}>
             Deals
           </Link>
           <Link href="/guides" className={styles.link}>

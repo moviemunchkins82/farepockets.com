@@ -17,7 +17,7 @@ export default function NotFound() {
         <Link href="/search" className="button">
           Search flights
         </Link>
-        <Link href="/#deals" className="button button-secondary">
+        <Link href="/flights" className="button button-secondary">
           Flight deals
         </Link>
       </div>

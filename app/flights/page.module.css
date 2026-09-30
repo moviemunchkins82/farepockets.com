@@ -1,0 +1,64 @@
+/* Columns (not grid) so cities with many routes don't leave gaps beside short ones. */
+.grid {
+  columns: 3;
+  column-gap: 20px;
+}
+
+.city {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.city h2 {
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+
+.city h2 a:hover {
+  color: var(--accent);
+}
+
+.city ul {
+  list-style: none;
+}
+
+.city li a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--text-2);
+  transition: color 0.15s ease;
+}
+
+.city li + li a {
+  border-top: 1px dashed var(--border);
+}
+
+.city li a:hover {
+  color: var(--accent);
+}
+
+.price {
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    columns: 2;
+  }
+}
+
+@media (max-width: 639px) {
+  .grid {
+    columns: 1;
+  }
+}

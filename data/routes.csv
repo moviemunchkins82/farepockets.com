@@ -1,7 +1,41 @@
 slug,origin_iata,destination_iata,origin_city,destination_city,target_keyword
-nyc-to-lax,JFK,LAX,New York,Los Angeles,flights from new york to los angeles
-lax-to-nyc,LAX,JFK,Los Angeles,New York,flights from los angeles to new york
-chi-to-mia,ORD,MIA,Chicago,Miami,flights from chicago to miami
-mia-to-chi,MIA,ORD,Miami,Chicago,flights from miami to chicago
-nyc-to-sfo,JFK,SFO,New York,San Francisco,flights from new york to san francisco
-sfo-to-nyc,SFO,JFK,San Francisco,New York,flights from san francisco to new york
+new-york-to-los-angeles,NYC,LAX,New York,Los Angeles,flights from new york to los angeles
+los-angeles-to-new-york,LAX,NYC,Los Angeles,New York,flights from los angeles to new york
+new-york-to-san-francisco,NYC,SFO,New York,San Francisco,flights from new york to san francisco
+san-francisco-to-new-york,SFO,NYC,San Francisco,New York,flights from san francisco to new york
+chicago-to-miami,CHI,MIA,Chicago,Miami,flights from chicago to miami
+miami-to-chicago,MIA,CHI,Miami,Chicago,flights from miami to chicago
+new-york-to-miami,NYC,MIA,New York,Miami,flights from new york to miami
+miami-to-new-york,MIA,NYC,Miami,New York,flights from miami to new york
+new-york-to-chicago,NYC,CHI,New York,Chicago,flights from new york to chicago
+chicago-to-new-york,CHI,NYC,Chicago,New York,flights from chicago to new york
+new-york-to-orlando,NYC,MCO,New York,Orlando,flights from new york to orlando
+orlando-to-new-york,MCO,NYC,Orlando,New York,flights from orlando to new york
+new-york-to-atlanta,NYC,ATL,New York,Atlanta,flights from new york to atlanta
+atlanta-to-new-york,ATL,NYC,Atlanta,New York,flights from atlanta to new york
+new-york-to-las-vegas,NYC,LAS,New York,Las Vegas,flights from new york to las vegas
+las-vegas-to-new-york,LAS,NYC,Las Vegas,New York,flights from las vegas to new york
+new-york-to-dallas,NYC,DFW,New York,Dallas,flights from new york to dallas
+dallas-to-new-york,DFW,NYC,Dallas,New York,flights from dallas to new york
+new-york-to-denver,NYC,DEN,New York,Denver,flights from new york to denver
+denver-to-new-york,DEN,NYC,Denver,New York,flights from denver to new york
+los-angeles-to-san-francisco,LAX,SFO,Los Angeles,San Francisco,flights from los angeles to san francisco
+san-francisco-to-los-angeles,SFO,LAX,San Francisco,Los Angeles,flights from san francisco to los angeles
+los-angeles-to-las-vegas,LAX,LAS,Los Angeles,Las Vegas,flights from los angeles to las vegas
+las-vegas-to-los-angeles,LAS,LAX,Las Vegas,Los Angeles,flights from las vegas to los angeles
+los-angeles-to-seattle,LAX,SEA,Los Angeles,Seattle,flights from los angeles to seattle
+seattle-to-los-angeles,SEA,LAX,Seattle,Los Angeles,flights from seattle to los angeles
+los-angeles-to-chicago,LAX,CHI,Los Angeles,Chicago,flights from los angeles to chicago
+chicago-to-los-angeles,CHI,LAX,Chicago,Los Angeles,flights from chicago to los angeles
+los-angeles-to-denver,LAX,DEN,Los Angeles,Denver,flights from los angeles to denver
+denver-to-los-angeles,DEN,LAX,Denver,Los Angeles,flights from denver to los angeles
+chicago-to-las-vegas,CHI,LAS,Chicago,Las Vegas,flights from chicago to las vegas
+las-vegas-to-chicago,LAS,CHI,Las Vegas,Chicago,flights from las vegas to chicago
+chicago-to-orlando,CHI,MCO,Chicago,Orlando,flights from chicago to orlando
+orlando-to-chicago,MCO,CHI,Orlando,Chicago,flights from orlando to chicago
+boston-to-orlando,BOS,MCO,Boston,Orlando,flights from boston to orlando
+orlando-to-boston,MCO,BOS,Orlando,Boston,flights from orlando to boston
+washington-dc-to-los-angeles,WAS,LAX,Washington DC,Los Angeles,flights from washington dc to los angeles
+los-angeles-to-washington-dc,LAX,WAS,Los Angeles,Washington DC,flights from los angeles to washington dc
+dallas-to-los-angeles,DFW,LAX,Dallas,Los Angeles,flights from dallas to los angeles
+los-angeles-to-dallas,LAX,DFW,Los Angeles,Dallas,flights from los angeles to dallas

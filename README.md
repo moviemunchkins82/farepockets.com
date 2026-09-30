@@ -19,8 +19,10 @@ Travelpayouts partner; we earn commission on the resulting booking. See `C:\User
    - `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_MIXPANEL_TOKEN` — analytics, optional during build.
 3. `npm run db:migrate` — applies `db/migrations/*.sql` in order (tracked in `schema_migrations`, so it's safe
    to re-run on every deploy). Use the Supabase **Transaction pooler** (port 6543) connection string for `DATABASE_URL`.
-4. `npm run seed:routes` — seeds `data/routes.csv` (currently 6 placeholder routes; SEO's real 30-50 route list
-   replaces this file directly, no code change needed).
+4. `npm run seed:routes` — seeds `data/routes.csv` (40 routes across 13 cities). Use metro codes where a city has
+   several airports (NYC, CHI, WAS). Adding a row creates its route page and adds it to the city hub pages
+   (`/flights-to/[city]`, `/flights-from/[city]`) automatically; removed rows are deactivated. Add a photo for any new
+   city in `lib/cityImages.ts` (optional; pages fall back to a gradient header).
 5. `npm run backfill:prices` — sanity-checks the Travelpayouts Data API response shape against a couple of routes
    before trusting the unattended cron.
 6. `npm run dev`.

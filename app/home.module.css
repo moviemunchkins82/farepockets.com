@@ -89,6 +89,18 @@
   gap: 20px;
 }
 
+.destGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.moreRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
 .empty {
   padding: 32px;
   border: 1px dashed var(--border);
@@ -101,7 +113,8 @@
 }
 
 @media (max-width: 1023px) {
-  .uspGrid {
+  .uspGrid,
+  .destGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .offerGrid,
@@ -125,6 +138,12 @@
   }
   .offerGrid,
   .dealGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 479px) {
+  .destGrid {
     grid-template-columns: 1fr;
   }
 }

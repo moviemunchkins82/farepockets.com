@@ -1,5 +1,8 @@
-import { CalendarBlank, CurrencyDollar, MagnifyingGlass, ShieldCheck } from "@phosphor-icons/react/ssr";
+import Link from "next/link";
+import { ArrowRight, CalendarBlank, CurrencyDollar, MagnifyingGlass, ShieldCheck } from "@phosphor-icons/react/ssr";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { buildHubs } from "@/lib/cities";
+import DestinationTile from "@/components/home/DestinationTile";
 import { getGuide, listGuideSlugs } from "@/lib/content/guides";
 import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
@@ -13,6 +16,8 @@ import type { RouteRow } from "@/lib/db/schema";
 import styles from "./home.module.css";
 
 export const revalidate = 21600; // matches route pages; cron revalidation keeps it fresher
+
+const HOME_DEALS = 9;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -75,6 +80,7 @@ const FAQ = [
 export default async function Home() {
   const routes = (await listActiveRoutes()).sort(byPrice);
   const offers = routes.filter((r) => r.cheapest_price !== null).slice(0, 3);
+  const destinations = buildHubs(routes, "to").slice(0, 8);
   const guides = listGuideSlugs()
     .map((slug) => getGuide(slug))
     .filter((g): g is NonNullable<typeof g> => g !== null)
@@ -128,6 +134,22 @@ export default async function Home() {
         </section>
       )}
 
+      {destinations.length > 0 && (
+        <section className="section" style={{ paddingTop: 0 }}>
+          <div className="container">
+            <div className="section-head">
+              <h2>Popular destinations</h2>
+              <p>See the cheapest ways to get to each city.</p>
+            </div>
+            <div className={styles.destGrid}>
+              {destinations.map((hub) => (
+                <DestinationTile key={hub.slug} hub={hub} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <section id="deals" className={`section ${styles.dealsBand}`}>
         <div className="container">
           <div className="section-head">
@@ -135,11 +157,21 @@ export default async function Home() {
             <p>Lowest one-way fares from recent searches, checked twice a day.</p>
           </div>
           {routes.length > 0 ? (
-            <div className={styles.dealGrid}>
-              {routes.map((route) => (
-                <RouteTicket key={route.slug} route={route} />
-              ))}
-            </div>
+            <>
+              <div className={styles.dealGrid}>
+                {routes.slice(0, HOME_DEALS).map((route) => (
+                  <RouteTicket key={route.slug} route={route} />
+                ))}
+              </div>
+              {routes.length > HOME_DEALS && (
+                <div className={styles.moreRow}>
+                  <Link href="/flights" className="button button-secondary">
+                    See all {routes.length} routes
+                    <ArrowRight size={16} weight="bold" aria-hidden="true" />
+                  </Link>
+                </div>
+              )}
+            </>
           ) : (
             <p className={styles.empty}>Deals are on their way. In the meantime, search any trip above.</p>
           )}

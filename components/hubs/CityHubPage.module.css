@@ -1,0 +1,38 @@
+.explore {
+  margin-top: 56px;
+}
+
+.explore h2 {
+  font-size: 1.25rem;
+  margin-bottom: 14px;
+}
+
+.explore ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.explore a {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 0.9rem;
+  font-weight: 550;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.explore a:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.explore .primaryChip {
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent);
+}

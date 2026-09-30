@@ -28,7 +28,7 @@ export default function SearchPage() {
           </div>
           <p style={{ marginTop: 24, color: "var(--text-2)" }}>
             Not sure where to go?{" "}
-            <Link href="/#deals" className="text-link">
+            <Link href="/flights" className="text-link">
               Browse flight deals
             </Link>
             .

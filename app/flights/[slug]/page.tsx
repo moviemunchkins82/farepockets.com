@@ -1,15 +1,16 @@
-import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { AirplaneInFlight } from "@phosphor-icons/react/ssr";
+import { AirplaneInFlight, ArrowRight } from "@phosphor-icons/react/ssr";
 import { getRouteBySlug, listActiveRoutes } from "@/lib/db/queries/routes";
 import { routeMetadata } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import { formatDate, formatLongDate, formatPrice } from "@/lib/format";
 import { getCityImage } from "@/lib/cityImages";
+import { hubPath } from "@/lib/cities";
 import PriceCard from "@/components/route-page/PriceCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
-import Breadcrumbs from "@/components/route-page/Breadcrumbs";
+import PhotoHero from "@/components/layout/PhotoHero";
 import RouteTicket from "@/components/routes/RouteTicket";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import type { RouteRow } from "@/lib/db/schema";
@@ -79,49 +80,29 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
 
   const related = relatedRoutes(route, await listActiveRoutes());
   const widgetSrc = buildWidgetSrc(buildSubId(`route_${route.slug}_search`));
-  const photo = getCityImage(route.destination_city);
   const origin = route.origin_iata.trim();
   const destination = route.destination_iata.trim();
 
   return (
     <main>
-      <section className={`${styles.hero} ${photo ? styles.heroPhoto : ""}`}>
-        {photo && (
-          <Image
-            src={photo.src}
-            alt={photo.alt}
-            fill
-            preload
-            placeholder="blur"
-            sizes="100vw"
-            className={styles.heroImage}
-          />
-        )}
-        <div className={`container ${styles.heroInner}`}>
-          <Breadcrumbs
-            items={[
-              { name: "Home", url: "/" },
-              { name: `${route.origin_city} to ${route.destination_city}`, url: `/flights/${route.slug}` },
-            ]}
-          />
-          <div className={styles.heroGrid}>
-            <div>
-              <p className={styles.codes} aria-label={`${origin} to ${destination}`}>
-                <span>{origin}</span>
-                <AirplaneInFlight size={22} weight="duotone" aria-hidden="true" />
-                <span>{destination}</span>
-              </p>
-              <h1>
-                Flights from {route.origin_city} to {route.destination_city}
-              </h1>
-              <p className={styles.lead}>
-                See the lowest recent fare, then compare every option and book with our partner Aviasales.
-              </p>
-            </div>
-            <PriceCard route={route} />
-          </div>
-        </div>
-      </section>
+      <PhotoHero
+        image={getCityImage(route.destination_city)}
+        breadcrumbs={[
+          { name: "Home", url: "/" },
+          { name: `Flights to ${route.destination_city}`, url: hubPath("to", route.destination_city) },
+          { name: `${route.origin_city} to ${route.destination_city}`, url: `/flights/${route.slug}` },
+        ]}
+        kicker={
+          <>
+            <span>{origin}</span>
+            <AirplaneInFlight size={22} weight="duotone" aria-label="to" />
+            <span>{destination}</span>
+          </>
+        }
+        title={`Flights from ${route.origin_city} to ${route.destination_city}`}
+        lead="See the lowest recent fare, then compare every option and book with our partner Aviasales."
+        aside={<PriceCard route={route} />}
+      />
 
       <section className="section">
         <div className="container">
@@ -132,16 +113,26 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
             </p>
           </div>
           <TravelpayoutsWidget src={widgetSrc} title="Flight search" />
+          <nav className={styles.hubLinks} aria-label="Related city pages">
+            <Link href={hubPath("to", route.destination_city)}>
+              All flights to {route.destination_city}
+              <ArrowRight size={16} weight="bold" aria-hidden="true" />
+            </Link>
+            <Link href={hubPath("from", route.origin_city)}>
+              All flights from {route.origin_city}
+              <ArrowRight size={16} weight="bold" aria-hidden="true" />
+            </Link>
+          </nav>
         </div>
       </section>
 
       {related.length > 0 && (
-        <section className={`section ${styles.relatedBand}`}>
+        <section className="section band-surface">
           <div className="container">
             <div className="section-head">
               <h2>More routes</h2>
             </div>
-            <div className={styles.relatedGrid}>
+            <div className="ticket-grid">
               {related.map((r) => (
                 <RouteTicket key={r.slug} route={r} />
               ))}
@@ -152,7 +143,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
 
       <section className="section">
         <div className="container">
-          <div className={styles.faq}>
+          <div className="faq-wrap">
             <RouteFAQ items={buildFaq(route)} />
           </div>
         </div>
