@@ -5,6 +5,7 @@ const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 export const metadata: Metadata = {
   title: "Terms of use",
   description: `${SITE_NAME} terms of use.`,
+  alternates: { canonical: "/terms" },
 };
 
 // DRAFT — not legal advice. Have this reviewed by a lawyer before launch.

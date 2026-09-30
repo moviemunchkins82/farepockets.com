@@ -5,6 +5,7 @@ const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 export const metadata: Metadata = {
   title: "Privacy policy",
   description: `${SITE_NAME} privacy policy.`,
+  alternates: { canonical: "/privacy" },
 };
 
 // DRAFT — factually accurate to what the app actually collects (see

@@ -8,10 +8,15 @@ import OfferCard from "@/components/home/OfferCard";
 import GuideList from "@/components/guides/GuideList";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
+import type { Metadata } from "next";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./home.module.css";
 
 export const revalidate = 21600; // matches route pages; cron revalidation keeps it fresher
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 function byPrice(a: RouteRow, b: RouteRow): number {
   if (a.cheapest_price === null) return 1;
