@@ -1,23 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarBlank, CurrencyDollar, MagnifyingGlass, ShieldCheck } from "@phosphor-icons/react/ssr";
+import type { Metadata } from "next";
+import { ArrowRight, BookOpenText, CalendarBlank, MagnifyingGlass, Ticket } from "@phosphor-icons/react/ssr";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
-import { buildHubs } from "@/lib/cities";
-import DestinationTile from "@/components/home/DestinationTile";
 import { getGuide, listGuideSlugs } from "@/lib/content/guides";
+import { buildHubs, hubPath } from "@/lib/cities";
+import { getCityImage } from "@/lib/cityImages";
+import { formatDate, formatPrice } from "@/lib/format";
 import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
-import RouteTicket from "@/components/routes/RouteTicket";
-import OfferCard from "@/components/home/OfferCard";
-import GuideList from "@/components/guides/GuideList";
-import RouteFAQ from "@/components/route-page/RouteFAQ";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
-import type { Metadata } from "next";
+import SectionHeader from "@/components/home/SectionHeader";
+import DealCard from "@/components/home/DealCard";
+import RouteListItem from "@/components/home/RouteListItem";
+import RouteFAQ from "@/components/route-page/RouteFAQ";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./home.module.css";
 
 export const revalidate = 21600; // matches route pages; cron revalidation keeps it fresher
-
-const HOME_DEALS = 9;
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -29,30 +29,36 @@ function byPrice(a: RouteRow, b: RouteRow): number {
   return Number(a.cheapest_price) - Number(b.cheapest_price);
 }
 
-const USPS = [
+// Cheapest-first, one route per destination, so a single cheap hub
+// (and its photo) doesn't fill a whole section.
+function pickByDestination(routes: RouteRow[], count: number, exclude: Set<string>): RouteRow[] {
+  const picked: RouteRow[] = [];
+  for (const route of routes) {
+    if (picked.length === count) break;
+    if (exclude.has(route.destination_city)) continue;
+    exclude.add(route.destination_city);
+    picked.push(route);
+  }
+  return picked;
+}
+
+const STEPS = [
   {
     icon: MagnifyingGlass,
-    title: "Compare in one search",
-    body: "Fares from airlines and booking sites, side by side.",
-  },
-  {
-    icon: CurrencyDollar,
-    title: "No fees from us",
-    body: "We never add a markup. You pay our partner's price.",
+    title: "Search",
+    body: "Enter your trip and compare fares from airlines and booking sites in one place.",
   },
   {
     icon: CalendarBlank,
-    title: "Cheapest dates shown",
-    body: "See the lowest recent fare and the day it departs.",
+    title: "Compare dates",
+    body: "Route pages show the cheapest days to fly over the next few months.",
   },
   {
-    icon: ShieldCheck,
-    title: "Book with a trusted partner",
-    body: "Tickets and payment are handled by Aviasales.",
+    icon: Ticket,
+    title: "Book with our partner",
+    body: "You book on Aviasales. They pay us a commission; you never pay us a fee.",
   },
 ];
-
-const OFFER_BADGES = ["Lowest fare right now", "Top deal", "Top deal"];
 
 const FAQ = [
   {
@@ -79,119 +85,226 @@ const FAQ = [
 
 export default async function Home() {
   const routes = (await listActiveRoutes()).sort(byPrice);
-  const offers = routes.filter((r) => r.cheapest_price !== null).slice(0, 3);
-  const destinations = buildHubs(routes, "to").slice(0, 8);
+  const priced = routes.filter((r) => r.cheapest_price !== null);
+  const used = new Set<string>();
+  const deals = pickByDestination(priced, 3, used);
+  const popular = pickByDestination(priced, 6, used);
+  const destinations = buildHubs(routes, "to").slice(0, 12);
+  const pills = buildHubs(routes, "from")
+    .map((hub) => hub.cheapest)
+    .filter((r): r is RouteRow => r !== null)
+    .slice(0, 5);
   const guides = listGuideSlugs()
     .map((slug) => getGuide(slug))
     .filter((g): g is NonNullable<typeof g> => g !== null)
-    .slice(0, 3);
+    .slice(0, 4);
   const widgetSrc = buildWidgetSrc(buildSubId("home_hero"));
+  const heroLeft = getCityImage("New York");
+  const heroRight = getCityImage("Miami");
+  // Decorative photos avoid cities already pictured in the deals and route list.
+  const spare = ["San Francisco", "Los Angeles", "Boston", "Washington DC", "Chicago", "Dallas", "Seattle"].filter(
+    (city) => !used.has(city) && getCityImage(city),
+  );
+  const featureImage = getCityImage(spare[0] ?? "San Francisco");
+  const bannerImage = getCityImage(spare[1] ?? "Los Angeles");
 
   return (
     <main>
       <section className={styles.hero}>
-        <div className="container">
-          <h1>Compare cheap flights across the US</h1>
+        {heroLeft && (
+          <div className={`${styles.heroPhoto} ${styles.heroPhotoLeft}`} aria-hidden="true">
+            <Image src={heroLeft.src} alt="" fill sizes="260px" placeholder="blur" className={styles.cover} preload />
+          </div>
+        )}
+        {heroRight && (
+          <div className={`${styles.heroPhoto} ${styles.heroPhotoRight}`} aria-hidden="true">
+            <Image src={heroRight.src} alt="" fill sizes="260px" placeholder="blur" className={styles.cover} />
+          </div>
+        )}
+        <div className={`container ${styles.heroInner}`}>
+          <h1>Find cheap flights across the US</h1>
           <p className={styles.heroLead}>
-            Search airlines and booking sites in one place, then book with our partner Aviasales.
+            Compare airlines and booking sites in one search, then book with our partner Aviasales.
           </p>
           <div className={styles.searchCard}>
             <TravelpayoutsWidget src={widgetSrc} title="Flight search" />
           </div>
+          {pills.length > 0 && (
+            <ul className={styles.pills} aria-label="Popular routes">
+              {pills.map((r) => (
+                <li key={r.slug}>
+                  <Link href={`/flights/${r.slug}`}>
+                    {r.origin_city} to {r.destination_city}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
           <AffiliateDisclosure inverse className={styles.heroNote} />
         </div>
       </section>
 
-      <section className={styles.usps} aria-label="Why use FarePockets">
-        <div className={`container ${styles.uspGrid}`}>
-          {USPS.map(({ icon: Icon, title, body }) => (
-            <div key={title} className={styles.usp}>
-              <span className={styles.uspIcon} aria-hidden="true">
-                <Icon size={24} weight="duotone" />
-              </span>
-              <div>
-                <h2>{title}</h2>
-                <p>{body}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {offers.length > 0 && (
+      {destinations.length > 0 && (
         <section className="section">
           <div className="container">
-            <div className="section-head">
-              <h2>Top flight deals right now</h2>
-              <p>The cheapest one-way fares found on our routes, from recent searches.</p>
-            </div>
-            <div className={styles.offerGrid}>
-              {offers.map((route, i) => (
-                <OfferCard key={route.slug} route={route} index={i} badge={OFFER_BADGES[i]} />
-              ))}
-            </div>
+            <SectionHeader title="Browse flights by destination" href="/flights" />
+            <ul className={styles.cityGrid}>
+              {destinations.map((hub) => {
+                const photo = getCityImage(hub.name);
+                const price = hub.cheapest && formatPrice(hub.cheapest.cheapest_price, hub.cheapest.cheapest_currency);
+                return (
+                  <li key={hub.slug}>
+                    <Link href={hubPath("to", hub.name)} className={styles.city}>
+                      <span className={styles.cityThumb}>
+                        {photo ? (
+                          <Image src={photo.src} alt="" fill sizes="48px" className={styles.cover} />
+                        ) : (
+                          <span>{hub.code}</span>
+                        )}
+                      </span>
+                      <span className={styles.cityText}>
+                        <span className={styles.cityName}>{hub.name}</span>
+                        <span className={styles.cityMeta}>{price ? `Flights from ${price}` : "Checking fares"}</span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </section>
       )}
 
-      {destinations.length > 0 && (
+      {popular.length > 0 && (
         <section className="section" style={{ paddingTop: 0 }}>
-          <div className="container">
-            <div className="section-head">
-              <h2>Popular destinations</h2>
-              <p>See the cheapest ways to get to each city.</p>
-            </div>
-            <div className={styles.destGrid}>
-              {destinations.map((hub) => (
-                <DestinationTile key={hub.slug} hub={hub} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section id="deals" className={`section ${styles.dealsBand}`}>
-        <div className="container">
-          <div className="section-head">
-            <h2>Flight deals from popular US cities</h2>
-            <p>Lowest one-way fares from recent searches, checked twice a day.</p>
-          </div>
-          {routes.length > 0 ? (
-            <>
-              <div className={styles.dealGrid}>
-                {routes.slice(0, HOME_DEALS).map((route) => (
-                  <RouteTicket key={route.slug} route={route} />
-                ))}
+          <div className={`container ${styles.split}`}>
+            <aside className={styles.feature}>
+              <div>
+                <h2>Find your cheapest fare</h2>
+                <p>Compare airlines and booking sites, then book with our partner. No fees from us.</p>
+                <Link href="/search" className="button">
+                  Search flights
+                  <ArrowRight size={16} weight="bold" aria-hidden="true" />
+                </Link>
               </div>
-              {routes.length > HOME_DEALS && (
-                <div className={styles.moreRow}>
-                  <Link href="/flights" className="button button-secondary">
-                    See all {routes.length} routes
-                    <ArrowRight size={16} weight="bold" aria-hidden="true" />
-                  </Link>
+              {featureImage && (
+                <div className={styles.featureImage}>
+                  <Image
+                    src={featureImage.src}
+                    alt={featureImage.alt}
+                    fill
+                    sizes="(max-width: 899px) 100vw, 360px"
+                    placeholder="blur"
+                    className={styles.cover}
+                  />
                 </div>
               )}
-            </>
-          ) : (
-            <p className={styles.empty}>Deals are on their way. In the meantime, search any trip above.</p>
-          )}
-        </div>
-      </section>
+            </aside>
+            <div>
+              <SectionHeader title="Popular routes right now" href="/flights" />
+              <ul className={styles.routeList}>
+                {popular.map((route) => (
+                  <li key={route.slug}>
+                    <RouteListItem route={route} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {deals.length > 0 && (
+        <section className="section band-surface">
+          <div className="container">
+            <SectionHeader
+              title="Top flight deals"
+              description="The cheapest one-way fares on our routes, from recent searches."
+              href="/flights"
+            />
+            <div className={styles.dealGrid}>
+              {deals.map((route) => (
+                <DealCard key={route.slug} route={route} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {guides.length > 0 && (
         <section className="section">
           <div className="container">
-            <div className="section-head">
-              <h2>Tips for booking cheaper flights</h2>
-            </div>
-            <GuideList guides={guides} />
+            <SectionHeader title="Travel tips" href="/guides" />
+            <ul className={styles.guideGrid}>
+              {guides.map((guide) => (
+                <li key={guide.slug}>
+                  <Link href={`/guides/${guide.slug}`} className={styles.guide}>
+                    <span className={styles.guideIcon} aria-hidden="true">
+                      <BookOpenText size={28} weight="duotone" />
+                    </span>
+                    <span className={styles.guideText}>
+                      <span className={styles.guideKicker}>Guide</span>
+                      <span className={styles.guideTitle}>{guide.title}</span>
+                      <span className={styles.guideDesc}>{guide.description}</span>
+                      {formatDate(guide.publishedAt) && (
+                        <span className={styles.guideDate}>{formatDate(guide.publishedAt)}</span>
+                      )}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       )}
 
+      <section className="section" style={{ paddingTop: guides.length > 0 ? 0 : undefined }}>
+        <div className="container">
+          <SectionHeader
+            title="How it works"
+            description="Find a cheap fare and book it with a trusted partner in three steps."
+          />
+          <ol className={styles.steps}>
+            {STEPS.map(({ icon: Icon, title, body }) => (
+              <li key={title}>
+                <span className={styles.stepIcon} aria-hidden="true">
+                  <Icon size={30} weight="duotone" />
+                </span>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className={styles.banner}>
+        <div className={styles.bannerText}>
+          <div className={styles.bannerInner}>
+            <h2>
+              {routes.length} routes across the US, checked twice a day
+            </h2>
+            <p>Browse every route we track, or search any trip you have in mind.</p>
+            <div className={styles.bannerButtons}>
+              <Link href="/flights" className="button">
+                See all flights
+              </Link>
+              <Link href="/search" className={`button ${styles.ghost}`}>
+                Search flights
+              </Link>
+            </div>
+          </div>
+        </div>
+        {bannerImage && (
+          <div className={styles.bannerImage}>
+            <Image src={bannerImage.src} alt={bannerImage.alt} fill sizes="(max-width: 899px) 100vw, 50vw" placeholder="blur" className={styles.cover} />
+          </div>
+        )}
+      </section>
+
       <section className="section">
         <div className="container">
-          <div className={styles.faq}>
+          <div className="faq-wrap">
             <RouteFAQ items={FAQ} />
           </div>
         </div>

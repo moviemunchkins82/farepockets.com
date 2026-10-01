@@ -1,0 +1,55 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px;
+  border-radius: var(--radius-lg);
+  transition: background-color 0.15s ease;
+}
+
+.item:hover {
+  background: var(--surface-2);
+}
+
+.thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 96px;
+  height: 72px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--hero-from), var(--hero-to));
+}
+
+.img {
+  object-fit: cover;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.item:hover .title {
+  color: var(--accent);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-3);
+}
+
+.price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
