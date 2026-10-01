@@ -7,7 +7,7 @@ import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
 import SectionHeader from "@/components/home/SectionHeader";
 import DealCard from "@/components/home/DealCard";
-import RouteListItem from "@/components/home/RouteListItem";
+import DealsExplorer, { type DealItem } from "@/components/deals/DealsExplorer";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import Breadcrumbs from "@/components/route-page/Breadcrumbs";
 import type { RouteRow } from "@/lib/db/schema";
@@ -50,10 +50,22 @@ export default async function DealsPage() {
   const priced = routes.filter((r) => r.cheapest_price !== null);
   const fromHubs = buildHubs(routes, "from");
 
-  const seen = new Set<string>();
-  const topDeals = priced.filter((r) => (seen.has(r.destination_city) ? false : (seen.add(r.destination_city), true))).slice(0, 6);
+  // One deal per destination so the top cards show six different cities.
+  const topDeals: RouteRow[] = [];
+  for (const r of priced) {
+    if (topDeals.length < 6 && !topDeals.some((d) => d.destination_city === r.destination_city)) topDeals.push(r);
+  }
   const lowest = priced[0] ? formatPrice(priced[0].cheapest_price, priced[0].cheapest_currency) : null;
   const bannerImage = getCityImage("Seattle");
+  const dealItems: DealItem[] = routes.map((r) => ({
+    slug: r.slug,
+    originCity: r.origin_city,
+    originCode: r.origin_iata.trim(),
+    destinationCity: r.destination_city,
+    destinationCode: r.destination_iata.trim(),
+    price: r.cheapest_price === null ? null : Number(r.cheapest_price),
+    departDate: r.cheapest_depart_date ? r.cheapest_depart_date.toISOString().slice(0, 10) : null,
+  }));
 
   return (
     <main>
@@ -70,11 +82,11 @@ export default async function DealsPage() {
             {routes.length} routes from {fromHubs.length} cities
             {lowest ? `, with fares from ${lowest} one-way` : ""}. Checked twice a day.
           </p>
-          <nav aria-label="Jump to a departure city">
+          <nav aria-label="Flights by departure city">
             <ul className={styles.pills}>
               {fromHubs.map((hub) => (
                 <li key={hub.slug}>
-                  <a href={`#from-${hub.slug}`}>{hub.name}</a>
+                  <Link href={hubPath("from", hub.name)}>{hub.name}</Link>
                 </li>
               ))}
             </ul>
@@ -98,48 +110,13 @@ export default async function DealsPage() {
         </section>
       )}
 
-      <section className="section band-surface">
+      <section id="all-deals" className="section band-surface">
         <div className="container">
           <SectionHeader
-            title="Deals by departure city"
-            description="Every route we track, cheapest first within each city."
+            title="All flight deals"
+            description="Filter by city, price or month to find your route. Every route links to its cheapest dates."
           />
-          <div className={styles.cities}>
-            {fromHubs.map((hub) => {
-              const photo = getCityImage(hub.name);
-              const from = hub.cheapest && formatPrice(hub.cheapest.cheapest_price, hub.cheapest.cheapest_currency);
-              return (
-                <section key={hub.slug} id={`from-${hub.slug}`} className={styles.city} aria-labelledby={`h-${hub.slug}`}>
-                  <header className={styles.cityHead}>
-                    <span className={styles.cityThumb} aria-hidden="true">
-                      {photo ? (
-                        <Image src={photo.src} alt="" fill sizes="44px" className={styles.cover} />
-                      ) : (
-                        <span>{hub.code}</span>
-                      )}
-                    </span>
-                    <div className={styles.cityTitle}>
-                      <h3 id={`h-${hub.slug}`}>Flights from {hub.name}</h3>
-                      <span>
-                        {hub.routes.length} {hub.routes.length === 1 ? "route" : "routes"}
-                        {from ? `, from ${from}` : ""}
-                      </span>
-                    </div>
-                    <Link href={hubPath("from", hub.name)} className={styles.cityLink}>
-                      View all
-                    </Link>
-                  </header>
-                  <ul className={styles.routeGrid}>
-                    {hub.routes.map((route) => (
-                      <li key={route.slug}>
-                        <RouteListItem route={route} />
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              );
-            })}
-          </div>
+          <DealsExplorer deals={dealItems} />
         </div>
       </section>
 

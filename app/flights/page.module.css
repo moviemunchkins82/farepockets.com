@@ -60,77 +60,6 @@
   gap: 32px 24px;
 }
 
-.cities {
-  display: grid;
-  gap: 20px;
-}
-
-.city {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-}
-
-.cityHead {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding-bottom: 14px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-
-.cityThumb {
-  position: relative;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--accent-hover);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.cityTitle {
-  flex: 1;
-  min-width: 0;
-}
-
-.cityTitle h3 {
-  font-size: 1.15rem;
-  letter-spacing: -0.01em;
-}
-
-.cityTitle span {
-  font-size: 0.875rem;
-  color: var(--text-2);
-}
-
-.cityLink {
-  flex-shrink: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-2);
-  transition: color 0.15s ease;
-}
-
-.cityLink:hover {
-  color: var(--accent);
-}
-
-.routeGrid {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px 20px;
-}
-
 .banner {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -182,8 +111,7 @@
 }
 
 @media (max-width: 1023px) {
-  .dealGrid,
-  .routeGrid {
+  .dealGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -199,11 +127,7 @@
 }
 
 @media (max-width: 639px) {
-  .dealGrid,
-  .routeGrid {
+  .dealGrid {
     grid-template-columns: 1fr;
-  }
-  .city {
-    padding: 14px;
   }
 }
