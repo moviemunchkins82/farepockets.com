@@ -52,7 +52,22 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     const contentHeight = () =>
       Array.from(mount.children).reduce((sum, child) => sum + child.getBoundingClientRect().height, 0);
 
+    // The form lives in an open shadow root and hard-codes 'Open Sans'. Page CSS
+    // can't reach it, but CSS variables inherit through, so point it at the site font.
+    const applySiteFont = () => {
+      for (const child of Array.from(mount.children)) {
+        const root = child.shadowRoot;
+        if (!root || root.querySelector("style[data-fp-font]")) continue;
+        const style = document.createElement("style");
+        style.setAttribute("data-fp-font", "");
+        style.textContent =
+          ".cascoon, .app { font-family: var(--font-sans) !important; } input, button, select, textarea { font-family: inherit !important; }";
+        root.appendChild(style);
+      }
+    };
+
     const resize = new ResizeObserver(() => {
+      applySiteFont();
       if (contentHeight() > 50) {
         setRendered(true);
         resize.disconnect();
@@ -60,6 +75,7 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
       }
     });
     const mutations = new MutationObserver(() => {
+      applySiteFont();
       for (const child of Array.from(mount.children)) resize.observe(child);
     });
     mutations.observe(mount, { childList: true });

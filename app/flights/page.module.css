@@ -1,64 +1,209 @@
-/* Columns (not grid) so cities with many routes don't leave gaps beside short ones. */
-.grid {
-  columns: 3;
-  column-gap: 20px;
+.cover {
+  object-fit: cover;
+}
+
+.hero {
+  background:
+    radial-gradient(900px 380px at 50% -20%, rgb(255 255 255 / 0.1), transparent 70%),
+    var(--teal);
+  color: #ffffff;
+  padding-block: 32px 48px;
+}
+
+.hero nav[aria-label="Breadcrumb"],
+.hero nav[aria-label="Breadcrumb"] a,
+.hero nav[aria-label="Breadcrumb"] [aria-current="page"] {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.hero nav[aria-label="Breadcrumb"] li + li::before {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.1rem);
+  letter-spacing: -0.035em;
+}
+
+.lead {
+  margin-top: 12px;
+  font-size: 1.125rem;
+  color: rgb(255 255 255 / 0.88);
+  max-width: 60ch;
+}
+
+.pills {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.pills a {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.6);
+  color: rgb(255 255 255 / 0.95);
+  font-size: 0.875rem;
+  transition: background-color 0.15s ease;
+}
+
+.pills a:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.dealGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px 24px;
+}
+
+.cities {
+  display: grid;
+  gap: 20px;
 }
 
 .city {
-  break-inside: avoid;
-  margin-bottom: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 20px;
 }
 
-.city h2 {
+.cityHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cityThumb {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cityTitle {
+  flex: 1;
+  min-width: 0;
+}
+
+.cityTitle h3 {
   font-size: 1.15rem;
   letter-spacing: -0.01em;
-  margin-bottom: 10px;
 }
 
-.city h2 a:hover {
-  color: var(--accent);
+.cityTitle span {
+  font-size: 0.875rem;
+  color: var(--text-2);
 }
 
-.city ul {
-  list-style: none;
-}
-
-.city li a {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
+.cityLink {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: var(--text-2);
   transition: color 0.15s ease;
 }
 
-.city li + li a {
-  border-top: 1px dashed var(--border);
-}
-
-.city li a:hover {
+.cityLink:hover {
   color: var(--accent);
 }
 
-.price {
-  font-weight: 600;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+.routeGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px 20px;
+}
+
+.banner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 340px;
+  background: var(--teal);
+  color: #ffffff;
+}
+
+.bannerText {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 56px 48px;
+}
+
+.bannerInner {
+  width: min(100%, 520px);
+}
+
+.bannerInner h2 {
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+}
+
+.bannerInner p {
+  margin-top: 12px;
+  color: rgb(255 255 255 / 0.88);
+}
+
+.bannerButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.ghost {
+  background: transparent;
+  border-color: rgb(255 255 255 / 0.6);
+  color: #ffffff;
+}
+
+.ghost:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.bannerImage {
+  position: relative;
+  min-height: 280px;
 }
 
 @media (max-width: 1023px) {
-  .grid {
-    columns: 2;
+  .dealGrid,
+  .routeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 899px) {
+  .banner {
+    grid-template-columns: 1fr;
+  }
+  .bannerText {
+    justify-content: flex-start;
+    padding: 48px 16px;
   }
 }
 
 @media (max-width: 639px) {
-  .grid {
-    columns: 1;
+  .dealGrid,
+  .routeGrid {
+    grid-template-columns: 1fr;
+  }
+  .city {
+    padding: 14px;
   }
 }
