@@ -1,0 +1,179 @@
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-right: -8px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--surface-2);
+}
+
+/* Covers the page below the header; tapping the dimmed area closes the menu. */
+.overlay {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  background: rgb(17 24 39 / 0.45);
+  animation: fade 0.18s ease;
+}
+
+.overlay[hidden] {
+  display: none;
+}
+
+.panel {
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 16px 24px;
+  background: var(--bg);
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  box-shadow: 0 16px 40px rgb(17 24 39 / 0.18);
+  animation: slide 0.2s ease;
+}
+
+.search {
+  width: 100%;
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+.links {
+  list-style: none;
+  margin-top: 12px;
+}
+
+.links li + li {
+  border-top: 1px solid var(--border);
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.linkText {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.linkTitle {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.linkDesc {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.caret {
+  flex-shrink: 0;
+  color: var(--text-3);
+}
+
+.heading {
+  margin-top: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.destinations {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.destination {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.destination:hover {
+  border-color: var(--text-3);
+  background: var(--surface-2);
+}
+
+.city {
+  font-weight: 600;
+  font-size: 0.925rem;
+  color: var(--text);
+}
+
+.price {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--deal);
+}
+
+.small {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 0.825rem;
+  color: var(--text-3);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .toggle,
+  .overlay {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel {
+    animation: none;
+  }
+}

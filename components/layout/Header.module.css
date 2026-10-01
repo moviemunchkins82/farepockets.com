@@ -35,27 +35,41 @@
   background: var(--surface-2);
 }
 
-.cta {
+/* ".nav .cta" so these beat the global .button rule regardless of CSS chunk order. */
+.nav .cta {
   margin-left: 8px;
-  min-height: 40px;
-  padding: 8px 14px;
 }
 
-@media (max-width: 479px) {
-  .optional {
+.ctaShort {
+  display: none;
+}
+
+/* Phones: logo, search button and the menu (components/layout/MobileMenu). */
+@media (max-width: 639px) {
+  .link {
     display: none;
   }
-  .link {
-    padding: 8px 8px;
+  .nav .cta {
+    margin-left: 0;
   }
-  .cta {
-    margin-left: 4px;
+  .nav {
+    gap: 8px;
   }
 }
 
-/* Small phones: logo + primary button only (links remain in the footer). */
-@media (max-width: 419px) {
-  .link {
+@media (max-width: 399px) {
+  .nav .cta {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Very narrow phones (320-349px): shorten the button so nothing overlaps. */
+@media (max-width: 349px) {
+  .ctaLong {
     display: none;
+  }
+  .ctaShort {
+    display: inline;
   }
 }

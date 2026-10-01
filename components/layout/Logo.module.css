@@ -22,3 +22,11 @@
   background: var(--accent);
   color: var(--accent-contrast);
 }
+
+/* Narrow phones: leaves room for the header's search button and menu. */
+@media (max-width: 399px) {
+  .logo {
+    gap: 8px;
+    font-size: 1rem;
+  }
+}
