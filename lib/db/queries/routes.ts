@@ -1,13 +1,15 @@
+import { cache } from "react";
 import type { JSONValue } from "postgres";
 import sql from "@/lib/db/client";
 import type { RouteRow } from "@/lib/db/schema";
 import type { PriceCalendarData } from "@/lib/travelpayouts/types";
 
-export async function listActiveRoutes(): Promise<RouteRow[]> {
+// cache() dedupes this within one render: the header, footer and page all read it.
+export const listActiveRoutes = cache(async (): Promise<RouteRow[]> => {
   return sql<RouteRow[]>`
     SELECT * FROM routes WHERE is_active = true ORDER BY slug
   `;
-}
+});
 
 export async function getRouteBySlug(slug: string): Promise<RouteRow | null> {
   const rows = await sql<RouteRow[]>`
