@@ -8,6 +8,11 @@
   color: var(--text);
 }
 
+.inverse,
+.inverse:hover {
+  color: #ffffff;
+}
+
 .mark {
   display: grid;
   place-items: center;

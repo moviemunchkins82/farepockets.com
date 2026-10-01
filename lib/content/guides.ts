@@ -9,6 +9,10 @@ export interface GuideFrontmatter {
   title: string;
   description: string;
   publishedAt: string;
+  // Short label shown above the title, e.g. "Fare data".
+  category: string | null;
+  // City name from lib/cityImages.ts used as the guide's thumbnail.
+  image: string | null;
 }
 
 export interface Guide extends GuideFrontmatter {
@@ -35,6 +39,16 @@ export function getGuide(slug: string): Guide | null {
     title: data.title,
     description: data.description,
     publishedAt: data.publishedAt,
+    category: typeof data.category === "string" ? data.category : null,
+    image: typeof data.image === "string" ? data.image : null,
     content,
   };
+}
+
+// Newest first.
+export function listGuides(): Guide[] {
+  return listGuideSlugs()
+    .map((slug) => getGuide(slug))
+    .filter((g): g is Guide => g !== null)
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }

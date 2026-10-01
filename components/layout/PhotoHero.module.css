@@ -2,7 +2,7 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(180deg, #e6f1fa 0%, var(--bg) 100%);
+  background: var(--surface-2);
   padding-block: 32px 48px;
   border-bottom: 1px solid var(--border);
 }
@@ -18,7 +18,7 @@
 
 /* Dark on the left for the white text, lighter on the right behind the card. */
 .withPhoto {
-  background: #0b1f33;
+  background: var(--navy);
   color: #ffffff;
   padding-block: 32px 56px;
   border-bottom: 0;
@@ -29,7 +29,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(90deg, rgb(6 22 40 / 0.9) 0%, rgb(6 22 40 / 0.72) 50%, rgb(6 22 40 / 0.3) 100%);
+  background: linear-gradient(90deg, rgb(17 24 39 / 0.9) 0%, rgb(17 24 39 / 0.72) 50%, rgb(17 24 39 / 0.3) 100%);
 }
 
 .grid {
@@ -69,7 +69,7 @@
 }
 
 .withPhoto .kicker {
-  color: #bae6fd;
+  color: rgb(255 255 255 / 0.8);
 }
 
 .withPhoto .lead {
@@ -88,7 +88,7 @@
 
 @media (max-width: 899px) {
   .withPhoto::after {
-    background: rgb(6 22 40 / 0.78);
+    background: rgb(17 24 39 / 0.78);
   }
   .grid {
     grid-template-columns: 1fr;

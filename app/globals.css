@@ -1,29 +1,32 @@
-/* Light theme only. Accent: sky blue (matched to the search widget).
-   Deal orange is reserved for price/deal highlights.
-   Radius rule: surfaces 16px, controls 10px, badges full pill. */
+/* Light theme only, Finder-style palette: coral accent (darkened slightly from
+   #d85151 so white button text passes WCAG AA), navy text, teal feature bands,
+   light grey alternating sections. Teal "deal" marks the cheapest fares.
+   Radius rule: cards 12px, controls 8px, pills full. */
 :root {
   color-scheme: light;
-  --bg: #f5f8fb;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #edf2f7;
-  --text: #0f1b2a;
-  --text-2: #475569;
-  --text-3: #5b6878;
-  --border: #dbe3ec;
-  --accent: #0369a1;
-  --accent-hover: #075985;
-  --accent-soft: #e3f1fb;
+  --surface-2: #f5f7fa;
+  --text: #111827;
+  --text-2: #4e5562;
+  --text-3: #6c727f;
+  --border: #e0e5eb;
+  --accent: #cc4747;
+  --accent-hover: #b23a3a;
+  --accent-soft: #fbecec;
   --accent-contrast: #ffffff;
-  --deal: #c2410c;
-  --deal-soft: #fff1e8;
-  --hero-from: #0c4a6e;
-  --hero-to: #0284c7;
-  --shadow: 0 1px 2px rgb(15 27 42 / 0.04), 0 10px 30px rgb(15 27 42 / 0.07);
-  --radius-lg: 16px;
-  --radius: 10px;
-  --container: 1160px;
+  --deal: #2c6a70;
+  --deal-soft: #e3f0f1;
+  --teal: #3d7a81;
+  --navy: #111827;
+  --hero-from: #2f6369;
+  --hero-to: #3d7a81;
+  --shadow: 0 1px 2px rgb(17 24 39 / 0.04), 0 10px 30px rgb(17 24 39 / 0.08);
+  --radius-lg: 12px;
+  --radius: 8px;
+  --container: 1240px;
   --header-h: 64px;
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
@@ -114,9 +117,8 @@ svg {
 
 /* Shared page sections */
 .band-surface {
-  background: var(--surface);
-  border-block: 1px solid var(--border);
-  --ticket-cutout: var(--surface);
+  background: var(--surface-2);
+  --ticket-cutout: var(--surface-2);
 }
 
 .ticket-grid {

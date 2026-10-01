@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { listGuideSlugs, getGuide } from "@/lib/content/guides";
+import { listGuides } from "@/lib/content/guides";
 import PageHeader from "@/components/layout/PageHeader";
 import GuideList from "@/components/guides/GuideList";
 
@@ -10,10 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function GuidesIndex() {
-  const guides = listGuideSlugs()
-    .map((slug) => getGuide(slug))
-    .filter((g): g is NonNullable<typeof g> => g !== null)
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  const guides = listGuides();
 
   return (
     <main>

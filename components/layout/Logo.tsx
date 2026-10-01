@@ -4,9 +4,9 @@ import styles from "./Logo.module.css";
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 
-export default function Logo() {
+export default function Logo({ inverse = false }: { inverse?: boolean }) {
   return (
-    <Link href="/" className={styles.logo} aria-label={`${SITE_NAME} home`}>
+    <Link href="/" className={`${styles.logo} ${inverse ? styles.inverse : ""}`} aria-label={`${SITE_NAME} home`}>
       <span className={styles.mark} aria-hidden="true">
         <AirplaneTilt size={18} weight="fill" />
       </span>

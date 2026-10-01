@@ -118,17 +118,18 @@ a.cell:hover {
 }
 
 .low {
-  background: var(--accent-soft);
-  border-color: color-mix(in srgb, var(--accent) 25%, var(--border));
+  background: color-mix(in srgb, var(--deal-soft) 55%, var(--surface));
+  border-color: color-mix(in srgb, var(--deal) 22%, var(--border));
 }
 
 .cheapest {
-  background: var(--deal-soft);
-  border-color: color-mix(in srgb, var(--deal) 55%, transparent);
+  background: var(--deal);
+  border-color: var(--deal);
 }
 
-.cheapest .price {
-  color: var(--deal);
+.cheapest .price,
+.cheapest .day {
+  color: #ffffff;
 }
 
 .past {

@@ -28,7 +28,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(to top, rgb(6 22 40 / 0.78) 0%, rgb(6 22 40 / 0.2) 45%, transparent 70%);
+  background: linear-gradient(to top, rgb(17 24 39 / 0.78) 0%, rgb(17 24 39 / 0.2) 45%, transparent 70%);
 }
 
 .title {

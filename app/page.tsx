@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, BookOpenText, CalendarBlank, MagnifyingGlass, Ticket } from "@phosphor-icons/react/ssr";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
-import { getGuide, listGuideSlugs } from "@/lib/content/guides";
+import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -88,16 +88,13 @@ export default async function Home() {
   const priced = routes.filter((r) => r.cheapest_price !== null);
   const used = new Set<string>();
   const deals = pickByDestination(priced, 3, used);
-  const popular = pickByDestination(priced, 6, used);
+  const popular = pickByDestination(priced, 8, used);
   const destinations = buildHubs(routes, "to").slice(0, 12);
   const pills = buildHubs(routes, "from")
     .map((hub) => hub.cheapest)
     .filter((r): r is RouteRow => r !== null)
     .slice(0, 5);
-  const guides = listGuideSlugs()
-    .map((slug) => getGuide(slug))
-    .filter((g): g is NonNullable<typeof g> => g !== null)
-    .slice(0, 4);
+  const guides = listGuides().slice(0, 4);
   const widgetSrc = buildWidgetSrc(buildSubId("home_hero"));
   const heroLeft = getCityImage("New York");
   const heroRight = getCityImage("Miami");
@@ -236,14 +233,20 @@ export default async function Home() {
           <div className="container">
             <SectionHeader title="Travel tips" href="/guides" />
             <ul className={styles.guideGrid}>
-              {guides.map((guide) => (
+              {guides.map((guide) => {
+                const thumb = guide.image ? getCityImage(guide.image) : null;
+                return (
                 <li key={guide.slug}>
                   <Link href={`/guides/${guide.slug}`} className={styles.guide}>
                     <span className={styles.guideIcon} aria-hidden="true">
-                      <BookOpenText size={28} weight="duotone" />
+                      {thumb ? (
+                        <Image src={thumb.src} alt="" fill sizes="160px" placeholder="blur" className={styles.cover} />
+                      ) : (
+                        <BookOpenText size={28} weight="duotone" />
+                      )}
                     </span>
                     <span className={styles.guideText}>
-                      <span className={styles.guideKicker}>Guide</span>
+                      <span className={styles.guideKicker}>{guide.category ?? "Guide"}</span>
                       <span className={styles.guideTitle}>{guide.title}</span>
                       <span className={styles.guideDesc}>{guide.description}</span>
                       {formatDate(guide.publishedAt) && (
@@ -252,7 +255,8 @@ export default async function Home() {
                     </span>
                   </Link>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </div>
         </section>

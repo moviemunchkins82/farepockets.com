@@ -1,5 +1,5 @@
 .band {
-  background: linear-gradient(180deg, #e6f1fa 0%, var(--bg) 100%);
+  background: var(--surface-2);
   padding-block: 40px;
   border-bottom: 1px solid var(--border);
 }
