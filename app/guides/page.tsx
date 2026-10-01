@@ -1,36 +1,54 @@
 import type { Metadata } from "next";
-import { listGuides } from "@/lib/content/guides";
-import PageHeader from "@/components/layout/PageHeader";
-import GuideGrid from "@/components/guides/GuideGrid";
+import { listGuides, toSummary } from "@/lib/content/guides";
+import { getCityImage } from "@/lib/cityImages";
+import Breadcrumbs from "@/components/route-page/Breadcrumbs";
+import FeaturedGuide from "@/components/guides/FeaturedGuide";
+import GuideBrowser from "@/components/guides/GuideBrowser";
+import styles from "./page.module.css";
+
+const DESCRIPTION = "Practical, data-backed tips for finding and booking cheaper US flights.";
 
 export const metadata: Metadata = {
   title: "Travel guides",
-  description: "Practical, data-backed tips for finding and booking cheaper US flights.",
+  description: DESCRIPTION,
   alternates: { canonical: "/guides" },
 };
 
 export default function GuidesIndex() {
-  const guides = listGuides();
+  const guides = listGuides().map(toSummary);
+  const [featured] = guides;
+  const items = guides.map((guide) => ({
+    guide,
+    photo: guide.image ? (getCityImage(guide.image)?.src ?? null) : null,
+  }));
 
   return (
-    <main>
-      <PageHeader
-        title="Travel guides"
-        description="Practical, data-backed tips for finding and booking cheaper US flights."
-        breadcrumbs={[
-          { name: "Home", url: "/" },
-          { name: "Guides", url: "/guides" },
-        ]}
-      />
-      <section className="section">
-        <div className="container">
-          {guides.length > 0 ? (
-            <GuideGrid guides={guides} />
-          ) : (
-            <p style={{ color: "var(--text-2)" }}>New guides are on the way.</p>
-          )}
-        </div>
-      </section>
+    <main className={styles.main}>
+      <div className="container">
+        <Breadcrumbs
+          items={[
+            { name: "Home", url: "/" },
+            { name: "Guides", url: "/guides" },
+          ]}
+        />
+        <header className={styles.head}>
+          <h1>Travel guides</h1>
+          <p>{DESCRIPTION}</p>
+        </header>
+
+        {featured ? (
+          <>
+            <FeaturedGuide guide={featured} />
+            {guides.length > 1 && (
+              <section className={styles.browse} aria-label="All guides">
+                <GuideBrowser items={items} featuredSlug={featured.slug} />
+              </section>
+            )}
+          </>
+        ) : (
+          <p className={styles.empty}>New guides are on the way.</p>
+        )}
+      </div>
     </main>
   );
 }

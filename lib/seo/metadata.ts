@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { RouteRow } from "@/lib/db/schema";
 import { formatPrice } from "@/lib/format";
+import { getCityImage } from "@/lib/cityImages";
+import type { GuideSummary } from "@/lib/content/guides";
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
@@ -23,11 +25,26 @@ export function routeMetadata(route: RouteRow): Metadata {
   };
 }
 
-export function guideMetadata(title: string, description: string, slug: string): Metadata {
+export function guideMetadata(guide: GuideSummary): Metadata {
+  const url = `${SITE_URL}/guides/${guide.slug}`;
+  const photo = guide.image ? getCityImage(guide.image) : null;
   return {
-    title,
-    description,
-    alternates: { canonical: `${SITE_URL}/guides/${slug}` },
-    openGraph: { title: `${title} | ${SITE_NAME}`, description, url: `${SITE_URL}/guides/${slug}` },
+    title: guide.title,
+    description: guide.description,
+    authors: [{ name: guide.author }],
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: `${guide.title} | ${SITE_NAME}`,
+      description: guide.description,
+      url,
+      publishedTime: guide.publishedAt,
+      modifiedTime: guide.updatedAt ?? guide.publishedAt,
+      authors: [guide.author],
+      tags: guide.tags,
+      images: photo
+        ? [{ url: photo.src.src, width: photo.src.width, height: photo.src.height, alt: photo.alt }]
+        : undefined,
+    },
   };
 }

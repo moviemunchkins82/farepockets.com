@@ -7,5 +7,7 @@ export function revalidateRoutePages(slugs: string[]): void {
   revalidatePath("/flights");
   revalidatePath("/flights-to/[city]", "page");
   revalidatePath("/flights-from/[city]", "page");
+  // Guides show the cheapest fares in their sidebar.
+  revalidatePath("/guides/[slug]", "page");
   revalidatePath("/sitemap.xml");
 }

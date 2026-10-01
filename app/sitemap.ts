@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
-import { listGuideSlugs } from "@/lib/content/guides";
+import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath, type HubDirection } from "@/lib/cities";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
@@ -9,7 +9,7 @@ export const revalidate = 21600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = await listActiveRoutes();
-  const guideSlugs = listGuideSlugs();
+  const guides = listGuides();
   const hubs = (["to", "from"] as HubDirection[]).flatMap((direction) =>
     buildHubs(routes, direction).map((hub) => ({
       url: `${SITE_URL}${hubPath(direction, hub.name)}`,
@@ -30,8 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 0.8,
     })),
-    ...guideSlugs.map((slug) => ({
-      url: `${SITE_URL}/guides/${slug}`,
+    ...guides.map((guide) => ({
+      url: `${SITE_URL}/guides/${guide.slug}`,
+      lastModified: guide.updatedAt ?? guide.publishedAt,
       changeFrequency: "monthly" as const,
       priority: 0.5,
     })),
