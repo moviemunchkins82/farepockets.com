@@ -1,0 +1,25 @@
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  gap: 12px 20px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+
+.text {
+  max-width: 44ch;
+  font-size: 0.925rem;
+  color: var(--text-2);
+}
+
+.fallback .cta {
+  min-height: 48px;
+}

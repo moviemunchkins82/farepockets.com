@@ -1,27 +1,46 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { preconnect, preload } from "react-dom";
 import WidgetSkeleton from "@/components/search/WidgetSkeleton";
+import WidgetFallback from "@/components/search/WidgetFallback";
+import type { WidgetFallback as WidgetFallbackLink } from "@/lib/travelpayouts/affiliateLinks";
+
+// If the form hasn't drawn by then (slow network, or blocked by an ad blocker
+// without an error event), offer a direct partner link instead.
+const FALLBACK_AFTER_MS = 8000;
 
 interface TravelpayoutsWidgetProps {
   src: string;
   title: string;
+  // Partner link shown if the widget fails to load.
+  fallback: WidgetFallbackLink;
+  // For widgets near the top of the page: fetch the script while the HTML is
+  // still loading, instead of after hydration once the widget scrolls into view.
+  eager?: boolean;
 }
 
-// Travelpayouts search widgets are <script async src="https://tp.media/content?...">
+// Travelpayouts search widgets are <script async src="https://tpwgts.com/content?...">
 // embeds that render the form next to the script tag — not iframe-able pages.
-// The script is injected only once the container nears the viewport (protects LCP),
-// and the skeleton reserves the widget's height (protects CLS).
-export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetProps) {
+// Lazy widgets inject the script once the container nears the viewport (protects LCP);
+// a form-shaped skeleton reserves the widget's height meanwhile (protects CLS).
+export default function TravelpayoutsWidget({ src, title, fallback, eager = false }: TravelpayoutsWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
+  const [inView, setInView] = useState(eager);
   const [rendered, setRendered] = useState(false);
+  const [failed, setFailed] = useState(false);
   const configured = src !== "#";
+
+  // Resource hints are hoisted into <head> (including during server rendering).
+  if (configured) {
+    preconnect(new URL(src).origin);
+    if (eager) preload(src, { as: "script" });
+  }
 
   useEffect(() => {
     const el = containerRef.current;
-    if (!el || !configured) return;
+    if (!el || !configured || eager) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -34,7 +53,7 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [configured]);
+  }, [configured, eager]);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -44,7 +63,10 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     script.src = src;
     script.async = true;
     script.charset = "utf-8";
+    // Blocked requests (ad blockers, privacy browsers) fire an error event.
+    script.onerror = () => setFailed(true);
     mount.appendChild(script);
+    const timer = setTimeout(() => setFailed(true), FALLBACK_AFTER_MS);
 
     // The widget first inserts an empty shadow-DOM host, then draws the form a frame
     // or two later. The mount has a reserved min-height, so measure the widget's own
@@ -69,7 +91,9 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     const resize = new ResizeObserver(() => {
       applySiteFont();
       if (contentHeight() > 50) {
+        // A late load still wins over the fallback link.
         setRendered(true);
+        clearTimeout(timer);
         resize.disconnect();
         mutations.disconnect();
       }
@@ -81,6 +105,7 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     mutations.observe(mount, { childList: true });
 
     return () => {
+      clearTimeout(timer);
       resize.disconnect();
       mutations.disconnect();
       mount.replaceChildren();
@@ -91,12 +116,14 @@ export default function TravelpayoutsWidget({ src, title }: TravelpayoutsWidgetP
     <div
       ref={containerRef}
       aria-label={title}
+      aria-busy={!rendered && !failed}
       className="tp-widget"
       data-rendered={rendered || undefined}
       style={{ position: "relative" }}
     >
       <div ref={mountRef} className="tp-mount" />
-      {!rendered && <WidgetSkeleton configured={configured} />}
+      {!rendered &&
+        (failed ? <WidgetFallback link={fallback} /> : <WidgetSkeleton configured={configured} />)}
     </div>
   );
 }

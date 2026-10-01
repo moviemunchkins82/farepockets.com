@@ -5,7 +5,7 @@ import { listActiveRoutes } from "@/lib/db/queries/routes";
 import { buildHubs, findHub, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
-import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
+import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import HubFareCard from "@/components/hubs/HubFareCard";
 import RouteCard from "@/components/routes/RouteCard";
@@ -101,7 +101,9 @@ export default async function CityHubPage({ direction, slug }: { direction: HubD
   const reverseHub = findHub(routes, reverse, hub.slug);
   const otherHubs = buildHubs(routes, direction).filter((h) => h.slug !== hub.slug);
   const title = copy[direction].title(hub.name);
-  const widgetSrc = buildWidgetSrc(buildSubId(`hub_${direction}_${hub.slug}`));
+  const widgetSubId = buildSubId(`hub_${direction}_${hub.slug}`);
+  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetFallback = buildWidgetFallback(widgetSubId);
 
   return (
     <main>
@@ -139,7 +141,7 @@ export default async function CityHubPage({ direction, slug }: { direction: HubD
             <h2>Search flights {direction === "to" ? "to" : "from"} {hub.name}</h2>
             <p>Pick your dates to compare live fares from airlines and booking sites.</p>
           </div>
-          <TravelpayoutsWidget src={widgetSrc} title="Flight search" />
+          <TravelpayoutsWidget src={widgetSrc} title="Flight search" fallback={widgetFallback} />
           <div style={{ marginTop: 12 }}>
             <AffiliateDisclosure />
           </div>

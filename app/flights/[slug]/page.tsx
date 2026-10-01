@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { AirplaneInFlight, ArrowRight } from "@phosphor-icons/react/ssr";
 import { getRouteBySlug, listActiveRoutes } from "@/lib/db/queries/routes";
 import { routeMetadata } from "@/lib/seo/metadata";
-import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
+import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import { formatDate, formatLongDate, formatPrice } from "@/lib/format";
 import { getCityImage } from "@/lib/cityImages";
 import { hubPath } from "@/lib/cities";
@@ -96,7 +96,9 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
   const related = relatedRoutes(route, await listActiveRoutes());
   const calendar = calendarData(route);
   const hasCalendarFares = !!calendar?.months.some((m) => m.days.length > 0);
-  const widgetSrc = buildWidgetSrc(buildSubId(`route_${route.slug}_search`));
+  const widgetSubId = buildSubId(`route_${route.slug}_search`);
+  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetFallback = buildWidgetFallback(widgetSubId, route);
   const origin = route.origin_iata.trim();
   const destination = route.destination_iata.trim();
 
@@ -143,7 +145,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
               Choose your own dates for {route.origin_city} to {route.destination_city} and compare live fares.
             </p>
           </div>
-          <TravelpayoutsWidget src={widgetSrc} title="Flight search" />
+          <TravelpayoutsWidget src={widgetSrc} title="Flight search" fallback={widgetFallback} />
           <nav className={styles.hubLinks} aria-label="Related city pages">
             <Link href={hubPath("to", route.destination_city)}>
               All flights to {route.destination_city}

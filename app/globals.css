@@ -311,15 +311,6 @@ svg {
   }
 }
 
-.widget-skeleton {
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 16px;
-  color: var(--text-3);
-  font-size: 0.9rem;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

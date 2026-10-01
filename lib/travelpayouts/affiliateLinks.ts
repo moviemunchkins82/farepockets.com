@@ -11,7 +11,9 @@
 // blocked before the account is approved — but a real launch
 // (NEXT_PUBLIC_ALLOW_INDEXING=true) throws, so missing config can never ship live.
 
-const ALLOW_INDEXING = process.env.NEXT_PUBLIC_ALLOW_INDEXING === "true";
+import type { RouteRow } from "@/lib/db/schema";
+
+const ALLOW_INDEXING =process.env.NEXT_PUBLIC_ALLOW_INDEXING === "true";
 const PLACEHOLDER = "#";
 
 function missingConfig(name: string): typeof PLACEHOLDER {
@@ -85,6 +87,40 @@ export function buildDeepLink(
     destination: destinationIata.trim(),
     date: toDdMm(departDate),
   });
+}
+
+// Same partner link as buildDeepLink, but landing on the Aviasales home page
+// (for places with no specific route). Reuses the deep-link template with its
+// u= target swapped, so marker/campaign/trs stay in one place.
+export function buildPartnerHomeLink(subId: string): string {
+  const template = process.env.TRAVELPAYOUTS_DEEPLINK_TEMPLATE;
+  const marker = process.env.TRAVELPAYOUTS_MARKER;
+  if (!template) return missingConfig("TRAVELPAYOUTS_DEEPLINK_TEMPLATE");
+  if (!marker) return missingConfig("TRAVELPAYOUTS_MARKER");
+  if (!/[?&]u=[^&]*/.test(template)) throw new Error("TRAVELPAYOUTS_DEEPLINK_TEMPLATE has no u= target to replace");
+  const home = template.replace(/([?&]u=)[^&]*/, (_, prefix: string) => prefix + encodeURIComponent("https://www.aviasales.com"));
+  return fill(home, { marker, subId });
+}
+
+export interface WidgetFallback {
+  href: string;
+  subId: string;
+  routeSlug: string | null;
+}
+
+// Link shown in place of the search widget if it fails to load (blocked or too
+// slow). Its own "-fallback" sub ID shows in reports how often that happens.
+export function buildWidgetFallback(
+  widgetSubId: string,
+  route?: Pick<RouteRow, "slug" | "origin_iata" | "destination_iata" | "cheapest_depart_date">,
+): WidgetFallback {
+  const subId = buildSubId(`${widgetSubId}_fallback`);
+  if (!route) return { href: buildPartnerHomeLink(subId), subId, routeSlug: null };
+  return {
+    href: buildDeepLink(route.origin_iata, route.destination_iata, subId, pickSearchDate(route.cheapest_depart_date)),
+    subId,
+    routeSlug: route.slug,
+  };
 }
 
 export function isPlaceholderLink(href: string): boolean {

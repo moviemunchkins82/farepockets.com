@@ -7,7 +7,7 @@ import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
-import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
+import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import SectionHeader from "@/components/home/SectionHeader";
@@ -96,7 +96,9 @@ export default async function Home() {
     .filter((r): r is RouteRow => r !== null)
     .slice(0, 5);
   const guides = listGuides().slice(0, 4);
-  const widgetSrc = buildWidgetSrc(buildSubId("home_hero"));
+  const widgetSubId = buildSubId("home_hero");
+  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetFallback = buildWidgetFallback(widgetSubId);
   const heroLeft = getCityImage("New York");
   const heroRight = getCityImage("Miami");
   // Decorative photos avoid cities already pictured in the deals and route list.
@@ -125,7 +127,7 @@ export default async function Home() {
             Compare airlines and booking sites in one search, then book with our partner Aviasales.
           </p>
           <div className={styles.searchCard}>
-            <TravelpayoutsWidget src={widgetSrc} title="Flight search" />
+            <TravelpayoutsWidget src={widgetSrc} title="Flight search" fallback={widgetFallback} eager />
           </div>
           {pills.length > 0 && (
             <ul className={styles.pills} aria-label="Popular routes">

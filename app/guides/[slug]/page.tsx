@@ -10,7 +10,7 @@ import { listActiveRoutes } from "@/lib/db/queries/routes";
 import { guideMetadata } from "@/lib/seo/metadata";
 import { articleSchema } from "@/lib/seo/schema";
 import { formatDate } from "@/lib/format";
-import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
+import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import Breadcrumbs from "@/components/route-page/Breadcrumbs";
 import JsonLd from "@/components/seo/JsonLd";
 import SectionHeader from "@/components/home/SectionHeader";
@@ -68,7 +68,9 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
   const updated = guide.updatedAt && guide.updatedAt !== guide.publishedAt ? formatDate(guide.updatedAt) : null;
   const path = `/guides/${guide.slug}`;
   const deals = await loadSidebarDeals();
-  const widgetSrc = buildWidgetSrc(buildSubId(`guide_${guide.slug}`));
+  const widgetSubId = buildSubId(`guide_${guide.slug}`);
+  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetFallback = buildWidgetFallback(widgetSubId);
   const more = listGuides()
     .filter((g) => g.slug !== guide.slug)
     .slice(0, 3);
@@ -179,7 +181,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
             <div className={styles.searchCard}>
               <h2 className={styles.searchTitle}>Search cheap flights</h2>
               <p className={styles.searchText}>Compare airlines and booking sites in one search.</p>
-              <TravelpayoutsWidget src={widgetSrc} title="Flight search" />
+              <TravelpayoutsWidget src={widgetSrc} title="Flight search" fallback={widgetFallback} />
               <AffiliateDisclosure className={styles.note} />
             </div>
           </div>
