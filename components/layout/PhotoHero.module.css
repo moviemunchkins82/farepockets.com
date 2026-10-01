@@ -1,10 +1,14 @@
+/* Teal band by default; with a photo, a dark overlay keeps the white text readable
+   on the left while the photo shows through behind the card on the right. */
 .hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--surface-2);
-  padding-block: 32px 48px;
-  border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(900px 380px at 50% -20%, rgb(255 255 255 / 0.1), transparent 70%),
+    var(--teal);
+  color: #ffffff;
+  padding-block: 32px 56px;
 }
 
 .inner {
@@ -16,12 +20,8 @@
   object-fit: cover;
 }
 
-/* Dark on the left for the white text, lighter on the right behind the card. */
 .withPhoto {
   background: var(--navy);
-  color: #ffffff;
-  padding-block: 32px 56px;
-  border-bottom: 0;
 }
 
 .withPhoto::after {
@@ -51,7 +51,7 @@
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: 0.04em;
-  color: var(--accent);
+  color: rgb(255 255 255 / 0.8);
   margin-bottom: 14px;
 }
 
@@ -64,25 +64,17 @@
 .lead {
   margin-top: 16px;
   font-size: 1.1rem;
-  color: var(--text-2);
+  color: rgb(255 255 255 / 0.9);
   max-width: 48ch;
 }
 
-.withPhoto .kicker {
-  color: rgb(255 255 255 / 0.8);
-}
-
-.withPhoto .lead {
-  color: rgb(255 255 255 / 0.9);
-}
-
-.withPhoto nav[aria-label="Breadcrumb"],
-.withPhoto nav[aria-label="Breadcrumb"] a,
-.withPhoto nav[aria-label="Breadcrumb"] [aria-current="page"] {
+.hero nav[aria-label="Breadcrumb"],
+.hero nav[aria-label="Breadcrumb"] a,
+.hero nav[aria-label="Breadcrumb"] [aria-current="page"] {
   color: rgb(255 255 255 / 0.85);
 }
 
-.withPhoto nav[aria-label="Breadcrumb"] li + li::before {
+.hero nav[aria-label="Breadcrumb"] li + li::before {
   color: rgb(255 255 255 / 0.5);
 }
 

@@ -12,7 +12,7 @@ import PriceCard from "@/components/route-page/PriceCard";
 import PriceCalendar, { calendarData, monthlyLows } from "@/components/route-page/PriceCalendar";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import PhotoHero from "@/components/layout/PhotoHero";
-import RouteTicket from "@/components/routes/RouteTicket";
+import DealCard from "@/components/home/DealCard";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import type { RouteRow } from "@/lib/db/schema";
 import type { PriceCalendarData } from "@/lib/travelpayouts/types";
@@ -163,9 +163,9 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
             <div className="section-head">
               <h2>More routes</h2>
             </div>
-            <div className="ticket-grid">
+            <div className="deal-grid">
               {related.map((r) => (
-                <RouteTicket key={r.slug} route={r} />
+                <DealCard key={r.slug} route={r} />
               ))}
             </div>
           </div>

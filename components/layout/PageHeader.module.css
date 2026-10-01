@@ -1,18 +1,37 @@
 .band {
-  background: var(--surface-2);
-  padding-block: 40px;
-  border-bottom: 1px solid var(--border);
+  background:
+    radial-gradient(900px 380px at 50% -20%, rgb(255 255 255 / 0.1), transparent 70%),
+    var(--teal);
+  color: #ffffff;
+  padding-block: 32px 48px;
+}
+
+.band nav[aria-label="Breadcrumb"],
+.band nav[aria-label="Breadcrumb"] a,
+.band nav[aria-label="Breadcrumb"] [aria-current="page"] {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.band nav[aria-label="Breadcrumb"] li + li::before {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.kicker {
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.85);
 }
 
 .title {
   font-size: clamp(2rem, 1.4rem + 2.2vw, 2.9rem);
   letter-spacing: -0.035em;
-  max-width: 22ch;
+  max-width: 24ch;
 }
 
 .description {
   margin-top: 12px;
   font-size: 1.1rem;
-  color: var(--text-2);
-  max-width: 56ch;
+  color: rgb(255 255 255 / 0.88);
+  max-width: 60ch;
 }

@@ -118,13 +118,20 @@ svg {
 /* Shared page sections */
 .band-surface {
   background: var(--surface-2);
-  --ticket-cutout: var(--surface-2);
 }
 
-.ticket-grid {
+/* Photo deal cards (3-up) and horizontal route cards (2-up). */
+.deal-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 32px 24px;
+}
+
+.card-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
 .faq-wrap {
@@ -132,13 +139,14 @@ svg {
 }
 
 @media (max-width: 1023px) {
-  .ticket-grid {
+  .deal-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 639px) {
-  .ticket-grid {
+  .deal-grid,
+  .card-grid {
     grid-template-columns: 1fr;
   }
 }

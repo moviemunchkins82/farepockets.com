@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, BookOpenText, CalendarBlank, MagnifyingGlass, Ticket } from "@phosphor-icons/react/ssr";
+import { ArrowRight, CalendarBlank, MagnifyingGlass, Ticket } from "@phosphor-icons/react/ssr";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
 import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
@@ -14,6 +14,7 @@ import SectionHeader from "@/components/home/SectionHeader";
 import DealCard from "@/components/home/DealCard";
 import RouteListItem from "@/components/home/RouteListItem";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
+import GuideGrid from "@/components/guides/GuideGrid";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./home.module.css";
 
@@ -232,32 +233,7 @@ export default async function Home() {
         <section className="section">
           <div className="container">
             <SectionHeader title="Travel tips" href="/guides" />
-            <ul className={styles.guideGrid}>
-              {guides.map((guide) => {
-                const thumb = guide.image ? getCityImage(guide.image) : null;
-                return (
-                <li key={guide.slug}>
-                  <Link href={`/guides/${guide.slug}`} className={styles.guide}>
-                    <span className={styles.guideIcon} aria-hidden="true">
-                      {thumb ? (
-                        <Image src={thumb.src} alt="" fill sizes="160px" placeholder="blur" className={styles.cover} />
-                      ) : (
-                        <BookOpenText size={28} weight="duotone" />
-                      )}
-                    </span>
-                    <span className={styles.guideText}>
-                      <span className={styles.guideKicker}>{guide.category ?? "Guide"}</span>
-                      <span className={styles.guideTitle}>{guide.title}</span>
-                      <span className={styles.guideDesc}>{guide.description}</span>
-                      {formatDate(guide.publishedAt) && (
-                        <span className={styles.guideDate}>{formatDate(guide.publishedAt)}</span>
-                      )}
-                    </span>
-                  </Link>
-                </li>
-                );
-              })}
-            </ul>
+            <GuideGrid guides={guides} />
           </div>
         </section>
       )}

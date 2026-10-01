@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import PageHeader from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -8,19 +9,24 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="container page" style={{ paddingBlock: "96px" }}>
-      <div className="prose">
-        <h1>We couldn&apos;t find that page</h1>
-        <p>The route or guide you&apos;re looking for may have moved. Try a new search or browse popular routes.</p>
-      </div>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 24 }}>
-        <Link href="/search" className="button">
-          Search flights
-        </Link>
-        <Link href="/flights" className="button button-secondary">
-          Flight deals
-        </Link>
-      </div>
+    <main>
+      <PageHeader
+        title="We couldn't find that page"
+        description="The route or guide you're looking for may have moved. Try a new search or browse flight deals."
+      />
+      <section className="section">
+        <div className="container" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <Link href="/search" className="button">
+            Search flights
+          </Link>
+          <Link href="/flights" className="button button-secondary">
+            Flight deals
+          </Link>
+          <Link href="/guides" className="button button-secondary">
+            Travel guides
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

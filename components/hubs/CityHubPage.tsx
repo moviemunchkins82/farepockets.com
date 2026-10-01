@@ -8,7 +8,7 @@ import { formatPrice } from "@/lib/format";
 import { buildSubId, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import HubFareCard from "@/components/hubs/HubFareCard";
-import RouteTicket from "@/components/routes/RouteTicket";
+import RouteCard from "@/components/routes/RouteCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
@@ -123,11 +123,13 @@ export default async function CityHubPage({ direction, slug }: { direction: HubD
             <h2>{copy[direction].gridHeading(hub.name)}</h2>
             <p>Lowest one-way fares from recent searches, checked twice a day.</p>
           </div>
-          <div className="ticket-grid">
+          <ul className="card-grid">
             {hub.routes.map((route) => (
-              <RouteTicket key={route.slug} route={route} />
+              <li key={route.slug}>
+                <RouteCard route={route} photoCity={direction === "to" ? route.origin_city : route.destination_city} />
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
