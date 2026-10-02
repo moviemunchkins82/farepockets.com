@@ -42,10 +42,16 @@ export async function generateMetadata({ params }: PageProps<"/guides/[slug]">):
 // Cheapest route per destination, so the sidebar shows three different places.
 // A guide about one market (e.g. the UK) shows only fares departing there, and
 // its search form uses that market's currency; otherwise markets alternate.
-async function loadSidebarDeals(market: string | null): Promise<{ deals: RouteRow[]; currency?: string }> {
+// A guide about particular countries prefers fares to those countries.
+async function loadSidebarDeals(
+  market: string | null,
+  countries: string[],
+): Promise<{ deals: RouteRow[]; currency?: string }> {
   try {
     const priced = (await listActiveRoutes()).filter((r) => r.cheapest_price !== null).sort(byPrice);
-    const inMarket = market ? priced.filter((r) => r.origin_country.trim() === market) : [];
+    const fromMarket = market ? priced.filter((r) => r.origin_country.trim() === market) : [];
+    const toCountries = fromMarket.filter((r) => countries.includes(r.destination_country.trim()));
+    const inMarket = toCountries.length > 0 ? toCountries : fromMarket;
     const routes = inMarket.length > 0 ? inMarket : interleaveByOrigin(priced);
     const picked: RouteRow[] = [];
     for (const r of routes) {
@@ -70,7 +76,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
   const published = formatDate(guide.publishedAt);
   const updated = guide.updatedAt && guide.updatedAt !== guide.publishedAt ? formatDate(guide.updatedAt) : null;
   const path = `/guides/${guide.slug}`;
-  const { deals, currency } = await loadSidebarDeals(guide.market);
+  const { deals, currency } = await loadSidebarDeals(guide.market, guide.countries);
   const widgetSubId = buildSubId(`guide_${guide.slug}`);
   const widgetSrc = buildWidgetSrc(widgetSubId, currency);
   const widgetFallback = buildWidgetFallback(widgetSubId);

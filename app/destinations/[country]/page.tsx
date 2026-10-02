@@ -14,6 +14,9 @@ import RouteCard from "@/components/routes/RouteCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
+import SectionHeader from "@/components/home/SectionHeader";
+import GuideGrid from "@/components/guides/GuideGrid";
+import { listGuides } from "@/lib/content/guides";
 import styles from "./page.module.css";
 
 export const revalidate = 21600;
@@ -99,6 +102,7 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
   const cityNames = group.cities.map((c) => c.name);
   const origins = new Set(group.routes.map((r) => r.origin_city));
   const others = buildCountries(routes).filter((g) => g.info.code !== info.code);
+  const guides = listGuides().filter((g) => g.countries.includes(info.code));
   const currency = group.routes[0]?.currency.trim();
   const widgetSubId = buildSubId(`country_${info.slug}`);
   const widgetSrc = buildWidgetSrc(widgetSubId, currency);
@@ -216,6 +220,12 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
 
       <section className="section">
         <div className="container">
+          {guides.length > 0 && (
+            <div className={styles.guides}>
+              <SectionHeader title={`Guides for ${info.name}`} href="/guides" linkLabel="All guides" />
+              <GuideGrid guides={guides} />
+            </div>
+          )}
           <div className="faq-wrap">
             <RouteFAQ items={buildFaq(group)} />
           </div>

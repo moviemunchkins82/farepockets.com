@@ -13,6 +13,9 @@ import CountryCard from "@/components/regions/CountryCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
+import GuideGrid from "@/components/guides/GuideGrid";
+import { listGuides } from "@/lib/content/guides";
+import { SILK_ROAD } from "@/lib/regions";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./page.module.css";
 
@@ -46,6 +49,8 @@ export default async function DestinationsPage() {
     }
   }
 
+  const regionCodes = new Set(SILK_ROAD.map((c) => c.code));
+  const guides = listGuides().filter((g) => g.countries.some((c) => regionCodes.has(c)));
   const widgetSubId = buildSubId("destinations_hub");
   const widgetSrc = buildWidgetSrc(widgetSubId, regionRoutes[0]?.currency.trim());
   const widgetFallback = buildWidgetFallback(widgetSubId);
@@ -123,7 +128,16 @@ export default async function DestinationsPage() {
         </section>
       )}
 
-      <section className="section">
+      {guides.length > 0 && (
+        <section className="section">
+          <div className="container">
+            <SectionHeader title="Plan your trip" description="Which airports, how many stops and when to go, based on our fare data." href="/guides" linkLabel="All guides" />
+            <GuideGrid guides={guides} />
+          </div>
+        </section>
+      )}
+
+      <section className={`section ${guides.length > 0 ? "band-surface" : ""}`}>
         <div className="container">
           <div className="section-head">
             <h2>Search any trip</h2>
@@ -136,7 +150,7 @@ export default async function DestinationsPage() {
         </div>
       </section>
 
-      <section className="section band-surface">
+      <section className={`section ${guides.length > 0 ? "" : "band-surface"}`}>
         <div className="container">
           <div className="faq-wrap">
             <RouteFAQ items={faq} />

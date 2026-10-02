@@ -24,6 +24,9 @@ export interface GuideFrontmatter {
   // Departure country the guide is about (ISO code, e.g. "GB"): its sidebar shows
   // fares from there, in that currency. Null shows all markets.
   market: string | null;
+  // Destination countries the guide covers (ISO codes); it is listed on their
+  // /destinations pages.
+  countries: string[];
 }
 
 // Everything a guide card needs, without the body (safe to pass to client components).
@@ -70,6 +73,9 @@ export function getGuide(slug: string): Guide | null {
     tags: Array.isArray(data.tags) ? data.tags.filter((t): t is string => typeof t === "string") : [],
     image: typeof data.image === "string" ? data.image : null,
     market: typeof data.market === "string" && /^[A-Z]{2}$/.test(data.market) ? data.market : null,
+    countries: Array.isArray(data.countries)
+      ? data.countries.filter((c): c is string => typeof c === "string" && /^[A-Z]{2}$/.test(c))
+      : [],
     readingMinutes: readingMinutes(content),
     content,
   };
