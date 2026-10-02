@@ -24,13 +24,15 @@ export async function recordRoutePrice(params: {
   slug: string;
   cheapestPrice: number | null;
   cheapestCurrency: string;
+  cheapestPriceUsd: number | null;
   cheapestDepartDate: string | null;
 }): Promise<void> {
-  const { slug, cheapestPrice, cheapestCurrency, cheapestDepartDate } = params;
+  const { slug, cheapestPrice, cheapestCurrency, cheapestPriceUsd, cheapestDepartDate } = params;
   await sql`
     UPDATE routes
     SET cheapest_price = ${cheapestPrice},
         cheapest_currency = ${cheapestCurrency},
+        cheapest_price_usd = ${cheapestPriceUsd},
         cheapest_depart_date = ${cheapestDepartDate},
         last_refreshed_at = now(),
         refresh_status = 'ok',

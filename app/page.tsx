@@ -15,6 +15,7 @@ import DealCard from "@/components/home/DealCard";
 import RouteListItem from "@/components/home/RouteListItem";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import GuideGrid from "@/components/guides/GuideGrid";
+import { byPrice, interleaveByOrigin } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./home.module.css";
 
@@ -23,12 +24,6 @@ export const revalidate = 21600; // matches route pages; cron revalidation keeps
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
-
-function byPrice(a: RouteRow, b: RouteRow): number {
-  if (a.cheapest_price === null) return 1;
-  if (b.cheapest_price === null) return -1;
-  return Number(a.cheapest_price) - Number(b.cheapest_price);
-}
 
 // Cheapest-first, one route per destination, so a single cheap hub
 // (and its photo) doesn't fill a whole section.
@@ -65,7 +60,7 @@ const FAQ = [
   {
     question: "How does FarePockets find cheap flights?",
     answer:
-      "We track recent fares on popular US routes using flight data from Aviasales, and our search compares fares from airlines and booking sites in one place.",
+      "We track recent fares on popular routes using flight data from Aviasales, and our search compares fares from airlines and booking sites in one place.",
   },
   {
     question: "Do I book my flight on FarePockets?",
@@ -86,7 +81,8 @@ const FAQ = [
 
 export default async function Home() {
   const routes = (await listActiveRoutes()).sort(byPrice);
-  const priced = routes.filter((r) => r.cheapest_price !== null);
+  // Cheapest first within each departure country, alternating countries.
+  const priced = interleaveByOrigin(routes.filter((r) => r.cheapest_price !== null));
   const used = new Set<string>();
   const deals = pickByDestination(priced, 3, used);
   const popular = pickByDestination(priced, 8, used);
@@ -122,7 +118,7 @@ export default async function Home() {
           </div>
         )}
         <div className={`container ${styles.heroInner}`}>
-          <h1>Find cheap flights across the US</h1>
+          <h1>Find cheap flights, wherever you&apos;re going</h1>
           <p className={styles.heroLead}>
             Compare airlines and booking sites in one search, then book with our partner Aviasales.
           </p>
@@ -264,7 +260,7 @@ export default async function Home() {
         <div className={styles.bannerText}>
           <div className={styles.bannerInner}>
             <h2>
-              {routes.length} routes across the US, checked twice a day
+              {routes.length} popular routes, checked twice a day
             </h2>
             <p>Browse every route we track, or search any trip you have in mind.</p>
             <div className={styles.bannerButtons}>

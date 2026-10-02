@@ -4,15 +4,16 @@
 import "./_env";
 import { getCheapestPrice } from "@/lib/travelpayouts/dataApi";
 
-const SAMPLE_ROUTES: [string, string][] = [
-  ["JFK", "LAX"],
-  ["ORD", "MIA"],
+const SAMPLE_ROUTES: [string, string, string][] = [
+  ["JFK", "LAX", "USD"],
+  ["ORD", "MIA", "USD"],
+  ["LON", "EDI", "GBP"],
 ];
 
 async function main() {
-  for (const [origin, destination] of SAMPLE_ROUTES) {
-    console.log(`Fetching ${origin} -> ${destination}...`);
-    const result = await getCheapestPrice(origin, destination);
+  for (const [origin, destination, currency] of SAMPLE_ROUTES) {
+    console.log(`Fetching ${origin} -> ${destination} (${currency})...`);
+    const result = await getCheapestPrice(origin, destination, currency);
     console.log(result);
   }
 }

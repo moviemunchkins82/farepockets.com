@@ -42,12 +42,16 @@ export function buildSubId(context: string): string {
     .slice(0, 60);
 }
 
-export function buildWidgetSrc(subId: string): string {
+// `currency` (e.g. "GBP") overrides the template's currency= so a UK route's
+// search shows results in pounds; omit it to keep the template's default.
+export function buildWidgetSrc(subId: string, currency?: string): string {
   const template = process.env.TRAVELPAYOUTS_WIDGET_SRC_TEMPLATE;
   const marker = process.env.TRAVELPAYOUTS_MARKER;
   if (!template) return missingConfig("TRAVELPAYOUTS_WIDGET_SRC_TEMPLATE");
   if (!marker) return missingConfig("TRAVELPAYOUTS_MARKER");
-  return fill(template, { marker, subId });
+  const src = fill(template, { marker, subId });
+  if (!currency) return src;
+  return src.replace(/([?&]currency=)[a-zA-Z]{3}/, (_, prefix: string) => prefix + currency.trim().toLowerCase());
 }
 
 const DAY_MS = 86_400_000;

@@ -14,6 +14,7 @@ import RouteFAQ from "@/components/route-page/RouteFAQ";
 import PhotoHero from "@/components/layout/PhotoHero";
 import DealCard from "@/components/home/DealCard";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
+import { byPrice } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import type { PriceCalendarData } from "@/lib/travelpayouts/types";
 import styles from "./page.module.css";
@@ -33,14 +34,23 @@ export async function generateMetadata({ params }: PageProps<"/flights/[slug]">)
 }
 
 // Return trip first, then routes sharing a city, then anything else.
+// The return trip, then other places from the same city (cheapest first), then
+// other routes touching either city — one card per destination so the photos differ.
 function relatedRoutes(route: RouteRow, all: RouteRow[]): RouteRow[] {
   const others = all.filter((r) => r.slug !== route.slug);
   const score = (r: RouteRow) => {
     if (r.origin_city === route.destination_city && r.destination_city === route.origin_city) return 0;
-    if ([r.origin_city, r.destination_city].some((c) => c === route.origin_city || c === route.destination_city)) return 1;
-    return 2;
+    if (r.origin_city === route.origin_city) return 1;
+    if (r.destination_city === route.destination_city) return 2;
+    if ([r.origin_city, r.destination_city].some((c) => c === route.origin_city || c === route.destination_city)) return 3;
+    return 4;
   };
-  return others.sort((a, b) => score(a) - score(b)).slice(0, 3);
+  const picked: RouteRow[] = [];
+  for (const r of others.sort((a, b) => score(a) - score(b) || byPrice(a, b))) {
+    if (picked.length === 3) break;
+    if (!picked.some((p) => p.destination_city === r.destination_city)) picked.push(r);
+  }
+  return picked;
 }
 
 function buildFaq(route: RouteRow, calendar: PriceCalendarData | null) {
@@ -71,11 +81,11 @@ function buildFaq(route: RouteRow, calendar: PriceCalendarData | null) {
     const best = lows.reduce((a, b) => (b.price < a.price ? b : a));
     const others = lows
       .filter((l) => l.month !== best.month)
-      .map((l) => `${l.label} from ${formatPrice(l.price)}`)
+      .map((l) => `${l.label} from ${formatPrice(l.price, route.currency)}`)
       .join(" and ");
     items.push({
       question: `What is the cheapest month to fly from ${from} to ${to}?`,
-      answer: `Of the next ${lows.length} months, ${best.label} has the lowest fare we've seen: ${formatPrice(best.price)} on ${formatLongDate(best.date)}. For comparison, ${others}.`,
+      answer: `Of the next ${lows.length} months, ${best.label} has the lowest fare we've seen: ${formatPrice(best.price, route.currency)} on ${formatLongDate(best.date)}. For comparison, ${others}.`,
     });
   }
 
@@ -97,7 +107,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
   const calendar = calendarData(route);
   const hasCalendarFares = !!calendar?.months.some((m) => m.days.length > 0);
   const widgetSubId = buildSubId(`route_${route.slug}_search`);
-  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetSrc = buildWidgetSrc(widgetSubId, route.currency);
   const widgetFallback = buildWidgetFallback(widgetSubId, route);
   const origin = route.origin_iata.trim();
   const destination = route.destination_iata.trim();

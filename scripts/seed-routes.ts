@@ -13,6 +13,9 @@ interface CsvRow {
   destination_iata: string;
   origin_city: string;
   destination_city: string;
+  origin_country: string;
+  destination_country: string;
+  currency: string;
   target_keyword: string;
 }
 
@@ -22,9 +25,14 @@ const REQUIRED_COLUMNS: (keyof CsvRow)[] = [
   "destination_iata",
   "origin_city",
   "destination_city",
+  "origin_country",
+  "destination_country",
+  "currency",
   "target_keyword",
 ];
 const IATA = /^[A-Z]{3}$/;
+const COUNTRY = /^[A-Z]{2}$/; // ISO 3166-1 alpha-2, e.g. US, GB
+const CURRENCY = /^[A-Z]{3}$/; // ISO 4217, e.g. USD, GBP
 
 function parseCsv(raw: string): CsvRow[] {
   const [headerLine, ...lines] = raw.replace(/\r/g, "").trim().split("\n");
@@ -51,6 +59,9 @@ function parseCsv(raw: string): CsvRow[] {
     if (!IATA.test(row.destination_iata)) errors.push(`line ${lineNo}: invalid destination_iata "${row.destination_iata}"`);
     if (row.origin_iata === row.destination_iata) errors.push(`line ${lineNo}: origin and destination are the same`);
     if (!row.origin_city || !row.destination_city) errors.push(`line ${lineNo}: city names are required`);
+    if (!COUNTRY.test(row.origin_country)) errors.push(`line ${lineNo}: invalid origin_country "${row.origin_country}"`);
+    if (!COUNTRY.test(row.destination_country)) errors.push(`line ${lineNo}: invalid destination_country "${row.destination_country}"`);
+    if (!CURRENCY.test(row.currency)) errors.push(`line ${lineNo}: invalid currency "${row.currency}"`);
     if (seen.has(row.slug)) errors.push(`line ${lineNo}: duplicate slug "${row.slug}"`);
     seen.add(row.slug);
 
@@ -75,17 +86,25 @@ async function main() {
     WITH input AS (
       SELECT * FROM unnest(
         ${slugs}::text[], ${col("origin_iata")}::text[], ${col("destination_iata")}::text[],
-        ${col("origin_city")}::text[], ${col("destination_city")}::text[], ${col("target_keyword")}::text[]
-      ) AS t(slug, origin_iata, destination_iata, origin_city, destination_city, target_keyword)
+        ${col("origin_city")}::text[], ${col("destination_city")}::text[],
+        ${col("origin_country")}::text[], ${col("destination_country")}::text[], ${col("currency")}::text[],
+        ${col("target_keyword")}::text[]
+      ) AS t(slug, origin_iata, destination_iata, origin_city, destination_city,
+             origin_country, destination_country, currency, target_keyword)
     ), upserted AS (
-      INSERT INTO routes (slug, origin_iata, destination_iata, origin_city, destination_city, target_keyword, is_active)
-      SELECT slug, origin_iata, destination_iata, origin_city, destination_city, NULLIF(target_keyword, ''), true
+      INSERT INTO routes (slug, origin_iata, destination_iata, origin_city, destination_city,
+                          origin_country, destination_country, currency, target_keyword, is_active)
+      SELECT slug, origin_iata, destination_iata, origin_city, destination_city,
+             origin_country, destination_country, currency, NULLIF(target_keyword, ''), true
       FROM input
       ON CONFLICT (slug) DO UPDATE SET
         origin_iata = EXCLUDED.origin_iata,
         destination_iata = EXCLUDED.destination_iata,
         origin_city = EXCLUDED.origin_city,
         destination_city = EXCLUDED.destination_city,
+        origin_country = EXCLUDED.origin_country,
+        destination_country = EXCLUDED.destination_country,
+        currency = EXCLUDED.currency,
         target_keyword = EXCLUDED.target_keyword,
         is_active = true,
         updated_at = now()

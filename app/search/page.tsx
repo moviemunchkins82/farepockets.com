@@ -8,6 +8,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import SectionHeader from "@/components/home/SectionHeader";
 import RouteCard from "@/components/routes/RouteCard";
 import GuideGrid from "@/components/guides/GuideGrid";
+import { byPrice } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./page.module.css";
 
@@ -15,15 +16,9 @@ export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: "Search flights",
-  description: "Search and compare US flight prices, then book with our travel partner Aviasales.",
+  description: "Search and compare flight prices, then book with our travel partner Aviasales.",
   alternates: { canonical: "/search" },
 };
-
-function byPrice(a: RouteRow, b: RouteRow): number {
-  if (a.cheapest_price === null) return 1;
-  if (b.cheapest_price === null) return -1;
-  return Number(a.cheapest_price) - Number(b.cheapest_price);
-}
 
 export default async function SearchPage() {
   const widgetSubId = buildSubId("search_widget");

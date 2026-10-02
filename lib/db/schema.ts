@@ -1,4 +1,4 @@
-// Row shapes matching db/migrations/0001_init.sql. No ORM — raw SQL via lib/db/client.ts,
+// Row shapes matching db/migrations/*.sql. No ORM — raw SQL via lib/db/client.ts,
 // these types just keep query call sites honest.
 
 export interface RouteRow {
@@ -8,10 +8,17 @@ export interface RouteRow {
   destination_iata: string;
   origin_city: string;
   destination_city: string;
+  // ISO 3166-1 alpha-2, e.g. "US", "GB" (0003_route_markets.sql).
+  origin_country: string;
+  destination_country: string;
+  // Pricing currency for this route (the origin market's), e.g. "USD", "GBP".
+  currency: string;
   is_active: boolean;
   target_keyword: string | null;
   cheapest_price: string | null; // postgres.js returns NUMERIC as string, DATE/TIMESTAMPTZ as Date
   cheapest_currency: string;
+  // Same fare in USD, for ranking routes priced in different currencies. Never displayed.
+  cheapest_price_usd: string | null;
   cheapest_depart_date: Date | null;
   price_calendar: unknown | null;
   last_refreshed_at: Date | null;

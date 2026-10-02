@@ -19,6 +19,7 @@ import ShareButtons from "@/components/guides/ShareButtons";
 import SidebarDeals from "@/components/guides/SidebarDeals";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
+import { byPrice, interleaveByOrigin } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./page.module.css";
 
@@ -38,12 +39,13 @@ export async function generateMetadata({ params }: PageProps<"/guides/[slug]">):
   return guideMetadata(guide);
 }
 
-// Cheapest route per destination, so the sidebar shows three different places.
+// Cheapest route per destination (alternating departure countries), so the
+// sidebar shows three different places.
 async function loadSidebarDeals(): Promise<RouteRow[]> {
   try {
-    const routes = (await listActiveRoutes())
-      .filter((r) => r.cheapest_price !== null)
-      .sort((a, b) => Number(a.cheapest_price) - Number(b.cheapest_price));
+    const routes = interleaveByOrigin(
+      (await listActiveRoutes()).filter((r) => r.cheapest_price !== null).sort(byPrice),
+    );
     const picked: RouteRow[] = [];
     for (const r of routes) {
       if (picked.length < 3 && !picked.some((p) => p.destination_city === r.destination_city)) picked.push(r);

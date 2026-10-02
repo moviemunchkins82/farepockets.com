@@ -10,22 +10,17 @@ import DealCard from "@/components/home/DealCard";
 import DealsExplorer, { type DealItem } from "@/components/deals/DealsExplorer";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import Breadcrumbs from "@/components/route-page/Breadcrumbs";
+import { byPrice, interleaveByOrigin, rankingPrice } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./page.module.css";
 
 export const revalidate = 21600;
 
 export const metadata: Metadata = {
-  title: "Flight deals across the US",
-  description: "Cheap one-way flight deals on popular US routes, grouped by departure city and checked twice a day.",
+  title: "Cheap flight deals",
+  description: "Cheap one-way flight deals on popular routes, grouped by departure city and checked twice a day.",
   alternates: { canonical: "/flights" },
 };
-
-function byPrice(a: RouteRow, b: RouteRow): number {
-  if (a.cheapest_price === null) return 1;
-  if (b.cheapest_price === null) return -1;
-  return Number(a.cheapest_price) - Number(b.cheapest_price);
-}
 
 const FAQ = [
   {
@@ -41,7 +36,7 @@ const FAQ = [
   {
     question: "Can I find deals for a route that isn't listed?",
     answer:
-      "Yes. Use the flight search to compare fares for any trip. These pages cover the popular US routes we track daily.",
+      "Yes. Use the flight search to compare fares for any trip. These pages cover the popular routes we track daily.",
   },
 ];
 
@@ -52,7 +47,7 @@ export default async function DealsPage() {
 
   // One deal per destination so the top cards show six different cities.
   const topDeals: RouteRow[] = [];
-  for (const r of priced) {
+  for (const r of interleaveByOrigin(priced)) {
     if (topDeals.length < 6 && !topDeals.some((d) => d.destination_city === r.destination_city)) topDeals.push(r);
   }
   const lowest = priced[0] ? formatPrice(priced[0].cheapest_price, priced[0].cheapest_currency) : null;
@@ -63,7 +58,10 @@ export default async function DealsPage() {
     originCode: r.origin_iata.trim(),
     destinationCity: r.destination_city,
     destinationCode: r.destination_iata.trim(),
+    originCountry: r.origin_country.trim(),
     price: r.cheapest_price === null ? null : Number(r.cheapest_price),
+    currency: r.cheapest_currency.trim(),
+    rankPrice: rankingPrice(r),
     departDate: r.cheapest_depart_date ? r.cheapest_depart_date.toISOString().slice(0, 10) : null,
   }));
 
@@ -77,7 +75,7 @@ export default async function DealsPage() {
               { name: "Flight deals", url: "/flights" },
             ]}
           />
-          <h1>Flight deals across the US</h1>
+          <h1>Cheap flight deals</h1>
           <p className={styles.lead}>
             {routes.length} routes from {fromHubs.length} cities
             {lowest ? `, with fares from ${lowest} one-way` : ""}. Checked twice a day.
@@ -99,7 +97,7 @@ export default async function DealsPage() {
           <div className="container">
             <SectionHeader
               title="Cheapest deals right now"
-              description="The lowest one-way fares on our routes, one per destination."
+              description="The lowest one-way fares from each country we cover, one per destination."
             />
             <div className={styles.dealGrid}>
               {topDeals.map((route) => (

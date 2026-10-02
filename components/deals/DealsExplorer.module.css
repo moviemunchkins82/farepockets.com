@@ -125,6 +125,11 @@
   color: var(--text);
 }
 
+.hint {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
 .chips {
   clear: both;
   display: flex;

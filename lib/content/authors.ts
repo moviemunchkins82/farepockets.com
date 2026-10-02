@@ -16,7 +16,7 @@ const AUTHORS: Record<string, Author> = {
   [DEFAULT_AUTHOR]: {
     name: DEFAULT_AUTHOR,
     type: "Organization",
-    bio: `${SITE_NAME} tracks the cheapest one-way fares on popular US routes and checks them twice a day. Our guides are based on that fare data and on how airline pricing works.`,
+    bio: `${SITE_NAME} tracks the cheapest one-way fares on popular routes and checks them twice a day. Our guides are based on that fare data and on how airline pricing works.`,
   },
 };
 

@@ -12,6 +12,31 @@ import orlando from "@/assets/cities/orlando.jpg";
 import sanFrancisco from "@/assets/cities/san-francisco.jpg";
 import seattle from "@/assets/cities/seattle.jpg";
 import washingtonDc from "@/assets/cities/washington-dc.jpg";
+import london from "@/assets/cities/london.jpg";
+import manchester from "@/assets/cities/manchester.jpg";
+import edinburgh from "@/assets/cities/edinburgh.jpg";
+import belfast from "@/assets/cities/belfast.jpg";
+import glasgow from "@/assets/cities/glasgow.jpg";
+import dublin from "@/assets/cities/dublin.jpg";
+import amsterdam from "@/assets/cities/amsterdam.jpg";
+import barcelona from "@/assets/cities/barcelona.jpg";
+import madrid from "@/assets/cities/madrid.jpg";
+import malaga from "@/assets/cities/malaga.jpg";
+import alicante from "@/assets/cities/alicante.jpg";
+import palmaDeMallorca from "@/assets/cities/palma-de-mallorca.jpg";
+import paris from "@/assets/cities/paris.jpg";
+import rome from "@/assets/cities/rome.jpg";
+import lisbon from "@/assets/cities/lisbon.jpg";
+import istanbul from "@/assets/cities/istanbul.jpg";
+import faro from "@/assets/cities/faro.jpg";
+import athens from "@/assets/cities/athens.jpg";
+import dubai from "@/assets/cities/dubai.jpg";
+import doha from "@/assets/cities/doha.jpg";
+import delhi from "@/assets/cities/delhi.jpg";
+import mumbai from "@/assets/cities/mumbai.jpg";
+import singapore from "@/assets/cities/singapore.jpg";
+import toronto from "@/assets/cities/toronto.jpg";
+import hongKong from "@/assets/cities/hong-kong.jpg";
 
 export interface CityImage {
   src: StaticImageData;
@@ -100,6 +125,156 @@ const CITY_IMAGES: Record<string, CityImage> = {
     alt: "Golden Gate Bridge over blue water in San Francisco",
     photographer: "Maarten van den Heuvel",
     sourceUrl: "https://unsplash.com/photos/gZXx8lKAb7Y",
+  },
+  London: {
+    src: london,
+    alt: "Tower Bridge and the Shard at sunset in London",
+    photographer: "David Monaghan",
+    sourceUrl: "https://unsplash.com/photos/J-wEJwSiAbQ",
+  },
+  Manchester: {
+    src: manchester,
+    alt: "Rooftop view over Manchester city centre",
+    photographer: "Will McCue",
+    sourceUrl: "https://unsplash.com/photos/1jZbU_XuyvU",
+  },
+  Edinburgh: {
+    src: edinburgh,
+    alt: "The Balmoral clock tower and Scott Monument in Edinburgh at golden hour",
+    photographer: "Adam Wilson",
+    sourceUrl: "https://unsplash.com/photos/ktDODr-3tvY",
+  },
+  Belfast: {
+    src: belfast,
+    alt: "Titanic Belfast and the shipyard cranes on the Belfast waterfront",
+    photographer: "K. Mitch Hodge",
+    sourceUrl: "https://unsplash.com/photos/znItvqcLmJA",
+  },
+  Glasgow: {
+    src: glasgow,
+    alt: "The Hydro, SEC Armadillo and Finnieston Crane reflected in the River Clyde",
+    photographer: "Phil Reid",
+    sourceUrl: "https://unsplash.com/photos/xKdTulV46F0",
+  },
+  Dublin: {
+    src: dublin,
+    alt: "The Ha'penny Bridge over the River Liffey in Dublin",
+    photographer: "Sophie Popplewell",
+    sourceUrl: "https://unsplash.com/photos/blDB0HbjB1k",
+  },
+  Amsterdam: {
+    src: amsterdam,
+    alt: "Boats moored along a tree-lined canal in Amsterdam",
+    photographer: "Adrien Olichon",
+    sourceUrl: "https://unsplash.com/photos/QRtym77B6xk",
+  },
+  Barcelona: {
+    src: barcelona,
+    alt: "Aerial view of Barcelona's Eixample grid around the Sagrada Familia",
+    photographer: "Logan Armstrong",
+    sourceUrl: "https://unsplash.com/photos/hVhfqhDYciU",
+  },
+  Madrid: {
+    src: madrid,
+    alt: "The Metropolis building and Gran Via in Madrid at sunset",
+    photographer: "Florian Wehde",
+    sourceUrl: "https://unsplash.com/photos/WBGjg0DsO_g",
+  },
+  Malaga: {
+    src: malaga,
+    alt: "Malaga Cathedral rising above the city's rooftops",
+    photographer: "Yuliya Matuzava",
+    sourceUrl: "https://unsplash.com/photos/Nx0C3cDKRLw",
+  },
+  Alicante: {
+    src: alicante,
+    alt: "Santa Barbara Castle above the port of Alicante",
+    photographer: "Dean Milenkovic",
+    sourceUrl: "https://unsplash.com/photos/Ih5MQMqPjQ8",
+  },
+  "Palma de Mallorca": {
+    src: palmaDeMallorca,
+    alt: "Palma Cathedral above the palm-lined waterfront in Palma de Mallorca",
+    photographer: "Tom Podmore",
+    sourceUrl: "https://unsplash.com/photos/SaW5DBItJHI",
+  },
+  Paris: {
+    src: paris,
+    alt: "The Eiffel Tower against a blue sky in Paris",
+    photographer: "Anthony Delanoix",
+    sourceUrl: "https://unsplash.com/photos/Q0-fOL2nqZc",
+  },
+  Rome: {
+    src: rome,
+    alt: "The Colosseum in Rome at dusk",
+    photographer: "David Köhler",
+    sourceUrl: "https://unsplash.com/photos/VFRTXGw1VjU",
+  },
+  Lisbon: {
+    src: lisbon,
+    alt: "A yellow tram on a street of historic buildings in Lisbon",
+    photographer: "Aayush Gupta",
+    sourceUrl: "https://unsplash.com/photos/ljhCEaHYWJ8",
+  },
+  Istanbul: {
+    src: istanbul,
+    alt: "The Galata Tower rising above the rooftops of Istanbul",
+    photographer: "Anna Berdnik",
+    sourceUrl: "https://unsplash.com/photos/0n0AHB1fgTQ",
+  },
+  Faro: {
+    src: faro,
+    alt: "Boats moored in the marina in Faro, Portugal",
+    photographer: "KOBU Agency",
+    sourceUrl: "https://unsplash.com/photos/piAkOiQfYXg",
+  },
+  Athens: {
+    src: athens,
+    alt: "The Acropolis of Athens at golden hour",
+    photographer: "Constantinos Kollias",
+    sourceUrl: "https://unsplash.com/photos/yqBvJJ8jGBQ",
+  },
+  Dubai: {
+    src: dubai,
+    alt: "The Burj Khalifa above the Downtown Dubai skyline under storm clouds",
+    photographer: "Ahmed Aldaie",
+    sourceUrl: "https://unsplash.com/photos/aKj9uDanF18",
+  },
+  Doha: {
+    src: doha,
+    alt: "Traditional dhow boats near the Museum of Islamic Art in Doha",
+    photographer: "Hongbin",
+    sourceUrl: "https://unsplash.com/photos/1UF8ddEalwk",
+  },
+  Delhi: {
+    src: delhi,
+    alt: "India Gate in New Delhi under a pink evening sky",
+    photographer: "shalender kumar",
+    sourceUrl: "https://unsplash.com/photos/XjKaPInYVCM",
+  },
+  Mumbai: {
+    src: mumbai,
+    alt: "The Gateway of India and the Taj Mahal Palace hotel on the Mumbai waterfront",
+    photographer: "Renzo D'souza",
+    sourceUrl: "https://unsplash.com/photos/MxabbMSLr_M",
+  },
+  Singapore: {
+    src: singapore,
+    alt: "Marina Bay Sands and the ArtScience Museum in Singapore",
+    photographer: "Hu Chen",
+    sourceUrl: "https://unsplash.com/photos/__cBlRzLSTg",
+  },
+  Toronto: {
+    src: toronto,
+    alt: "The CN Tower and Toronto skyline at night",
+    photographer: "Jochem Raat",
+    sourceUrl: "https://unsplash.com/photos/s0grRYEDaL4",
+  },
+  "Hong Kong": {
+    src: hongKong,
+    alt: "The Hong Kong skyline across Victoria Harbour at golden hour",
+    photographer: "Manson",
+    sourceUrl: "https://unsplash.com/photos/4vf1KEkD7Gc",
   },
 };
 

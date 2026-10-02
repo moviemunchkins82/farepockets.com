@@ -1,3 +1,4 @@
+import { byPrice } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 
 export type HubDirection = "to" | "from";
@@ -22,12 +23,6 @@ export function hubPath(direction: HubDirection, city: string): string {
   return `/flights-${direction}/${citySlug(city)}`;
 }
 
-function byPrice(a: RouteRow, b: RouteRow): number {
-  if (a.cheapest_price === null) return 1;
-  if (b.cheapest_price === null) return -1;
-  return Number(a.cheapest_price) - Number(b.cheapest_price);
-}
-
 // Hubs are derived from the active routes, so adding a route to data/routes.csv
 // automatically creates (or grows) the "flights to" and "flights from" pages.
 export function buildHubs(routes: RouteRow[], direction: HubDirection): CityHub[] {
@@ -49,4 +44,12 @@ export function buildHubs(routes: RouteRow[], direction: HubDirection): CityHub[
 
 export function findHub(routes: RouteRow[], direction: HubDirection, slug: string): CityHub | null {
   return buildHubs(routes, direction).find((h) => h.slug === slug) ?? null;
+}
+
+// The currency most of a hub's routes are priced in (all of them, for a "from"
+// hub), so its search form shows results the hub's visitors expect.
+export function hubCurrency(hub: CityHub): string {
+  const counts = new Map<string, number>();
+  for (const route of hub.routes) counts.set(route.currency, (counts.get(route.currency) ?? 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "USD";
 }

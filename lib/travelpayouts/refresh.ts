@@ -27,10 +27,10 @@ export function upcomingMonths(count = CALENDAR_MONTHS, now = new Date()): strin
   });
 }
 
-async function fetchCalendar(origin: string, destination: string): Promise<PriceCalendarData> {
+async function fetchCalendar(origin: string, destination: string, currency: string): Promise<PriceCalendarData> {
   const months: PriceCalendarData["months"] = [];
   for (const month of upcomingMonths()) {
-    const { days } = await getPriceCalendar(origin, destination, month);
+    const { days } = await getPriceCalendar(origin, destination, month, currency);
     months.push({ month, days });
     await sleep(REQUEST_GAP_MS);
   }
@@ -46,14 +46,26 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
   for (const route of routes) {
     const origin = route.origin_iata.trim();
     const destination = route.destination_iata.trim();
+    const currency = route.currency.trim();
     let result: RefreshResult;
 
     try {
-      const cheapest = await getCheapestPrice(origin, destination);
+      const cheapest = await getCheapestPrice(origin, destination, currency);
+      let cheapestUsd = currency === "USD" ? (cheapest?.price ?? null) : null;
+      if (cheapest && currency !== "USD") {
+        // Only used to rank this route against USD-priced ones; a miss just ranks it last.
+        await sleep(REQUEST_GAP_MS);
+        try {
+          cheapestUsd = (await getCheapestPrice(origin, destination, "USD"))?.price ?? null;
+        } catch {
+          cheapestUsd = null;
+        }
+      }
       await recordRoutePrice({
         slug: route.slug,
         cheapestPrice: cheapest?.price ?? null,
-        cheapestCurrency: cheapest?.currency ?? "USD",
+        cheapestCurrency: currency,
+        cheapestPriceUsd: cheapestUsd,
         cheapestDepartDate: cheapest?.departDate ?? null,
       });
       result = { slug: route.slug, status: "ok" };
@@ -68,7 +80,7 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
 
     // A failed calendar keeps the previous one; it doesn't fail the route.
     try {
-      await recordRouteCalendar(route.slug, await fetchCalendar(origin, destination));
+      await recordRouteCalendar(route.slug, await fetchCalendar(origin, destination, currency));
       result.calendar = "ok";
     } catch (err) {
       result.calendar = "error";

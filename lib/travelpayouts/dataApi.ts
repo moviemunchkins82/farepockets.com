@@ -19,9 +19,10 @@ interface V3Response {
   error?: string;
 }
 
-async function pricesForDates(params: Record<string, string>): Promise<V3Ticket[]> {
+// `currency` is an ISO code like "USD" or "GBP"; prices come back in it.
+async function pricesForDates(currency: string, params: Record<string, string>): Promise<V3Ticket[]> {
   const res = await travelpayoutsGet<V3Response>("/aviasales/v3/prices_for_dates", {
-    currency: "usd",
+    currency: currency.toLowerCase(),
     one_way: "true",
     sorting: "price",
     ...params,
@@ -38,8 +39,12 @@ async function pricesForDates(params: Record<string, string>): Promise<V3Ticket[
   return res.data;
 }
 
-export async function getCheapestPrice(origin: string, destination: string): Promise<CheapestPriceResult | null> {
-  const tickets = await pricesForDates({ origin, destination, limit: "30" });
+export async function getCheapestPrice(
+  origin: string,
+  destination: string,
+  currency: string,
+): Promise<CheapestPriceResult | null> {
+  const tickets = await pricesForDates(currency, { origin, destination, limit: "30" });
   if (tickets.length === 0) return null;
 
   const cheapest = tickets.reduce((min, cur) => (cur.price < min.price ? cur : min));
@@ -48,7 +53,7 @@ export async function getCheapestPrice(origin: string, destination: string): Pro
     origin,
     destination,
     price: cheapest.price,
-    currency: "USD",
+    currency: currency.toUpperCase(),
     departDate: cheapest.departure_at ? cheapest.departure_at.slice(0, 10) : null,
     airline: cheapest.airline ?? null,
     transfers: typeof cheapest.transfers === "number" ? cheapest.transfers : null,
@@ -60,8 +65,9 @@ export async function getPriceCalendar(
   origin: string,
   destination: string,
   departureMonth: string,
+  currency: string,
 ): Promise<PriceCalendarResult> {
-  const tickets = await pricesForDates({
+  const tickets = await pricesForDates(currency, {
     origin,
     destination,
     departure_at: departureMonth,

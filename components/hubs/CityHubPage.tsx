@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
-import { buildHubs, findHub, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
+import { buildHubs, findHub, hubCurrency, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
@@ -22,13 +22,13 @@ const copy = {
     title: (city: string) => `Cheap flights to ${city}`,
     gridHeading: (city: string) => `Flights to ${city} from popular cities`,
     other: (r: CityHubRoute) => r.origin_city,
-    count: (n: number) => `${n} US ${n === 1 ? "city" : "cities"}`,
+    count: (n: number) => `${n} ${n === 1 ? "city" : "cities"}`,
   },
   from: {
     title: (city: string) => `Cheap flights from ${city}`,
     gridHeading: (city: string) => `Popular destinations from ${city}`,
     other: (r: CityHubRoute) => r.destination_city,
-    count: (n: number) => `${n} US ${n === 1 ? "destination" : "destinations"}`,
+    count: (n: number) => `${n} ${n === 1 ? "destination" : "destinations"}`,
   },
 };
 
@@ -102,7 +102,7 @@ export default async function CityHubPage({ direction, slug }: { direction: HubD
   const otherHubs = buildHubs(routes, direction).filter((h) => h.slug !== hub.slug);
   const title = copy[direction].title(hub.name);
   const widgetSubId = buildSubId(`hub_${direction}_${hub.slug}`);
-  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetSrc = buildWidgetSrc(widgetSubId, hubCurrency(hub));
   const widgetFallback = buildWidgetFallback(widgetSubId);
 
   return (

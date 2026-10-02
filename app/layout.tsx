@@ -18,7 +18,7 @@ const MIXPANEL_TOKEN = process.env.NEXT_PUBLIC_MIXPANEL_TOKEN;
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
-  description: "Compare US flight prices and book with our travel partner.",
+  description: "Compare flight prices and book with our travel partner.",
   robots: ALLOW_INDEXING ? { index: true, follow: true } : { index: false, follow: false },
 };
 

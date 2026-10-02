@@ -84,7 +84,7 @@ export default function PriceCalendar({ route, calendar }: { route: RouteRow; ca
               <li key={d.iso}>
                 <AffiliateLink href={link(d.date)} subId={subId} routeSlug={route.slug} className={styles.chip}>
                   <span>{formatLongDate(d.date)?.replace(/, \d{4}$/, "")}</span>
-                  <strong>{formatPrice(d.price)}</strong>
+                  <strong>{formatPrice(d.price, route.currency)}</strong>
                 </AffiliateLink>
               </li>
             ))}
@@ -97,7 +97,7 @@ export default function PriceCalendar({ route, calendar }: { route: RouteRow; ca
           <section key={month} className={styles.month} aria-label={monthLabel(month)}>
             <header>
               <h3>{monthLabel(month)}</h3>
-              <span>{min !== null ? `From ${formatPrice(min)}` : "No cached fares yet"}</span>
+              <span>{min !== null ? `From ${formatPrice(min, route.currency)}` : "No cached fares yet"}</span>
             </header>
             <div className={styles.grid}>
               {WEEKDAYS.map((w) => (
@@ -117,7 +117,7 @@ export default function PriceCalendar({ route, calendar }: { route: RouteRow; ca
                     </span>
                   );
                 }
-                const price = d.price !== null ? formatPrice(d.price) : null;
+                const price = d.price !== null ? formatPrice(d.price, route.currency) : null;
                 const tone =
                   d.price === null
                     ? styles.empty

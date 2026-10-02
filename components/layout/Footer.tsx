@@ -44,7 +44,7 @@ export default async function Footer() {
           <div className={styles.brand}>
             <Logo inverse />
             <p>
-              Compare US flight prices and book with our travel partner, which pays us a commission at no extra cost to
+              Compare flight prices and book with our travel partner, which pays us a commission at no extra cost to
               you.
             </p>
           </div>
