@@ -15,6 +15,8 @@ import DealCard from "@/components/home/DealCard";
 import RouteListItem from "@/components/home/RouteListItem";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import GuideGrid from "@/components/guides/GuideGrid";
+import CountryCard from "@/components/regions/CountryCard";
+import { buildCountries } from "@/lib/regions";
 import { byPrice, interleaveByOrigin } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./home.module.css";
@@ -87,6 +89,7 @@ export default async function Home() {
   const deals = pickByDestination(priced, 3, used);
   const popular = pickByDestination(priced, 8, used);
   const destinations = buildHubs(routes, "to").slice(0, 12);
+  const countries = buildCountries(routes);
   const pills = buildHubs(routes, "from")
     .map((hub) => hub.cheapest)
     .filter((r): r is RouteRow => r !== null)
@@ -139,6 +142,24 @@ export default async function Home() {
           <AffiliateDisclosure inverse className={styles.heroNote} />
         </div>
       </section>
+
+      {countries.length > 0 && (
+        <section className="section band-surface">
+          <div className="container">
+            <SectionHeader
+              title="Turkey & the Silk Road"
+              description="Cheap flights from the UK to Istanbul, the Turkish coast, the Caucasus and Central Asia."
+              href="/destinations"
+              linkLabel="All destinations"
+            />
+            <div className="deal-grid">
+              {countries.map((group) => (
+                <CountryCard key={group.info.code} group={group} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {destinations.length > 0 && (
         <section className="section">

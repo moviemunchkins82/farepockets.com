@@ -1,0 +1,186 @@
+/* Cities in the country */
+.cities {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.city {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.city:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow: 0 8px 24px rgb(17 24 39 / 0.08);
+}
+
+.cityPhoto {
+  position: relative;
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.img {
+  object-fit: cover;
+}
+
+.cityText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cityName {
+  font-weight: 650;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.city:hover .cityName {
+  color: var(--accent);
+}
+
+.cityMeta {
+  font-size: 0.825rem;
+  color: var(--text-3);
+}
+
+.cityPrice {
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Cheapest departure airport ranking */
+.origins {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 900px;
+}
+
+.origin {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+}
+
+.origin:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.rank {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--deal-soft);
+  color: var(--deal);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.originText {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.originName {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.originMeta {
+  font-size: 0.825rem;
+  color: var(--text-3);
+}
+
+.originPrice {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.note {
+  margin-top: 12px;
+}
+
+/* Other countries */
+.explore {
+  margin-top: 56px;
+}
+
+.explore h2 {
+  font-size: 1.25rem;
+  margin-bottom: 14px;
+}
+
+.explore ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.explore a {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 0.9rem;
+  font-weight: 550;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.explore a:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+@media (max-width: 1023px) {
+  .cities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .cities,
+  .origins {
+    grid-template-columns: 1fr;
+  }
+
+  .cityPhoto {
+    width: 80px;
+    height: 80px;
+  }
+}

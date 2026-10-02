@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenText, CaretRight, List, MagnifyingGlass, Tag, X } from "@phosphor-icons/react";
+import { BookOpenText, CaretRight, GlobeHemisphereEast, List, MagnifyingGlass, Tag, X } from "@phosphor-icons/react";
 import styles from "./MobileMenu.module.css";
 
 export interface MenuDestination {
@@ -82,6 +82,18 @@ export default function MobileMenu({ destinations }: { destinations: MenuDestina
           </Link>
 
           <ul className={styles.links}>
+            <li>
+              <Link href="/destinations" className={styles.link} onClick={close}>
+                <span className={styles.icon} aria-hidden="true">
+                  <GlobeHemisphereEast size={20} />
+                </span>
+                <span className={styles.linkText}>
+                  <span className={styles.linkTitle}>Turkey &amp; the Silk Road</span>
+                  <span className={styles.linkDesc}>Istanbul, Tbilisi, Baku, Tashkent and more</span>
+                </span>
+                <CaretRight size={16} className={styles.caret} aria-hidden="true" />
+              </Link>
+            </li>
             <li>
               <Link href="/flights" className={styles.link} onClick={close}>
                 <span className={styles.icon} aria-hidden="true">

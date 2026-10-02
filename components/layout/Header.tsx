@@ -30,6 +30,9 @@ export default async function Header() {
       <div className={`container ${styles.inner}`}>
         <Logo />
         <nav className={styles.nav} aria-label="Main">
+          <Link href="/destinations" className={styles.link}>
+            Destinations
+          </Link>
           <Link href="/flights" className={styles.link}>
             Deals
           </Link>

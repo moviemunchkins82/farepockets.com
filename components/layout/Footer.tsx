@@ -71,6 +71,9 @@ export default async function Footer() {
                 <Link href="/flights">All flights</Link>
               </li>
               <li>
+                <Link href="/destinations">Turkey &amp; the Silk Road</Link>
+              </li>
+              <li>
                 <Link href="/guides">Travel guides</Link>
               </li>
               <li>

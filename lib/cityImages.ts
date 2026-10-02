@@ -12,6 +12,20 @@ import orlando from "@/assets/cities/orlando.jpg";
 import sanFrancisco from "@/assets/cities/san-francisco.jpg";
 import seattle from "@/assets/cities/seattle.jpg";
 import washingtonDc from "@/assets/cities/washington-dc.jpg";
+import antalya from "@/assets/cities/antalya.jpg";
+import dalaman from "@/assets/cities/dalaman.jpg";
+import bodrum from "@/assets/cities/bodrum.jpg";
+import izmir from "@/assets/cities/izmir.jpg";
+import tbilisi from "@/assets/cities/tbilisi.jpg";
+import kutaisi from "@/assets/cities/kutaisi.jpg";
+import batumi from "@/assets/cities/batumi.jpg";
+import baku from "@/assets/cities/baku.jpg";
+import yerevan from "@/assets/cities/yerevan.jpg";
+import tashkent from "@/assets/cities/tashkent.jpg";
+import samarkand from "@/assets/cities/samarkand.jpg";
+import almaty from "@/assets/cities/almaty.jpg";
+import astana from "@/assets/cities/astana.jpg";
+import birmingham from "@/assets/cities/birmingham.jpg";
 import london from "@/assets/cities/london.jpg";
 import manchester from "@/assets/cities/manchester.jpg";
 import edinburgh from "@/assets/cities/edinburgh.jpg";
@@ -275,6 +289,90 @@ const CITY_IMAGES: Record<string, CityImage> = {
     alt: "The Hong Kong skyline across Victoria Harbour at golden hour",
     photographer: "Manson",
     sourceUrl: "https://unsplash.com/photos/4vf1KEkD7Gc",
+  },
+  Antalya: {
+    src: antalya,
+    alt: "The old harbour and Kaleiçi old town in Antalya",
+    photographer: "Ant Rozetsky",
+    sourceUrl: "https://unsplash.com/photos/K6pcgoxD0yw",
+  },
+  Dalaman: {
+    src: dalaman,
+    alt: "A pine-covered bay on the coast near Dalaman",
+    photographer: "Seval Torun",
+    sourceUrl: "https://unsplash.com/photos/Fv3CvLHxiJA",
+  },
+  Bodrum: {
+    src: bodrum,
+    alt: "Bodrum Castle above yachts in the marina",
+    photographer: "Ilker Ozmen",
+    sourceUrl: "https://unsplash.com/photos/c6N40LBbCus",
+  },
+  Izmir: {
+    src: izmir,
+    alt: "The Izmir Clock Tower in Konak Square",
+    photographer: "Mehmet Korkmaz",
+    sourceUrl: "https://unsplash.com/photos/4T9AXWrh8q8",
+  },
+  Tbilisi: {
+    src: tbilisi,
+    alt: "Aerial view of Tbilisi old town and the Mtkvari river",
+    photographer: "K T",
+    sourceUrl: "https://unsplash.com/photos/xVLdFIxcDCc",
+  },
+  Kutaisi: {
+    src: kutaisi,
+    alt: "Bagrati Cathedral on a hill above Kutaisi",
+    photographer: "Tomáš Malík",
+    sourceUrl: "https://unsplash.com/photos/UtVi_VUXJPk",
+  },
+  Batumi: {
+    src: batumi,
+    alt: "The Batumi skyline along the Black Sea coast",
+    photographer: "Max",
+    sourceUrl: "https://unsplash.com/photos/R68FdCxFOII",
+  },
+  Baku: {
+    src: baku,
+    alt: "The Flame Towers rising above Baku",
+    photographer: "Lloyd Alozie",
+    sourceUrl: "https://unsplash.com/photos/CqwICExDNu4",
+  },
+  Yerevan: {
+    src: yerevan,
+    alt: "Mount Ararat behind the Yerevan skyline",
+    photographer: "Gor Davtyan",
+    sourceUrl: "https://unsplash.com/photos/a0nX79KYqNo",
+  },
+  Tashkent: {
+    src: tashkent,
+    alt: "Modern high-rises on the Tashkent skyline",
+    photographer: "ZBS",
+    sourceUrl: "https://unsplash.com/photos/Fu7Xar6MAhU",
+  },
+  Samarkand: {
+    src: samarkand,
+    alt: "The Registan in Samarkand",
+    photographer: "Hans-Jürgen Weinhardt",
+    sourceUrl: "https://unsplash.com/photos/JRpE5XBwlg0",
+  },
+  Almaty: {
+    src: almaty,
+    alt: "Almaty below the Trans-Ili Alatau mountains",
+    photographer: "Ilyas Dautov",
+    sourceUrl: "https://unsplash.com/photos/ljw3mBWuwTA",
+  },
+  Astana: {
+    src: astana,
+    alt: "The Bayterek Tower in Astana",
+    photographer: "Tim Broadbent",
+    sourceUrl: "https://unsplash.com/photos/zeuo_RU2954",
+  },
+  Birmingham: {
+    src: birmingham,
+    alt: "Victorian buildings in Birmingham city centre",
+    photographer: "Adam Jones",
+    sourceUrl: "https://unsplash.com/photos/OplwWjC8RRM",
   },
 };
 

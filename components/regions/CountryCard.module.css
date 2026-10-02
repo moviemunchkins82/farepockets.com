@@ -1,0 +1,82 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 12px 32px rgb(17 24 39 / 0.1);
+  transform: translateY(-2px);
+}
+
+.media {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 16 / 10;
+  background: var(--hero-from);
+}
+
+.media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(17 24 39 / 0.7), transparent 55%);
+}
+
+.img {
+  object-fit: cover;
+}
+
+.name {
+  position: relative;
+  z-index: 1;
+  padding: 16px 18px;
+  color: #fff;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  padding: 14px 18px 16px;
+}
+
+.cities {
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.price {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.routes {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover {
+    transform: none;
+  }
+}
