@@ -21,6 +21,9 @@ export interface GuideFrontmatter {
   tags: string[];
   // City name from lib/cityImages.ts used as the guide's photo.
   image: string | null;
+  // Departure country the guide is about (ISO code, e.g. "GB"): its sidebar shows
+  // fares from there, in that currency. Null shows all markets.
+  market: string | null;
 }
 
 // Everything a guide card needs, without the body (safe to pass to client components).
@@ -66,6 +69,7 @@ export function getGuide(slug: string): Guide | null {
     category: typeof data.category === "string" ? data.category : null,
     tags: Array.isArray(data.tags) ? data.tags.filter((t): t is string => typeof t === "string") : [],
     image: typeof data.image === "string" ? data.image : null,
+    market: typeof data.market === "string" && /^[A-Z]{2}$/.test(data.market) ? data.market : null,
     readingMinutes: readingMinutes(content),
     content,
   };

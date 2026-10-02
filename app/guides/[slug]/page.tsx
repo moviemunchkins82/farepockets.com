@@ -39,21 +39,22 @@ export async function generateMetadata({ params }: PageProps<"/guides/[slug]">):
   return guideMetadata(guide);
 }
 
-// Cheapest route per destination (alternating departure countries), so the
-// sidebar shows three different places.
-async function loadSidebarDeals(): Promise<RouteRow[]> {
+// Cheapest route per destination, so the sidebar shows three different places.
+// A guide about one market (e.g. the UK) shows only fares departing there, and
+// its search form uses that market's currency; otherwise markets alternate.
+async function loadSidebarDeals(market: string | null): Promise<{ deals: RouteRow[]; currency?: string }> {
   try {
-    const routes = interleaveByOrigin(
-      (await listActiveRoutes()).filter((r) => r.cheapest_price !== null).sort(byPrice),
-    );
+    const priced = (await listActiveRoutes()).filter((r) => r.cheapest_price !== null).sort(byPrice);
+    const inMarket = market ? priced.filter((r) => r.origin_country.trim() === market) : [];
+    const routes = inMarket.length > 0 ? inMarket : interleaveByOrigin(priced);
     const picked: RouteRow[] = [];
     for (const r of routes) {
       if (picked.length < 3 && !picked.some((p) => p.destination_city === r.destination_city)) picked.push(r);
     }
-    return picked;
+    return { deals: picked, currency: inMarket.length > 0 ? inMarket[0].currency.trim() : undefined };
   } catch (error) {
     console.error("guide sidebar: failed to load routes", error);
-    return [];
+    return { deals: [] };
   }
 }
 
@@ -69,9 +70,9 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
   const published = formatDate(guide.publishedAt);
   const updated = guide.updatedAt && guide.updatedAt !== guide.publishedAt ? formatDate(guide.updatedAt) : null;
   const path = `/guides/${guide.slug}`;
-  const deals = await loadSidebarDeals();
+  const { deals, currency } = await loadSidebarDeals(guide.market);
   const widgetSubId = buildSubId(`guide_${guide.slug}`);
-  const widgetSrc = buildWidgetSrc(widgetSubId);
+  const widgetSrc = buildWidgetSrc(widgetSubId, currency);
   const widgetFallback = buildWidgetFallback(widgetSubId);
   const more = listGuides()
     .filter((g) => g.slug !== guide.slug)
