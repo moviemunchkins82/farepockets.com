@@ -29,6 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((g) => g.hasPage)
       .map((g) => ({ url: `${SITE_URL}${countryPath(g.info)}`, changeFrequency: "daily" as const, priority: 0.85 })),
     { url: `${SITE_URL}/guides`, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.4 },
     ...routes.map((route) => ({
       url: `${SITE_URL}/flights/${route.slug}`,
       lastModified: route.last_refreshed_at ?? undefined,

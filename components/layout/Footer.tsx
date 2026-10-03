@@ -77,6 +77,9 @@ export default async function Footer() {
                 <Link href="/guides">Travel guides</Link>
               </li>
               <li>
+                <Link href="/about">About us</Link>
+              </li>
+              <li>
                 <Link href="/disclosure">How we make money</Link>
               </li>
               <li>
