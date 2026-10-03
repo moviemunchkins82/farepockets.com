@@ -12,6 +12,9 @@ import orlando from "@/assets/cities/orlando.jpg";
 import sanFrancisco from "@/assets/cities/san-francisco.jpg";
 import seattle from "@/assets/cities/seattle.jpg";
 import washingtonDc from "@/assets/cities/washington-dc.jpg";
+import bristol from "@/assets/cities/bristol.jpg";
+import liverpool from "@/assets/cities/liverpool.jpg";
+import osh from "@/assets/cities/osh.jpg";
 import antalya from "@/assets/cities/antalya.jpg";
 import dalaman from "@/assets/cities/dalaman.jpg";
 import bodrum from "@/assets/cities/bodrum.jpg";
@@ -373,6 +376,24 @@ const CITY_IMAGES: Record<string, CityImage> = {
     alt: "Victorian buildings in Birmingham city centre",
     photographer: "Adam Jones",
     sourceUrl: "https://unsplash.com/photos/OplwWjC8RRM",
+  },
+  Bristol: {
+    src: bristol,
+    alt: "The Clifton Suspension Bridge above the Avon Gorge in Bristol",
+    photographer: "Korng Sok",
+    sourceUrl: "https://unsplash.com/photos/UR8LnDmipiE",
+  },
+  Liverpool: {
+    src: liverpool,
+    alt: "The Royal Liver Building and the Three Graces on Liverpool's waterfront",
+    photographer: "Chris Boland",
+    sourceUrl: "https://unsplash.com/photos/vAlcgthBaUA",
+  },
+  Osh: {
+    src: osh,
+    alt: "Rocky mountains above a green valley near Osh, Kyrgyzstan",
+    photographer: "Dastan Suiuntbekov",
+    sourceUrl: "https://unsplash.com/photos/zEA5f3zSR4c",
   },
 };
 

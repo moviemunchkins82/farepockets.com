@@ -44,3 +44,34 @@ export function formatLongDate(value: string | Date | null): string | null {
       }).format(date)
     : null;
 }
+
+// "4h 55m", "45m", "12h"
+export function formatDuration(minutes: number | null): string | null {
+  if (minutes === null || !Number.isFinite(minutes) || minutes <= 0) return null;
+  const h = Math.floor(minutes / 60);
+  const m = Math.round(minutes % 60);
+  if (h === 0) return `${m}m`;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
+const STOP_WORDS = ["nonstop", "one stop", "two stops", "three stops"];
+
+// "nonstop", "one stop", "two stops"...
+export function formatStops(stops: number): string {
+  return STOP_WORDS[stops] ?? `${stops} stops`;
+}
+
+// Airports whose short form would read as just the city.
+const KEEP_FULL_AIRPORT_NAME = new Set(["Istanbul Airport"]);
+
+// "London Gatwick Airport" -> "London Gatwick", "Newark Liberty International Airport" -> "Newark Liberty"
+export function shortAirportName(name: string): string {
+  if (KEEP_FULL_AIRPORT_NAME.has(name)) return name;
+  return name.replace(/\s+(International\s+)?Airport$/i, "") || name;
+}
+
+// "A", "A and B", "A, B and C"
+export function listNames(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}

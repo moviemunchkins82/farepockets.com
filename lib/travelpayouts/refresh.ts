@@ -1,10 +1,13 @@
 import {
   listActiveRoutes,
   recordRouteCalendar,
+  recordRouteFacts,
   recordRoutePrice,
   recordRouteRefreshError,
 } from "@/lib/db/queries/routes";
-import { getCheapestPrice, getPriceCalendar } from "@/lib/travelpayouts/dataApi";
+import { cheapestFromSample, getCheapestPrice, getFareSample, getPriceCalendar } from "@/lib/travelpayouts/dataApi";
+import { loadReferenceNames } from "@/lib/travelpayouts/reference";
+import { buildRouteFacts } from "@/lib/travelpayouts/routeFacts";
 import { sleep } from "@/lib/travelpayouts/client";
 import type { PriceCalendarData } from "@/lib/travelpayouts/types";
 
@@ -15,6 +18,7 @@ export interface RefreshResult {
   slug: string;
   status: "ok" | "error";
   calendar?: "ok" | "error";
+  facts?: "ok" | "error";
   error?: string;
 }
 
@@ -41,6 +45,7 @@ async function fetchCalendar(origin: string, destination: string, currency: stri
 // and app/api/cron/refresh-prices/route.ts (manual/admin trigger fallback).
 export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
   const routes = await listActiveRoutes();
+  const names = await loadReferenceNames();
   const results: RefreshResult[] = [];
 
   for (const route of routes) {
@@ -49,8 +54,10 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
     const currency = route.currency.trim();
     let result: RefreshResult;
 
+    let sample: Awaited<ReturnType<typeof getFareSample>> = [];
     try {
-      const cheapest = await getCheapestPrice(origin, destination, currency);
+      sample = await getFareSample(origin, destination, currency);
+      const cheapest = cheapestFromSample(origin, destination, currency, sample);
       let cheapestUsd = currency === "USD" ? (cheapest?.price ?? null) : null;
       if (cheapest && currency !== "USD") {
         // Only used to rank this route against USD-priced ones; a miss just ranks it last.
@@ -86,6 +93,17 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
       result.calendar = "error";
       result.error = `calendar: ${err instanceof Error ? err.message : String(err)}`;
     }
+
+    // Same for facts (nonstop flights, airlines, stops): failures keep the old ones.
+    try {
+      const nonstopSample = await getFareSample(origin, destination, currency, true);
+      await recordRouteFacts(route.slug, buildRouteFacts(sample, nonstopSample, names));
+      result.facts = "ok";
+    } catch (err) {
+      result.facts = "error";
+      result.error = [result.error, `facts: ${err instanceof Error ? err.message : String(err)}`].filter(Boolean).join("; ");
+    }
+    await sleep(REQUEST_GAP_MS);
     results.push(result);
   }
 

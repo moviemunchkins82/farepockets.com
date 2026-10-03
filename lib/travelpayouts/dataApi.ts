@@ -4,12 +4,16 @@ import type { CheapestPriceResult, PriceCalendarResult, PriceCalendarDay } from 
 // /aviasales/v3/prices_for_dates accepts city OR airport IATA codes (the legacy
 // /v1/prices/* endpoints only accept city codes, which silently returns nothing
 // for airport-based routes like JFK-LAX). Data is Aviasales' search cache.
-interface V3Ticket {
+export interface V3Ticket {
   price: number;
   departure_at?: string;
   airline?: string;
   flight_number?: string | number;
   transfers?: number;
+  origin_airport?: string;
+  destination_airport?: string;
+  // Outbound flight time in minutes, including connections.
+  duration_to?: number;
 }
 
 interface V3Response {
@@ -39,12 +43,23 @@ async function pricesForDates(currency: string, params: Record<string, string>):
   return res.data;
 }
 
-export async function getCheapestPrice(
+// The cheapest cached one-way fares on a route (up to 30), cheapest first.
+// `nonstopOnly` limits them to direct flights.
+export async function getFareSample(
   origin: string,
   destination: string,
   currency: string,
-): Promise<CheapestPriceResult | null> {
-  const tickets = await pricesForDates(currency, { origin, destination, limit: "30" });
+  nonstopOnly = false,
+): Promise<V3Ticket[]> {
+  return pricesForDates(currency, { origin, destination, limit: "30", ...(nonstopOnly ? { direct: "true" } : {}) });
+}
+
+export function cheapestFromSample(
+  origin: string,
+  destination: string,
+  currency: string,
+  tickets: V3Ticket[],
+): CheapestPriceResult | null {
   if (tickets.length === 0) return null;
 
   const cheapest = tickets.reduce((min, cur) => (cur.price < min.price ? cur : min));
@@ -58,6 +73,14 @@ export async function getCheapestPrice(
     airline: cheapest.airline ?? null,
     transfers: typeof cheapest.transfers === "number" ? cheapest.transfers : null,
   };
+}
+
+export async function getCheapestPrice(
+  origin: string,
+  destination: string,
+  currency: string,
+): Promise<CheapestPriceResult | null> {
+  return cheapestFromSample(origin, destination, currency, await getFareSample(origin, destination, currency));
 }
 
 // Cheapest cached fare per departure day for one month. `departureMonth` is yyyy-mm.

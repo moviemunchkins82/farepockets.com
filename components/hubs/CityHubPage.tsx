@@ -5,6 +5,7 @@ import { listActiveRoutes } from "@/lib/db/queries/routes";
 import { buildHubs, findHub, hubCurrency, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
+import { placeOgImages } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import HubFareCard from "@/components/hubs/HubFareCard";
@@ -89,7 +90,12 @@ export async function hubMetadata(direction: HubDirection, slug: string): Promis
       ? `Compare cheap flights to ${hub.name} from ${others}${price ? `, from ${price} one-way` : ""}. Updated fare data, book with our travel partner.`
       : `Compare cheap flights from ${hub.name} to ${others}${price ? `, from ${price} one-way` : ""}. Updated fare data, book with our travel partner.`;
   const url = `${SITE_URL}${hubPath(direction, hub.name)}`;
-  return { title, description, alternates: { canonical: url }, openGraph: { title: `${title} | ${SITE_NAME}`, description, url } };
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: `${title} | ${SITE_NAME}`, description, url, images: placeOgImages(hub.name) },
+  };
 }
 
 export default async function CityHubPage({ direction, slug }: { direction: HubDirection; slug: string }) {

@@ -20,6 +20,7 @@ export const SILK_ROAD: CountryInfo[] = [
   { code: "AM", name: "Armenia", slug: "armenia", photoCity: "Yerevan" },
   { code: "UZ", name: "Uzbekistan", slug: "uzbekistan", photoCity: "Samarkand" },
   { code: "KZ", name: "Kazakhstan", slug: "kazakhstan", photoCity: "Almaty" },
+  { code: "KG", name: "Kyrgyzstan", slug: "kyrgyzstan", photoCity: "Osh" },
 ];
 
 // A country gets its own page once we track enough routes to it to say

@@ -21,6 +21,7 @@ export interface RouteRow {
   cheapest_price_usd: string | null;
   cheapest_depart_date: Date | null;
   price_calendar: unknown | null;
+  route_facts: unknown | null; // RouteFacts (lib/travelpayouts/types.ts) once refreshed
   last_refreshed_at: Date | null;
   refresh_status: "pending" | "ok" | "stale" | "error";
   refresh_error: string | null;

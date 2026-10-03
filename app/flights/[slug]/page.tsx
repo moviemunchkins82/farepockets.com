@@ -5,7 +5,10 @@ import { AirplaneInFlight, ArrowRight } from "@phosphor-icons/react/ssr";
 import { getRouteBySlug, listActiveRoutes } from "@/lib/db/queries/routes";
 import { routeMetadata } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
-import { formatDate, formatLongDate, formatPrice } from "@/lib/format";
+import { formatDate, formatLongDate, formatPrice, listNames } from "@/lib/format";
+import { nonstopSummary, routeFacts } from "@/lib/routeFacts";
+import { buildCountries, countryPath } from "@/lib/regions";
+import RouteFactsPanel from "@/components/route-page/RouteFactsPanel";
 import { getCityImage } from "@/lib/cityImages";
 import { hubPath } from "@/lib/cities";
 import PriceCard from "@/components/route-page/PriceCard";
@@ -16,7 +19,7 @@ import DealCard from "@/components/home/DealCard";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import { byPrice } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
-import type { PriceCalendarData } from "@/lib/travelpayouts/types";
+import type { PriceCalendarData, RouteFacts } from "@/lib/travelpayouts/types";
 import styles from "./page.module.css";
 
 export const revalidate = 21600; // 6h ISR window — cron refresh cadence drives real freshness
@@ -33,7 +36,6 @@ export async function generateMetadata({ params }: PageProps<"/flights/[slug]">)
   return routeMetadata(route);
 }
 
-// Return trip first, then routes sharing a city, then anything else.
 // The return trip, then other places from the same city (cheapest first), then
 // other routes touching either city — one card per destination so the photos differ.
 function relatedRoutes(route: RouteRow, all: RouteRow[]): RouteRow[] {
@@ -53,7 +55,7 @@ function relatedRoutes(route: RouteRow, all: RouteRow[]): RouteRow[] {
   return picked;
 }
 
-function buildFaq(route: RouteRow, calendar: PriceCalendarData | null) {
+function buildFaq(route: RouteRow, calendar: PriceCalendarData | null, facts: RouteFacts | null) {
   const from = route.origin_city;
   const to = route.destination_city;
   const price = formatPrice(route.cheapest_price, route.cheapest_currency);
@@ -89,6 +91,21 @@ function buildFaq(route: RouteRow, calendar: PriceCalendarData | null) {
     });
   }
 
+  if (facts) {
+    items.push({
+      question: `Are there direct flights from ${from} to ${to}?`,
+      answer: facts.nonstop
+        ? nonstopSummary(route, facts)
+        : `${nonstopSummary(route, facts)} The cheapest options have at least one stop.`,
+    });
+    if (facts.airlines.length > 0) {
+      items.push({
+        question: `Which airlines fly from ${from} to ${to}?`,
+        answer: `The cheapest fares we found were on ${listNames(facts.airlines)}. Fares with stops may combine more than one airline, so check each flight before you book.`,
+      });
+    }
+  }
+
   items.push({
     question: "Do you sell plane tickets?",
     answer:
@@ -103,7 +120,13 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
   const route = await getRouteBySlug(slug);
   if (!route) notFound();
 
-  const related = relatedRoutes(route, await listActiveRoutes());
+  const allRoutes = await listActiveRoutes();
+  const related = relatedRoutes(route, allRoutes);
+  const facts = routeFacts(route);
+  // Routes in our focus region sit under their country page; others under the city hub.
+  const country = buildCountries(allRoutes).find(
+    (g) => g.hasPage && g.info.code === route.destination_country.trim(),
+  );
   const calendar = calendarData(route);
   const hasCalendarFares = !!calendar?.months.some((m) => m.days.length > 0);
   const widgetSubId = buildSubId(`route_${route.slug}_search`);
@@ -118,7 +141,12 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
         image={getCityImage(route.destination_city)}
         breadcrumbs={[
           { name: "Home", url: "/" },
-          { name: `Flights to ${route.destination_city}`, url: hubPath("to", route.destination_city) },
+          ...(country
+            ? [
+                { name: "Destinations", url: "/destinations" },
+                { name: country.info.name, url: countryPath(country.info) },
+              ]
+            : [{ name: `Flights to ${route.destination_city}`, url: hubPath("to", route.destination_city) }]),
           { name: `${route.origin_city} to ${route.destination_city}`, url: `/flights/${route.slug}` },
         ]}
         kicker={
@@ -143,6 +171,20 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
               <p>The lowest one-way fare found for each day over the next few months.</p>
             </div>
             <PriceCalendar route={route} calendar={calendar} />
+          </div>
+        </section>
+      )}
+
+      {facts && (
+        <section className="section">
+          <div className="container">
+            <div className="section-head">
+              <h2>
+                Good to know: {route.origin_city} to {route.destination_city}
+              </h2>
+              <p>Nonstop flights, stops and airlines on the cheapest fares we found.</p>
+            </div>
+            <RouteFactsPanel route={route} facts={facts} />
           </div>
         </section>
       )}
@@ -187,7 +229,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
       <section className="section">
         <div className="container">
           <div className="faq-wrap">
-            <RouteFAQ items={buildFaq(route, calendar)} />
+            <RouteFAQ items={buildFaq(route, calendar, facts)} />
           </div>
         </div>
       </section>

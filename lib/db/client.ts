@@ -17,7 +17,8 @@ const options = {
   ssl: isLocal ? false : ("require" as const),
   max: 5,
   idle_timeout: 20,
-  connect_timeout: 15,
+  // Generous: from slower networks a new pooler connection can take a few seconds.
+  connect_timeout: 30,
   prepare: false,
   max_pipeline: 0,
   onnotice: () => {},

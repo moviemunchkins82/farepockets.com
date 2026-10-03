@@ -104,3 +104,12 @@ birmingham-to-istanbul,BHX,IST,Birmingham,Istanbul,GB,TR,GBP,flights from birmin
 birmingham-to-antalya,BHX,AYT,Birmingham,Antalya,GB,TR,GBP,flights from birmingham to antalya
 birmingham-to-tashkent,BHX,TAS,Birmingham,Tashkent,GB,UZ,GBP,flights from birmingham to tashkent
 birmingham-to-almaty,BHX,ALA,Birmingham,Almaty,GB,KZ,GBP,flights from birmingham to almaty
+bristol-to-antalya,BRS,AYT,Bristol,Antalya,GB,TR,GBP,flights from bristol to antalya
+bristol-to-istanbul,BRS,IST,Bristol,Istanbul,GB,TR,GBP,flights from bristol to istanbul
+glasgow-to-istanbul,GLA,IST,Glasgow,Istanbul,GB,TR,GBP,flights from glasgow to istanbul
+belfast-to-antalya,BFS,AYT,Belfast,Antalya,GB,TR,GBP,flights from belfast to antalya
+belfast-to-istanbul,BFS,IST,Belfast,Istanbul,GB,TR,GBP,flights from belfast to istanbul
+liverpool-to-istanbul,LPL,IST,Liverpool,Istanbul,GB,TR,GBP,flights from liverpool to istanbul
+birmingham-to-baku,BHX,GYD,Birmingham,Baku,GB,AZ,GBP,flights from birmingham to baku
+edinburgh-to-yerevan,EDI,EVN,Edinburgh,Yerevan,GB,AM,GBP,flights from edinburgh to yerevan
+london-to-osh,LON,OSS,London,Osh,GB,KG,GBP,flights from london to osh

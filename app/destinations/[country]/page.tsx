@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
 import { hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
-import { formatPrice, formatShortDate } from "@/lib/format";
+import { formatPrice, formatShortDate, listNames } from "@/lib/format";
+import { placeOgImages } from "@/lib/seo/metadata";
 import { buildCountries, countryHref, countryPath, findCountry, type CountryGroup } from "@/lib/regions";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
@@ -36,11 +37,6 @@ function originLabel(group: CountryGroup): string | null {
   return countries.size === 1 && countries.has("GB") ? "the UK" : null;
 }
 
-function listNames(names: string[]): string {
-  if (names.length <= 1) return names[0] ?? "";
-  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
-}
-
 export async function generateMetadata({ params }: PageProps<"/destinations/[country]">): Promise<Metadata> {
   const group = findCountry(await listActiveRoutes(), (await params).country);
   if (!group) return {};
@@ -49,7 +45,12 @@ export async function generateMetadata({ params }: PageProps<"/destinations/[cou
   const price = group.cheapest && formatPrice(group.cheapest.cheapest_price, group.cheapest.cheapest_currency);
   const description = `Compare cheap flights to ${listNames(group.cities.map((c) => c.name))}${price ? ` from ${price} one-way` : ""}, and see which city and departure airport are cheapest. Fares checked twice a day.`;
   const url = `${SITE_URL}${countryPath(group.info)}`;
-  return { title, description, alternates: { canonical: url }, openGraph: { title: `${title} | ${SITE_NAME}`, description, url } };
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: `${title} | ${SITE_NAME}`, description, url, images: placeOgImages(group.info.photoCity) },
+  };
 }
 
 function buildFaq(group: CountryGroup) {
