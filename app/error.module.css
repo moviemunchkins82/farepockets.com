@@ -1,0 +1,21 @@
+.main {
+  padding-block: 96px;
+}
+
+.main h1 {
+  font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.4rem);
+  letter-spacing: -0.02em;
+}
+
+.main p {
+  margin-top: 12px;
+  max-width: 56ch;
+  color: var(--text-2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}

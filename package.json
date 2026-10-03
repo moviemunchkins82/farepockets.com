@@ -24,6 +24,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@fontsource/inter": "^5.3.0",
     "@types/mixpanel-browser": "^2.60.0",
     "@types/node": "^20",
     "@types/react": "^19",

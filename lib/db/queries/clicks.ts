@@ -28,3 +28,14 @@ export async function insertClickEvent(params: {
     )
   `;
 }
+
+// Click history is kept for 13 months (a full year-on-year comparison), then
+// deleted so the free-tier database never fills up. Returns how many rows went.
+export const CLICK_RETENTION_MONTHS = 13;
+
+export async function deleteOldClickEvents(months = CLICK_RETENTION_MONTHS): Promise<number> {
+  const result = await sql`
+    DELETE FROM click_events WHERE occurred_at < now() - make_interval(months => ${months})
+  `;
+  return result.count;
+}
