@@ -13,6 +13,7 @@ import CountryCard from "@/components/regions/CountryCard";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
+import SignupBox from "@/components/signup/SignupBox";
 import GuideGrid from "@/components/guides/GuideGrid";
 import { listGuides } from "@/lib/content/guides";
 import { SILK_ROAD } from "@/lib/regions";
@@ -152,6 +153,9 @@ export default async function DestinationsPage() {
 
       <section className={`section ${guides.length > 0 ? "" : "band-surface"}`}>
         <div className="container">
+          <div className={styles.signup}>
+            <SignupBox />
+          </div>
           <div className="faq-wrap">
             <RouteFAQ items={faq} />
           </div>

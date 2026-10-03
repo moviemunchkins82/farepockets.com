@@ -19,6 +19,7 @@ import ShareButtons from "@/components/guides/ShareButtons";
 import SidebarDeals from "@/components/guides/SidebarDeals";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
+import SignupBox from "@/components/signup/SignupBox";
 import { byPrice, interleaveByOrigin } from "@/lib/prices";
 import type { RouteRow } from "@/lib/db/schema";
 import styles from "./page.module.css";
@@ -182,6 +183,10 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
               {author.bio && <p className={styles.authorBio}>{author.bio}</p>}
             </div>
           </section>
+
+          <div className={styles.signup}>
+            <SignupBox />
+          </div>
         </article>
 
         <aside className={styles.sidebar} aria-label="Find flights">
