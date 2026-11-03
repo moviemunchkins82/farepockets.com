@@ -31,6 +31,25 @@ Travelpayouts partner; we earn commission on the resulting booking. See `C:\User
    before trusting the unattended cron.
 6. `npm run dev`.
 
+## Deploying to Cloudflare Workers
+
+The site runs on Cloudflare Workers through [OpenNext](https://opennext.js.org/cloudflare) (`@opennextjs/cloudflare`;
+config in `wrangler.jsonc` and `open-next.config.ts`). Cloudflare builds it from GitHub on every push to `main`
+(Workers Builds, Linux). Local OpenNext builds don't work on Windows without Developer Mode, and OpenNext doesn't
+fully support Windows anyway.
+
+- Build command `npx opennextjs-cloudflare build`, deploy command `npx opennextjs-cloudflare deploy`.
+- Pages are prerendered at build and served from Workers static assets (read-only cache), which keeps requests
+  well under the free plan's 10 ms CPU limit. Prices on pages therefore update by **redeploying** after
+  `npm run refresh:prices` (re-run the latest build in the dashboard, or push a commit).
+- The build needs `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ALLOW_INDEXING` and the three
+  `TRAVELPAYOUTS_*` link settings as **build variables**. The running Worker needs `DATABASE_URL`, `CRON_SECRET`,
+  `TRAVELPAYOUTS_MARKER` (and `BASIC_AUTH_USER`/`BASIC_AUTH_PASS` for the pre-launch gate) as **runtime
+  variables or secrets**. `TRAVELPAYOUTS_TOKEN` is only used by the refresh script, not the Worker.
+- City photos are pre-made in fixed widths by `scripts/build-images.ts` (runs before `dev`/`build`) and served by
+  `lib/imageLoader.ts`; no image optimisation service is used.
+- On Workers each request gets its own database connection (`lib/db/client.ts`).
+
 ## Cron
 
 Production price refresh is `npm run refresh:prices` (`scripts/refresh-prices.ts`), run on a Hostinger hPanel

@@ -1,0 +1,22 @@
+// Cloudflare Workers deployment (via @opennextjs/cloudflare). A separate Worker
+// named "farepockets"; it doesn't touch any other site on the account.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "farepockets",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "farepockets"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
