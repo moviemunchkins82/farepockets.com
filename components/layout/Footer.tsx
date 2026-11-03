@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { AirplaneTakeoff } from "@phosphor-icons/react/ssr";
 import Logo from "@/components/layout/Logo";
-import SignupBox from "@/components/signup/SignupBox";
 import { listActiveRoutes } from "@/lib/db/queries/routes";
 import { buildHubs, hubPath } from "@/lib/cities";
 import type { RouteRow } from "@/lib/db/schema";
@@ -28,14 +27,6 @@ export default async function Footer() {
   return (
     <footer className={styles.footer}>
       <div className="container">
-        <div className={styles.signup}>
-          <SignupBox
-            variant="footer"
-            heading="Deal alerts by email"
-            intro="Price drops on routes from your airport, sent to your inbox."
-          />
-        </div>
-
         <div className={styles.top}>
           <div className={styles.cta}>
             <AirplaneTakeoff size={26} aria-hidden="true" />
