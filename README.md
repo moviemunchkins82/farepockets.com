@@ -14,8 +14,6 @@ Travelpayouts partner; we earn commission on the resulting booking. See `C:\User
      `#` locally with a console warning (see `lib/travelpayouts/affiliateLinks.ts`) — this only blocks a real
      production build (`NEXT_PUBLIC_ALLOW_INDEXING=true`), not local dev.
    - `CRON_SECRET` — any random string, protects the manual-trigger/revalidate endpoints.
-   - `BASIC_AUTH_USER`, `BASIC_AUTH_PASS` — pre-launch access gate. Set both during the entire build phase; blank
-     both only in the launch-flip deploy, together with flipping `NEXT_PUBLIC_ALLOW_INDEXING` to `true`.
    - `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_MIXPANEL_TOKEN` — analytics, optional during build.
 3. `npm run db:migrate` — applies `db/migrations/*.sql` in order (tracked in `schema_migrations`, so it's safe
    to re-run on every deploy). Use the Supabase **Transaction pooler** (port 6543) connection string for `DATABASE_URL`.
@@ -44,8 +42,7 @@ fully support Windows anyway.
   `npm run refresh:prices` (re-run the latest build in the dashboard, or push a commit).
 - The build needs `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ALLOW_INDEXING` and the three
   `TRAVELPAYOUTS_*` link settings as **build variables**. The running Worker needs `DATABASE_URL`, `CRON_SECRET`,
-  `TRAVELPAYOUTS_MARKER` (and `BASIC_AUTH_USER`/`BASIC_AUTH_PASS` for the pre-launch gate) as **runtime
-  variables or secrets**. `TRAVELPAYOUTS_TOKEN` is only used by the refresh script, not the Worker.
+  `TRAVELPAYOUTS_MARKER` as **runtime variables or secrets**. `TRAVELPAYOUTS_TOKEN` is only used by the refresh script, not the Worker.
 - City photos are pre-made in fixed widths by `scripts/build-images.ts` (runs before `dev`/`build`) and served by
   `lib/imageLoader.ts`; no image optimisation service is used.
 - On Workers each request gets its own database connection (`lib/db/client.ts`).
@@ -62,9 +59,10 @@ and can exceed serverless time limits at this size.
 
 ## Pre-launch
 
-Site is access-gated by HTTP Basic Auth (`proxy.ts`) and `noindex` (`NEXT_PUBLIC_ALLOW_INDEXING=false`) by
-default. Both flip together in one deploy at launch — see the plan's Build Phases / Verification sections for the
-exact checks to run before and after that flip.
+The site is public but hidden from search engines while `NEXT_PUBLIC_ALLOW_INDEXING=false` (every page sends
+`noindex` and robots.txt disallows crawling). Set it to `true` to launch. The old HTTP Basic Auth gate
+(`proxy.ts`) was removed: it was the only middleware, and Cloudflare's support for Node.js middleware is
+experimental and costs CPU on every request.
 
 ## Deploy targets
 
