@@ -16,6 +16,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Left unbundled so the Cloudflare build (OpenNext) can swap in postgres.js's
+  // own Workers version (its "workerd" export, which uses cloudflare:sockets).
+  // Bundled, the Node version's TLS upgrade fails on Workers and every database
+  // query hangs. No effect on Node hosts.
+  serverExternalPackages: ["postgres"],
   // City photos are pre-made in fixed widths (scripts/build-images.ts) and served
   // as static files by lib/imageLoader.ts, so no image optimisation server is
   // needed (Cloudflare Workers can't run one for free). The sizes below match.
