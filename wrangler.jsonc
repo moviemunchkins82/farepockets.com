@@ -18,5 +18,13 @@
   ],
   "observability": {
     "enabled": true
+  },
+  // Non-secret runtime settings. Kept here because `wrangler deploy` replaces
+  // plain variables set in the dashboard. Secrets (DATABASE_URL, CRON_SECRET)
+  // are set in the dashboard as type "Secret", which deploys keep.
+  "vars": {
+    "TRAVELPAYOUTS_MARKER": "783427",
+    "TRAVELPAYOUTS_WIDGET_SRC_TEMPLATE": "https://tpwgts.com/content?currency=usd&trs=579321&shmarker={marker}.{subId}&show_hotels=false&powered_by=true&locale=en&searchUrl=www.aviasales.com%2Fsearch&primary_override=%23cc4747&color_button=%23cc4747&color_icons=%23cc4747&dark=%23111827&light=%23FFFFFF&secondary=%23FFFFFF&special=%23E0E5EB&color_focused=%23cc4747&border_radius=8&plain=true&promo_id=7879&campaign_id=100",
+    "TRAVELPAYOUTS_DEEPLINK_TEMPLATE": "https://tp.media/r?campaign_id=100&marker={marker}&p=4114&sub_id={subId}&trs=579321&u=https%3A%2F%2Fwww.aviasales.com%2Fsearch%2F{origin}{date}{destination}1"
   }
 }

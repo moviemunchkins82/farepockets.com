@@ -36,13 +36,15 @@ config in `wrangler.jsonc` and `open-next.config.ts`). Cloudflare builds it from
 (Workers Builds, Linux). Local OpenNext builds don't work on Windows without Developer Mode, and OpenNext doesn't
 fully support Windows anyway.
 
-- Build command `npx opennextjs-cloudflare build`, deploy command `npx opennextjs-cloudflare deploy`.
+- Build command `npx @opennextjs/cloudflare build`, deploy command `npx @opennextjs/cloudflare deploy`,
+  preview command `npx @opennextjs/cloudflare upload`. Live test URL: https://farepockets.themasculinemind82.workers.dev
 - Pages are prerendered at build and served from Workers static assets (read-only cache), which keeps requests
   well under the free plan's 10 ms CPU limit. Prices on pages therefore update by **redeploying** after
   `npm run refresh:prices` (re-run the latest build in the dashboard, or push a commit).
 - The build needs `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ALLOW_INDEXING` and the three
-  `TRAVELPAYOUTS_*` link settings as **build variables**. The running Worker needs `DATABASE_URL`, `CRON_SECRET`,
-  `TRAVELPAYOUTS_MARKER` as **runtime variables or secrets**. `TRAVELPAYOUTS_TOKEN` is only used by the refresh script, not the Worker.
+  `TRAVELPAYOUTS_*` link settings as **build variables**. The running Worker needs `DATABASE_URL` and `CRON_SECRET`
+  as **secrets** (dashboard → Settings → Variables and Secrets, type Secret); its plain `TRAVELPAYOUTS_*` settings
+  are in `wrangler.jsonc` `vars`, because a deploy replaces plain variables set in the dashboard. `TRAVELPAYOUTS_TOKEN` is only used by the refresh script, not the Worker.
 - City photos are pre-made in fixed widths by `scripts/build-images.ts` (runs before `dev`/`build`) and served by
   `lib/imageLoader.ts`; no image optimisation service is used.
 - On Workers each request gets its own database connection (`lib/db/client.ts`).
