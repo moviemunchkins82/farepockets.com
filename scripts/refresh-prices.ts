@@ -27,7 +27,9 @@ async function main() {
   );
   for (const e of [...errors, ...partialErrors]) console.error(`  ${e.slug}: ${e.error}`);
 
-  if (errors.length > 0) process.exitCode = 1;
+  // 2, not 1: prices.json was still saved (failed routes keep their previous
+  // prices), so the scheduled workflow commits it and only warns.
+  if (errors.length > 0) process.exitCode = 2;
 }
 
 main().catch((err) => {

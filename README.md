@@ -35,7 +35,10 @@ photo for any new city in `lib/cityImages.ts` (optional; pages fall back to a gr
 ## Refreshing prices
 
 `npm run refresh:prices` (`scripts/refresh-prices.ts`) fetches fresh fares for every route and rewrites
-`data/prices.json`. Commit and push the file: the push rebuilds the site with the new prices. Each route makes 5–6
+`data/prices.json`. The GitHub Actions workflow `.github/workflows/refresh-prices.yml` runs it twice a day (05:17 and
+17:17 UTC) and commits the file, and the push rebuilds the site with the new prices. It needs the repository secret
+`TRAVELPAYOUTS_TOKEN`; run it by hand from the Actions tab ("Refresh prices" → "Run workflow"). Run locally, commit
+and push the file yourself. Each route makes 5–6
 Data API calls: its cheapest fares (which also feed the route facts: stops, airlines, airports), a nonstop-only
 search for the "Good to know" panel, 3 months of daily fares for the calendar, and for non-USD routes a USD price
 used only for ranking. 114 routes take about 12 minutes; it grows linearly with routes. A route whose lookup fails
