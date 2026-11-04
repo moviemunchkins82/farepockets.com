@@ -1,6 +1,5 @@
 "use client";
 
-import { getSessionId } from "@/lib/analytics/session";
 import { trackAffiliateClick as trackGa4 } from "@/lib/analytics/ga4";
 import { trackAffiliateClick as trackMixpanel } from "@/lib/analytics/mixpanel";
 
@@ -13,28 +12,13 @@ interface AffiliateLinkProps {
   ariaLabel?: string;
 }
 
-// The one place outbound affiliate clicks get logged. Fires a beacon to
-// /api/click (survives page unload) plus GA4 + Mixpanel, then lets the
-// normal <a> navigation proceed — no preventDefault, no blocking the click.
+// The one place outbound affiliate clicks get tracked, in GA4 + Mixpanel (once
+// analytics are set up). Clicks and bookings per link are also in the
+// Travelpayouts dashboard, by sub_id. The normal <a> navigation proceeds — no
+// preventDefault, no blocking the click.
 export default function AffiliateLink({ href, subId, routeSlug, children, className, ariaLabel }: AffiliateLinkProps) {
   function handleClick() {
     const pagePath = window.location.pathname;
-    const sessionId = getSessionId();
-
-    const payload = JSON.stringify({
-      routeSlug,
-      pagePath,
-      subId,
-      targetUrl: href,
-      sessionId,
-      referrer: document.referrer || null,
-      utmSource: new URLSearchParams(window.location.search).get("utm_source"),
-      utmMedium: new URLSearchParams(window.location.search).get("utm_medium"),
-      utmCampaign: new URLSearchParams(window.location.search).get("utm_campaign"),
-    });
-
-    navigator.sendBeacon?.("/api/click", new Blob([payload], { type: "application/json" }));
-
     trackGa4({ subId, routeSlug, pagePath });
     trackMixpanel({ subId, routeSlug, pagePath });
   }

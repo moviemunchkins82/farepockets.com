@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { buildHubs, hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
@@ -11,10 +11,9 @@ import DealsExplorer, { type DealItem } from "@/components/deals/DealsExplorer";
 import RouteFAQ from "@/components/route-page/RouteFAQ";
 import Breadcrumbs from "@/components/route-page/Breadcrumbs";
 import { byPrice, interleaveByOrigin, rankingPrice } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./page.module.css";
 
-export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: "Cheap flight deals",
@@ -59,7 +58,7 @@ export default async function DealsPage() {
     destinationCity: r.destination_city,
     destinationCode: r.destination_iata.trim(),
     originCountry: r.origin_country.trim(),
-    price: r.cheapest_price === null ? null : Number(r.cheapest_price),
+    price: r.cheapest_price,
     currency: r.cheapest_currency.trim(),
     rankPrice: rankingPrice(r),
     departDate: r.cheapest_depart_date ? r.cheapest_depart_date.toISOString().slice(0, 10) : null,

@@ -11,7 +11,7 @@ class NonRetryableError extends Error {}
 
 // Data API is rate-limited to 10 req/sec and is meant to feed cached/static
 // pages, not live page renders — every caller of this must run server-side
-// (cron/scripts), never in a request-render path.
+// (the refresh script), never in a request-render path.
 export async function travelpayoutsGet<T>(
   path: string,
   params: Record<string, string>,

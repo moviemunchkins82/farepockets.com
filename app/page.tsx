@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, CalendarBlank, MagnifyingGlass, Ticket } from "@phosphor-icons/react/ssr";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
@@ -18,10 +18,9 @@ import GuideGrid from "@/components/guides/GuideGrid";
 import CountryCard from "@/components/regions/CountryCard";
 import { buildCountries } from "@/lib/regions";
 import { byPrice, interleaveByOrigin } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./home.module.css";
 
-export const revalidate = 21600; // matches route pages; cron revalidation keeps it fresher
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },

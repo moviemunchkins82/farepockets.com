@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, CalendarBlank } from "@phosphor-icons/react/ssr";
 import { formatLongDate, formatPrice } from "@/lib/format";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "@/components/route-page/PriceCard.module.css";
 
 // Hub header card: the cheapest route in this hub, linking to its route page.

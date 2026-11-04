@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { buildHubs, findHub, hubCurrency, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";

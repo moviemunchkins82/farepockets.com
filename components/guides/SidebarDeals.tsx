@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AirplaneTilt, CaretRight } from "@phosphor-icons/react/ssr";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, formatShortDate } from "@/lib/format";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./SidebarDeals.module.css";
 
 // Compact list of cheap routes for the guide sidebar.

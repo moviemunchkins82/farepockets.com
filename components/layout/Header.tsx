@@ -1,22 +1,13 @@
 import Link from "next/link";
 import Logo from "@/components/layout/Logo";
 import MobileMenu, { type MenuDestination } from "@/components/layout/MobileMenu";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { buildHubs, hubPath } from "@/lib/cities";
 import { formatPrice } from "@/lib/format";
-import type { RouteRow } from "@/lib/db/schema";
 import styles from "./Header.module.css";
 
-async function loadRoutes(): Promise<RouteRow[]> {
-  try {
-    return await listActiveRoutes();
-  } catch {
-    return [];
-  }
-}
-
 export default async function Header() {
-  const routes = await loadRoutes();
+  const routes = await listActiveRoutes();
   const destinations: MenuDestination[] = buildHubs(routes, "to")
     .slice(0, 6)
     .map((hub) => ({

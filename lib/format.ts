@@ -1,13 +1,10 @@
-// Postgres NUMERIC comes back from postgres.js as a string.
-export function formatPrice(amount: string | number | null, currency = "USD"): string | null {
-  if (amount === null) return null;
-  const value = typeof amount === "string" ? Number(amount) : amount;
-  if (!Number.isFinite(value)) return null;
+export function formatPrice(amount: number | null, currency = "USD"): string | null {
+  if (amount === null || !Number.isFinite(amount)) return null;
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency.trim() || "USD",
     maximumFractionDigits: 0,
-  }).format(Math.round(value));
+  }).format(Math.round(amount));
 }
 
 // Dates are stored as calendar dates; format in UTC so the day never shifts.

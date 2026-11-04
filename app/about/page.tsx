@@ -1,14 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { listGuides } from "@/lib/content/guides";
 import { DEFAULT_AUTHOR } from "@/lib/content/authors";
 import PageHeader from "@/components/layout/PageHeader";
 import JsonLd from "@/components/seo/JsonLd";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./page.module.css";
 
-export const revalidate = 21600;
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";

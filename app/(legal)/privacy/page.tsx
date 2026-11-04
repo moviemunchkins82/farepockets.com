@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 // DRAFT — factually accurate to what the app actually collects (see
-// lib/db/schema.ts click_events, lib/analytics/*), but this is not legal
+// components/AffiliateLink.tsx, lib/analytics/*), but this is not legal
 // advice. Have this reviewed by a lawyer before launch, especially for
 // CCPA (California users) since the plan targets US traffic broadly.
 export default function PrivacyPage() {
@@ -34,10 +34,9 @@ export default function PrivacyPage() {
           </p>
           <h2>Clicks to our partners</h2>
           <p>
-            We use an anonymous, randomly generated session identifier (stored in your browser&apos;s local storage) to
-            understand which pages lead to a click-through to a partner site. This identifier is not linked to any
-            other information about you. We keep these click records for 13 months, then delete
-            them.
+            When you click through to a partner site, our analytics tools (below) record which page the click came from,
+            with an anonymous, randomly generated session identifier stored in your browser&apos;s local storage. This
+            identifier is not linked to any other information about you.
           </p>
           <p>
             We use Google Analytics (GA4) and Mixpanel to understand site traffic and which pages perform well. Both

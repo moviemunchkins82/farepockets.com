@@ -19,7 +19,7 @@ export interface PriceCalendarResult {
   days: PriceCalendarDay[];
 }
 
-// Stored in routes.price_calendar: cheapest cached fare per departure day, by month.
+// Stored as price_calendar in data/prices.json: cheapest cached fare per departure day, by month.
 export interface PriceCalendarData {
   updatedAt: string;
   months: { month: string; days: PriceCalendarDay[] }[];
@@ -40,7 +40,7 @@ export interface FactAirport {
   name: string;
 }
 
-// Stored in routes.route_facts: what the cheapest fares on a route look like.
+// Stored as route_facts in data/prices.json: what the cheapest fares on a route look like.
 // Built from the same searches as the prices (lib/travelpayouts/refresh.ts).
 export interface RouteFacts {
   updatedAt: string;

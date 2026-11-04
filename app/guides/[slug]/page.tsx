@@ -6,7 +6,7 @@ import { AirplaneTilt } from "@phosphor-icons/react/ssr";
 import { getGuide, listGuideSlugs, listGuides } from "@/lib/content/guides";
 import { getAuthor } from "@/lib/content/authors";
 import { getCityImage } from "@/lib/cityImages";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { guideMetadata } from "@/lib/seo/metadata";
 import { articleSchema } from "@/lib/seo/schema";
 import { formatDate } from "@/lib/format";
@@ -20,11 +20,10 @@ import SidebarDeals from "@/components/guides/SidebarDeals";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import { byPrice, interleaveByOrigin } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./page.module.css";
 
 // The sidebar shows live cached fares, refreshed with the route pages.
-export const revalidate = 21600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 

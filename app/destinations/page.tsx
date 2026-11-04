@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice } from "@/lib/format";
 import { buildCountries, countryHref } from "@/lib/regions";
@@ -16,10 +16,9 @@ import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import GuideGrid from "@/components/guides/GuideGrid";
 import { listGuides } from "@/lib/content/guides";
 import { SILK_ROAD } from "@/lib/regions";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./page.module.css";
 
-export const revalidate = 21600;
 
 const TITLE = "Cheap flights to Turkey, the Caucasus and Central Asia";
 const DESCRIPTION =

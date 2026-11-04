@@ -1,5 +1,5 @@
 import { byPrice } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 
 export type HubDirection = "to" | "from";
 

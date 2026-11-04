@@ -1,24 +1,14 @@
 import Link from "next/link";
 import { AirplaneTakeoff } from "@phosphor-icons/react/ssr";
 import Logo from "@/components/layout/Logo";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { buildHubs, hubPath } from "@/lib/cities";
-import type { RouteRow } from "@/lib/db/schema";
 import styles from "./Footer.module.css";
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 
-// The footer is on every page, so a database outage must not take pages down with it.
-async function loadRoutes(): Promise<RouteRow[]> {
-  try {
-    return await listActiveRoutes();
-  } catch {
-    return [];
-  }
-}
-
 export default async function Footer() {
-  const routes = await loadRoutes();
+  const routes = await listActiveRoutes();
   const popular = buildHubs(routes, "from")
     .flatMap((hub) => hub.routes.slice(0, 2))
     .slice(0, 10);

@@ -1,4 +1,4 @@
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 
 type PricedRoute = Pick<RouteRow, "cheapest_price" | "cheapest_currency" | "cheapest_price_usd">;
 
@@ -7,8 +7,8 @@ type PricedRoute = Pick<RouteRow, "cheapest_price" | "cheapest_currency" | "chea
 // displayed in the route's own currency.
 export function rankingPrice(route: PricedRoute): number | null {
   if (route.cheapest_price === null) return null;
-  if (route.cheapest_price_usd !== null) return Number(route.cheapest_price_usd);
-  return route.cheapest_currency.trim() === "USD" ? Number(route.cheapest_price) : null;
+  if (route.cheapest_price_usd !== null) return route.cheapest_price_usd;
+  return route.cheapest_currency.trim() === "USD" ? route.cheapest_price : null;
 }
 
 // Cheapest first; routes with no comparable price go last.

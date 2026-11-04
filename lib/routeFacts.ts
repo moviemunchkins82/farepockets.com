@@ -1,6 +1,6 @@
 import { formatDuration, formatPrice, formatStops } from "@/lib/format";
 import { isRouteFacts, type RouteFacts } from "@/lib/travelpayouts/types";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 
 // Plain-English summaries of a route's facts, shared by the "Good to know"
 // panel and the FAQ so both always say the same thing.

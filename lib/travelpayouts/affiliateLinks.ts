@@ -11,7 +11,7 @@
 // blocked before the account is approved — but a real launch
 // (NEXT_PUBLIC_ALLOW_INDEXING=true) throws, so missing config can never ship live.
 
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 
 const ALLOW_INDEXING =process.env.NEXT_PUBLIC_ALLOW_INDEXING === "true";
 const PLACEHOLDER = "#";

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, formatShortDate, listNames } from "@/lib/format";
@@ -20,7 +20,6 @@ import GuideGrid from "@/components/guides/GuideGrid";
 import { listGuides } from "@/lib/content/guides";
 import styles from "./page.module.css";
 
-export const revalidate = 21600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";

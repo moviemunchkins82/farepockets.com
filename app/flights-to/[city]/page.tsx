@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import CityHubPage, { hubMetadata, hubStaticParams } from "@/components/hubs/CityHubPage";
 
-export const revalidate = 21600;
 
 export function generateStaticParams() {
   return hubStaticParams("to");

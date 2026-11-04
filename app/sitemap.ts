@@ -1,12 +1,11 @@
 import type { MetadataRoute } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath, type HubDirection } from "@/lib/cities";
 import { buildCountries, countryPath } from "@/lib/regions";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 
-export const revalidate = 21600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = await listActiveRoutes();

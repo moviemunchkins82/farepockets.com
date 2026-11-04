@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { listActiveRoutes } from "@/lib/db/queries/routes";
+import { listActiveRoutes } from "@/lib/routes/data";
 import { listGuides } from "@/lib/content/guides";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
@@ -9,10 +9,9 @@ import SectionHeader from "@/components/home/SectionHeader";
 import RouteCard from "@/components/routes/RouteCard";
 import GuideGrid from "@/components/guides/GuideGrid";
 import { byPrice } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./page.module.css";
 
-export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: "Search flights",

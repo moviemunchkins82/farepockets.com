@@ -1,6 +1,6 @@
 import { buildHubs, citySlug, type CityHub } from "@/lib/cities";
 import { byPrice } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 
 // Our focus region: Turkey, the Caucasus and Central Asia, with Istanbul as the
 // hub between them. Russia is deliberately excluded (sanctions; the UK government

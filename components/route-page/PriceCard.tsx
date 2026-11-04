@@ -3,7 +3,7 @@ import AffiliateLink from "@/components/AffiliateLink";
 import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import { buildDeepLink, buildSubId, pickSearchDate } from "@/lib/travelpayouts/affiliateLinks";
 import { formatDate, formatLongDate, formatPrice, formatShortDate } from "@/lib/format";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./PriceCard.module.css";
 
 export default function PriceCard({ route }: { route: RouteRow }) {

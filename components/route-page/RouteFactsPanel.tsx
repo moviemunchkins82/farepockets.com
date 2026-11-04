@@ -2,7 +2,7 @@ import { AirplaneTakeoff, Airplane, ArrowsSplit, Buildings } from "@phosphor-ico
 import { formatDate, formatDuration, formatPrice, listNames, shortAirportName } from "@/lib/format";
 import { stopsSummary } from "@/lib/routeFacts";
 import type { RouteFacts } from "@/lib/travelpayouts/types";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./RouteFactsPanel.module.css";
 
 // "Good to know" facts for one route, from the same searches as its prices.

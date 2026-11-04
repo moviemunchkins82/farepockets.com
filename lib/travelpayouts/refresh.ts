@@ -1,15 +1,9 @@
-import {
-  listActiveRoutes,
-  recordRouteCalendar,
-  recordRouteFacts,
-  recordRoutePrice,
-  recordRouteRefreshError,
-} from "@/lib/db/queries/routes";
 import { cheapestFromSample, getCheapestPrice, getFareSample, getPriceCalendar } from "@/lib/travelpayouts/dataApi";
 import { loadReferenceNames } from "@/lib/travelpayouts/reference";
 import { buildRouteFacts } from "@/lib/travelpayouts/routeFacts";
 import { sleep } from "@/lib/travelpayouts/client";
 import type { PriceCalendarData } from "@/lib/travelpayouts/types";
+import type { PricesFile, RouteDefinition } from "@/lib/routes/types";
 
 export const CALENDAR_MONTHS = 3;
 const REQUEST_GAP_MS = 150; // ~6-7 req/sec, under the 10 req/sec Data API limit
@@ -41,17 +35,23 @@ async function fetchCalendar(origin: string, destination: string, currency: stri
   return { updatedAt: new Date().toISOString(), months };
 }
 
-// Shared by scripts/refresh-prices.ts (system crontab, the primary mechanism)
-// and app/api/cron/refresh-prices/route.ts (manual/admin trigger fallback).
-export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
-  const routes = await listActiveRoutes();
+// Run by scripts/refresh-prices.ts, which saves the result as data/prices.json.
+// A route whose price lookup fails keeps its previous entry, so a Travelpayouts
+// outage never blanks prices site-wide and the "last checked" date stays honest;
+// a failed calendar or facts lookup likewise keeps the previous calendar or facts.
+export async function refreshAllRoutePrices(
+  routes: RouteDefinition[],
+  previous: PricesFile,
+): Promise<{ prices: PricesFile; results: RefreshResult[] }> {
   const names = await loadReferenceNames();
+  const prices: PricesFile = {};
   const results: RefreshResult[] = [];
 
   for (const route of routes) {
     const origin = route.origin_iata.trim();
     const destination = route.destination_iata.trim();
     const currency = route.currency.trim();
+    const old = previous[route.slug];
     let result: RefreshResult;
 
     let sample: Awaited<ReturnType<typeof getFareSample>> = [];
@@ -68,36 +68,39 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
           cheapestUsd = null;
         }
       }
-      await recordRoutePrice({
-        slug: route.slug,
-        cheapestPrice: cheapest?.price ?? null,
-        cheapestCurrency: currency,
-        cheapestPriceUsd: cheapestUsd,
-        cheapestDepartDate: cheapest?.departDate ?? null,
-      });
+      // A null price is a real answer ("no cached fares for this route right
+      // now"), so it does replace the previous price.
+      prices[route.slug] = {
+        cheapest_price: cheapest?.price ?? null,
+        cheapest_currency: currency,
+        cheapest_price_usd: cheapestUsd,
+        cheapest_depart_date: cheapest?.departDate ?? null,
+        price_calendar: old?.price_calendar ?? null,
+        route_facts: old?.route_facts ?? null,
+        last_refreshed_at: new Date().toISOString(),
+      };
       result = { slug: route.slug, status: "ok" };
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      await recordRouteRefreshError(route.slug, message);
-      results.push({ slug: route.slug, status: "error", error: message });
+      if (old) prices[route.slug] = old;
+      results.push({ slug: route.slug, status: "error", error: err instanceof Error ? err.message : String(err) });
       await sleep(REQUEST_GAP_MS);
       continue;
     }
     await sleep(REQUEST_GAP_MS);
+    const entry = prices[route.slug];
 
-    // A failed calendar keeps the previous one; it doesn't fail the route.
     try {
-      await recordRouteCalendar(route.slug, await fetchCalendar(origin, destination, currency));
+      entry.price_calendar = await fetchCalendar(origin, destination, currency);
       result.calendar = "ok";
     } catch (err) {
       result.calendar = "error";
       result.error = `calendar: ${err instanceof Error ? err.message : String(err)}`;
     }
 
-    // Same for facts (nonstop flights, airlines, stops): failures keep the old ones.
+    // Facts: nonstop flights, airlines, stops.
     try {
       const nonstopSample = await getFareSample(origin, destination, currency, true);
-      await recordRouteFacts(route.slug, buildRouteFacts(sample, nonstopSample, names));
+      entry.route_facts = buildRouteFacts(sample, nonstopSample, names);
       result.facts = "ok";
     } catch (err) {
       result.facts = "error";
@@ -107,26 +110,5 @@ export async function refreshAllRoutePrices(): Promise<RefreshResult[]> {
     results.push(result);
   }
 
-  return results;
-}
-
-// Asks the running site to drop its cached pages for these routes. Only needed
-// from the standalone cron script — the API route revalidates in-process.
-export async function requestRevalidation(slugs: string[]): Promise<void> {
-  const siteUrl = process.env.REVALIDATE_BASE_URL ?? process.env.NEXT_PUBLIC_SITE_URL;
-  const secret = process.env.CRON_SECRET;
-  if (!siteUrl || !secret) {
-    console.warn("[refresh] REVALIDATE_BASE_URL/NEXT_PUBLIC_SITE_URL or CRON_SECRET not set — skipping revalidation.");
-    return;
-  }
-
-  const res = await fetch(new URL("/api/revalidate", siteUrl), {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-cron-secret": secret },
-    body: JSON.stringify({ slugs }),
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!res.ok) {
-    throw new Error(`Revalidation request failed: ${res.status} ${(await res.text()).slice(0, 300)}`);
-  }
+  return { prices, results };
 }

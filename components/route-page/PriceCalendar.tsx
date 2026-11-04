@@ -3,7 +3,7 @@ import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import { buildDeepLink, buildSubId } from "@/lib/travelpayouts/affiliateLinks";
 import { isPriceCalendarData, type PriceCalendarData } from "@/lib/travelpayouts/types";
 import { formatDate, formatLongDate, formatPrice } from "@/lib/format";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./PriceCalendar.module.css";
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];

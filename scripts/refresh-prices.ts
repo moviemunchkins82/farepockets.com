@@ -1,43 +1,36 @@
-// Run by Hostinger's hPanel crontab: `npm run refresh:prices`
+// Fetches fresh fares for every route in data/routes.csv and saves them as
+// data/prices.json. Pages pick the new prices up on the next build, so commit
+// and push the file (or redeploy) afterwards. Run: npm run refresh:prices
 import "./_env";
-import sql from "@/lib/db/client";
-import { refreshAllRoutePrices, requestRevalidation } from "@/lib/travelpayouts/refresh";
-import { deleteOldClickEvents } from "@/lib/db/queries/clicks";
+import fs from "node:fs";
+import path from "node:path";
+import { listRouteDefinitions } from "@/lib/routes/data";
+import { refreshAllRoutePrices } from "@/lib/travelpayouts/refresh";
+import type { PricesFile } from "@/lib/routes/types";
+
+const PRICES_PATH = path.join(process.cwd(), "data", "prices.json");
 
 async function main() {
-  const results = await refreshAllRoutePrices();
+  const previous: PricesFile = fs.existsSync(PRICES_PATH) ? JSON.parse(fs.readFileSync(PRICES_PATH, "utf-8")) : {};
+  const { prices, results } = await refreshAllRoutePrices(listRouteDefinitions(), previous);
+
+  // Written to a temporary file first, so an interrupted run can't leave a
+  // half-written prices.json that breaks the build.
+  const tmpPath = `${PRICES_PATH}.tmp`;
+  fs.writeFileSync(tmpPath, JSON.stringify(prices, null, 2) + "\n");
+  fs.renameSync(tmpPath, PRICES_PATH);
+
   const errors = results.filter((r) => r.status === "error");
-  const okSlugs = results.filter((r) => r.status === "ok").map((r) => r.slug);
-
   const partialErrors = results.filter((r) => r.calendar === "error" || r.facts === "error");
-
   console.log(
     `Refreshed ${results.length} routes, ${errors.length} errors, ${partialErrors.length} with calendar or facts errors.`,
   );
   for (const e of [...errors, ...partialErrors]) console.error(`  ${e.slug}: ${e.error}`);
 
-  if (okSlugs.length > 0) {
-    try {
-      await requestRevalidation(okSlugs);
-    } catch (err) {
-      console.error("Revalidation failed (prices are saved; pages refresh within the ISR window):", err);
-      process.exitCode = 1;
-    }
-  }
-
-  try {
-    const removed = await deleteOldClickEvents();
-    if (removed > 0) console.log(`Deleted ${removed} click events older than the retention period.`);
-  } catch (err) {
-    console.error("Click history cleanup failed:", err);
-  }
-
   if (errors.length > 0) process.exitCode = 1;
 }
 
-main()
-  .catch((err) => {
-    console.error("refresh-prices.ts failed:", err);
-    process.exitCode = 1;
-  })
-  .finally(() => sql.end({ timeout: 5 }));
+main().catch((err) => {
+  console.error("refresh-prices.ts failed:", err);
+  process.exitCode = 1;
+});

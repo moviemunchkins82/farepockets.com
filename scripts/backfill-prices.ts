@@ -1,5 +1,5 @@
 // One-off manual sanity check against a couple of routes — validates the
-// Travelpayouts Data API response shape before trusting the real cron
+// Travelpayouts Data API response shape before trusting the price refresh
 // (scripts/refresh-prices.ts) to run unattended. Run: npx tsx scripts/backfill-prices.ts
 import "./_env";
 import { getCheapestPrice } from "@/lib/travelpayouts/dataApi";

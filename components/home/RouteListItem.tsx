@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, formatShortDate } from "@/lib/format";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import styles from "./RouteListItem.module.css";
 
 export default function RouteListItem({ route }: { route: RouteRow }) {

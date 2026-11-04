@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { AirplaneInFlight, ArrowRight } from "@phosphor-icons/react/ssr";
-import { getRouteBySlug, listActiveRoutes } from "@/lib/db/queries/routes";
+import { getRouteBySlug, listActiveRoutes } from "@/lib/routes/data";
 import { routeMetadata } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import { formatDate, formatLongDate, formatPrice, listNames } from "@/lib/format";
@@ -18,11 +18,10 @@ import PhotoHero from "@/components/layout/PhotoHero";
 import DealCard from "@/components/home/DealCard";
 import TravelpayoutsWidget from "@/components/search/TravelpayoutsWidget";
 import { byPrice } from "@/lib/prices";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import type { PriceCalendarData, RouteFacts } from "@/lib/travelpayouts/types";
 import styles from "./page.module.css";
 
-export const revalidate = 21600; // 6h ISR window — cron refresh cadence drives real freshness
 
 export async function generateStaticParams() {
   const routes = await listActiveRoutes();

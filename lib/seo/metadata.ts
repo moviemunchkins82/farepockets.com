@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { RouteRow } from "@/lib/db/schema";
+import type { RouteRow } from "@/lib/routes/types";
 import { formatPrice } from "@/lib/format";
 import { getCityImage } from "@/lib/cityImages";
 import { routeFacts } from "@/lib/routeFacts";
