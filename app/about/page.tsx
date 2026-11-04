@@ -83,9 +83,10 @@ export default async function AboutPage() {
 
           <h2>Where we focus</h2>
           <p>
-            Our speciality is flights from the UK to <Link href="/destinations">Turkey, the Caucasus and Central Asia</Link>:
-            Istanbul and the Turkish coast, Georgia, Armenia, Azerbaijan, Uzbekistan, Kazakhstan and Kyrgyzstan. We also
-            cover popular routes across the US and from the UK to Europe and beyond.
+            Our speciality is flights to <Link href="/destinations">Turkey, the Caucasus and Central Asia</Link>: Istanbul
+            and the Turkish coast, Georgia, Armenia, Azerbaijan, Uzbekistan, Kazakhstan and Kyrgyzstan. We cover them from
+            the UK and the US, and add more departure countries once our partner has enough fares from them. We also cover
+            popular routes across the US and from the UK to Europe and beyond.
           </p>
 
           <h2>Where our fares come from</h2>

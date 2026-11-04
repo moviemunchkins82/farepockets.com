@@ -56,7 +56,7 @@ export default async function OpengraphImage() {
             Cheap flights, wherever you&apos;re going
           </div>
           <div style={{ fontSize: 32, opacity: 0.88, maxWidth: 980 }}>
-            Turkey, the Caucasus and Central Asia from the UK, plus popular US and UK routes
+            Turkey, the Caucasus and Central Asia, plus popular US and UK routes
           </div>
         </div>
       </div>

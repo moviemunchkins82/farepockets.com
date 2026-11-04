@@ -7,7 +7,7 @@ import { hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, formatShortDate, listNames } from "@/lib/format";
 import { placeOgImages } from "@/lib/seo/metadata";
-import { buildCountries, countryHref, countryPath, findCountry, type CountryGroup } from "@/lib/regions";
+import { buildCountries, buildMarkets, countryHref, countryPath, findCountry, type CountryGroup } from "@/lib/regions";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import HubFareCard from "@/components/hubs/HubFareCard";
@@ -30,10 +30,9 @@ export async function generateStaticParams() {
     .map((g) => ({ country: g.info.slug }));
 }
 
-// "the UK" when every route departs from there, so titles can say where from.
+// "the UK" when every route departs from one country, so titles can say where from.
 function originLabel(group: CountryGroup): string | null {
-  const countries = new Set(group.routes.map((r) => r.origin_country.trim()));
-  return countries.size === 1 && countries.has("GB") ? "the UK" : null;
+  return group.markets.length === 1 ? group.markets[0].name : null;
 }
 
 export async function generateMetadata({ params }: PageProps<"/destinations/[country]">): Promise<Metadata> {
@@ -55,12 +54,19 @@ export async function generateMetadata({ params }: PageProps<"/destinations/[cou
 function buildFaq(group: CountryGroup) {
   const items: { question: string; answer: string }[] = [];
   const name = group.info.name;
-  const cheapest = group.cheapest;
-  const price = cheapest && formatPrice(cheapest.cheapest_price, cheapest.cheapest_currency);
-  if (cheapest && price) {
+  // Each market's fares are in its own currency, so quote them separately.
+  const fromEach = group.markets
+    .filter((m) => m.cheapest)
+    .map((m, i) => {
+      const r = m.cheapest!;
+      const price = formatPrice(r.cheapest_price, r.cheapest_currency);
+      const fares = i === 0 ? `one-way fares to ${name} start at` : "they start at";
+      return `From ${m.name}, ${fares} ${price} (${r.origin_city} to ${r.destination_city}).`;
+    });
+  if (fromEach.length > 0) {
     items.push({
       question: `How much are flights to ${name}?`,
-      answer: `One-way fares to ${name} start from ${price} (${cheapest.origin_city} to ${cheapest.destination_city}), based on recent searches. Prices change often, so confirm the final fare before booking.`,
+      answer: `${fromEach.join(" ")} These are based on recent searches. Prices change often, so confirm the final fare before booking.`,
     });
   }
   const pricedCities = group.cities.filter((c) => c.cheapest);
@@ -75,10 +81,11 @@ function buildFaq(group: CountryGroup) {
       answer: `Of the cities we track, ${first.name} currently has the lowest fare, from ${formatPrice(first.cheapest!.cheapest_price, first.cheapest!.cheapest_currency)} one-way. For comparison: ${others}.`,
     });
   }
-  if (group.byOrigin.length > 1) {
-    const [best, ...rest] = group.byOrigin;
+  for (const market of group.markets) {
+    if (market.byOrigin.length < 2) continue;
+    const [best, ...rest] = market.byOrigin;
     items.push({
-      question: `Which airport has the cheapest flights to ${name}?`,
+      question: `Which ${group.markets.length > 1 ? `airport in ${market.name}` : "airport"} has the cheapest flights to ${name}?`,
       answer: `${best.origin_city} currently has the lowest fare to ${name}, from ${formatPrice(best.cheapest_price, best.cheapest_currency)} to ${best.destination_city}. ${rest
         .map((r) => `${r.origin_city} from ${formatPrice(r.cheapest_price, r.cheapest_currency)}`)
         .join(", ")}.`,
@@ -96,8 +103,8 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
   const group = findCountry(routes, (await params).country);
   if (!group) notFound();
 
-  const { info } = group;
-  const from = originLabel(group);
+  const { info, markets } = group;
+  const byMarket = markets.length > 1;
   const title = `Cheap flights to ${info.name}`;
   const cityNames = group.cities.map((c) => c.name);
   const origins = new Set(group.routes.map((r) => r.origin_city));
@@ -120,8 +127,8 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
         kicker={<span>{group.cities.map((c) => c.code).join(" · ")}</span>}
         title={title}
         lead={`Compare the lowest recent one-way fares to ${listNames(cityNames)} from ${origins.size} ${
-          from === "the UK" ? "UK " : ""
-        }${origins.size === 1 ? "airport" : "airports"}, then book with our partner Aviasales.`}
+          origins.size === 1 ? "airport" : "airports"
+        } in ${listNames(markets.map((m) => m.name))}, then book with our partner Aviasales.`}
         aside={group.cheapest ? <HubFareCard route={group.cheapest} label="Cheapest right now" /> : undefined}
       />
 
@@ -144,7 +151,8 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
                     <span className={styles.cityText}>
                       <span className={styles.cityName}>{city.name}</span>
                       <span className={styles.cityMeta}>
-                        {city.code} · {city.routes.length} {city.routes.length === 1 ? "route" : "routes"} from the UK
+                        {city.code} · {city.routes.length} {city.routes.length === 1 ? "route" : "routes"} from{" "}
+                        {listNames(buildMarkets(city.routes).map((m) => m.name))}
                       </span>
                       <span className={styles.cityPrice}>{price ? `From ${price}` : "Checking fares"}</span>
                     </span>
@@ -156,35 +164,43 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
         </div>
       </section>
 
-      {group.byOrigin.length > 1 && (
+      {(byMarket || markets[0].byOrigin.length > 1) && (
         <section className="section band-surface">
           <div className="container">
             <div className="section-head">
               <h2>Cheapest airport to fly from</h2>
-              <p>The lowest fare to {info.name} from each departure city we track.</p>
+              <p>
+                The lowest fare to {info.name} from each departure city we track
+                {byMarket ? ", ranked within each country" : ""}.
+              </p>
             </div>
-            <ol className={styles.origins}>
-              {group.byOrigin.map((route, i) => {
-                const departs = formatShortDate(route.cheapest_depart_date);
-                return (
-                  <li key={route.slug}>
-                    <Link href={`/flights/${route.slug}`} className={styles.origin}>
-                      <span className={styles.rank}>{i + 1}</span>
-                      <span className={styles.originText}>
-                        <span className={styles.originName}>From {route.origin_city}</span>
-                        <span className={styles.originMeta}>
-                          to {route.destination_city}
-                          {departs ? `, departs ${departs}` : ""}
-                        </span>
-                      </span>
-                      <span className={styles.originPrice}>
-                        {formatPrice(route.cheapest_price, route.cheapest_currency)}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ol>
+            {markets.filter((m) => m.byOrigin.length > 0).map((market) => (
+              <div key={market.code} className={styles.market}>
+                {byMarket && <h3 className={styles.marketHeading}>From {market.name}</h3>}
+                <ol className={styles.origins}>
+                  {market.byOrigin.map((route, i) => {
+                    const departs = formatShortDate(route.cheapest_depart_date);
+                    return (
+                      <li key={route.slug}>
+                        <Link href={`/flights/${route.slug}`} className={styles.origin}>
+                          <span className={styles.rank}>{i + 1}</span>
+                          <span className={styles.originText}>
+                            <span className={styles.originName}>From {route.origin_city}</span>
+                            <span className={styles.originMeta}>
+                              to {route.destination_city}
+                              {departs ? `, departs ${departs}` : ""}
+                            </span>
+                          </span>
+                          <span className={styles.originPrice}>
+                            {formatPrice(route.cheapest_price, route.cheapest_currency)}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -195,13 +211,18 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
             <h2>All flights to {info.name}</h2>
             <p>Every route we track, with its cheapest one-way fare. Each route page shows the cheapest days to fly.</p>
           </div>
-          <ul className="card-grid">
-            {group.routes.map((route) => (
-              <li key={route.slug}>
-                <RouteCard route={route} photoCity={route.destination_city} />
-              </li>
-            ))}
-          </ul>
+          {markets.map((market) => (
+            <div key={market.code} className={styles.market}>
+              {byMarket && <h3 className={styles.marketHeading}>From {market.name}</h3>}
+              <ul className="card-grid">
+                {market.routes.map((route) => (
+                  <li key={route.slug}>
+                    <RouteCard route={route} photoCity={route.destination_city} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </section>
 

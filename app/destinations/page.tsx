@@ -2,9 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { listActiveRoutes } from "@/lib/routes/data";
 import { getCityImage } from "@/lib/cityImages";
-import { formatPrice } from "@/lib/format";
-import { buildCountries, countryHref } from "@/lib/regions";
-import { byPrice } from "@/lib/prices";
+import { formatPrice, listNames } from "@/lib/format";
+import { buildCountries, buildMarkets, countryHref } from "@/lib/regions";
+import { byPrice, interleaveByOrigin } from "@/lib/prices";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import SectionHeader from "@/components/home/SectionHeader";
@@ -22,7 +22,7 @@ import styles from "./page.module.css";
 
 const TITLE = "Cheap flights to Turkey, the Caucasus and Central Asia";
 const DESCRIPTION =
-  "Compare cheap flights from the UK to Istanbul, the Turkish coast, Tbilisi, Baku, Yerevan, Tashkent, Samarkand and Almaty. Fares checked twice a day.";
+  "Compare cheap flights to Istanbul, the Turkish coast, Tbilisi, Baku, Yerevan, Tashkent, Samarkand and Almaty from the UK and the US. Fares checked twice a day.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -35,14 +35,22 @@ export default async function DestinationsPage() {
   const countries = buildCountries(routes);
   const regionRoutes = countries.flatMap((g) => g.routes).sort(byPrice);
   const origins = new Set(regionRoutes.map((r) => r.origin_city));
+  const markets = buildMarkets(regionRoutes);
+  const marketNames = listNames(markets.map((m) => m.name));
   const cheapest = countries
     .map((g) => g.cheapest)
     .filter((r): r is RouteRow => r !== null)
     .sort(byPrice);
 
-  // One deal per destination city so the cards show different places.
+  // One deal per destination city so the cards show different places, alternating
+  // departure countries so the cheaper UK fares don't fill every card. Each
+  // country's cheapest route per city goes in first, so the turns stay even.
+  const perMarketCity = regionRoutes.filter(
+    (r, i) =>
+      regionRoutes.findIndex((o) => o.origin_country === r.origin_country && o.destination_city === r.destination_city) === i,
+  );
   const deals: RouteRow[] = [];
-  for (const r of regionRoutes) {
+  for (const r of interleaveByOrigin(perMarketCity)) {
     if (deals.length < 6 && r.cheapest_price !== null && !deals.some((d) => d.destination_city === r.destination_city)) {
       deals.push(r);
     }
@@ -58,7 +66,7 @@ export default async function DestinationsPage() {
     ...(cheapest[0]
       ? [
           {
-            question: "Which of these countries is cheapest to fly to from the UK?",
+            question: "Which of these countries is cheapest to fly to?",
             answer: `Right now ${countries.find((g) => g.cheapest === cheapest[0])?.info.name} has the lowest fare we track, from ${formatPrice(
               cheapest[0].cheapest_price,
               cheapest[0].cheapest_currency,
@@ -70,8 +78,10 @@ export default async function DestinationsPage() {
         ]
       : []),
     {
-      question: "Which UK airports have flights to these destinations?",
-      answer: `We track fares from ${[...origins].join(", ")}. Many of the cheapest fares have at least one stop. Each route page shows the cheapest days to fly over the next three months.`,
+      question: "Which airports have flights to these destinations?",
+      answer: `We track fares ${listNames(
+        markets.map((m) => `from ${listNames([...new Set(m.routes.map((r) => r.origin_city))])} in ${m.name}`),
+      )}. Many of the cheapest fares have at least one stop. Each route page shows the cheapest days to fly over the next three months.`,
     },
     {
       question: "How often are these fares updated?",
@@ -90,7 +100,7 @@ export default async function DestinationsPage() {
         ]}
         kicker={<span>Turkey &amp; the Silk Road</span>}
         title={TITLE}
-        lead={`We track ${regionRoutes.length} routes from ${origins.size} UK airports to ${countries.length} countries, from Istanbul and the Turkish coast to Tbilisi, Tashkent and Almaty.`}
+        lead={`We track ${regionRoutes.length} routes from ${origins.size} airports in ${marketNames} to ${countries.length} countries, from Istanbul and the Turkish coast to Tbilisi, Tashkent and Almaty.`}
       />
 
       <section className="section">
@@ -115,8 +125,8 @@ export default async function DestinationsPage() {
             <SectionHeader
               title="Cheapest flights in the region"
               description="The lowest one-way fares right now, one per destination."
-              href="/flights?country=gb"
-              linkLabel="All UK deals"
+              href="/flights"
+              linkLabel="All deals"
             />
             <div className="deal-grid">
               {deals.map((route) => (

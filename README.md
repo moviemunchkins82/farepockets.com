@@ -20,9 +20,10 @@ There is no database. Routes and prices are files in `data/`, bundled into the s
 
 ## Routes
 
-`data/routes.csv` is the list of routes (114: US domestic; UK routes to Europe, the US, the Middle East and Asia;
-and the focus region, Turkey, the Caucasus and Central Asia, listed in `lib/regions.ts`, which builds
-`/destinations` and the country pages). Use metro codes where a city has several airports (NYC, CHI, WAS, LON,
+`data/routes.csv` is the list of routes (121: US domestic; UK routes to Europe, the US, the Middle East and Asia;
+and the focus region, Turkey, the Caucasus and Central Asia, from the UK and the US, listed in `lib/regions.ts`,
+which builds `/destinations` and the country pages; these group routes by departure country, each in its own
+currency, so a new departure country needs no page changes). Use metro codes where a city has several airports (NYC, CHI, WAS, LON,
 ROM, PAR, YTO). Each row also sets `origin_country`/`destination_country` (ISO codes like `US`, `GB`) and
 `currency` — the origin market's currency (`USD` from the US, `GBP` from the UK, `EUR` from Ireland). Prices
 are fetched and shown in that currency; a USD copy is stored only to rank routes against each other.

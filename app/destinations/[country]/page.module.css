@@ -127,6 +127,16 @@
   color: var(--text);
 }
 
+/* One departure country's block, when routes leave from several */
+.market + .market {
+  margin-top: 36px;
+}
+
+.marketHeading {
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+}
+
 .note {
   margin-top: 12px;
 }

@@ -1252,5 +1252,82 @@
     "destination_country": "KG",
     "currency": "GBP",
     "target_keyword": "flights from london to osh"
+  },
+  {
+    "slug": "london-to-bukhara",
+    "origin_iata": "LON",
+    "destination_iata": "BHK",
+    "origin_city": "London",
+    "destination_city": "Bukhara",
+    "origin_country": "GB",
+    "destination_country": "UZ",
+    "currency": "GBP",
+    "target_keyword": "flights from london to bukhara"
+  },
+  {
+    "slug": "london-to-urgench",
+    "origin_iata": "LON",
+    "destination_iata": "UGC",
+    "origin_city": "London",
+    "destination_city": "Urgench",
+    "origin_country": "GB",
+    "destination_country": "UZ",
+    "currency": "GBP",
+    "target_keyword": "flights from london to urgench"
+  },
+  {
+    "slug": "london-to-shymkent",
+    "origin_iata": "LON",
+    "destination_iata": "CIT",
+    "origin_city": "London",
+    "destination_city": "Shymkent",
+    "origin_country": "GB",
+    "destination_country": "KZ",
+    "currency": "GBP",
+    "target_keyword": "flights from london to shymkent"
+  },
+  {
+    "slug": "new-york-to-istanbul",
+    "origin_iata": "NYC",
+    "destination_iata": "IST",
+    "origin_city": "New York",
+    "destination_city": "Istanbul",
+    "origin_country": "US",
+    "destination_country": "TR",
+    "currency": "USD",
+    "target_keyword": "flights from new york to istanbul"
+  },
+  {
+    "slug": "new-york-to-tashkent",
+    "origin_iata": "NYC",
+    "destination_iata": "TAS",
+    "origin_city": "New York",
+    "destination_city": "Tashkent",
+    "origin_country": "US",
+    "destination_country": "UZ",
+    "currency": "USD",
+    "target_keyword": "flights from new york to tashkent"
+  },
+  {
+    "slug": "new-york-to-almaty",
+    "origin_iata": "NYC",
+    "destination_iata": "ALA",
+    "origin_city": "New York",
+    "destination_city": "Almaty",
+    "origin_country": "US",
+    "destination_country": "KZ",
+    "currency": "USD",
+    "target_keyword": "flights from new york to almaty"
+  },
+  {
+    "slug": "los-angeles-to-yerevan",
+    "origin_iata": "LAX",
+    "destination_iata": "EVN",
+    "origin_city": "Los Angeles",
+    "destination_city": "Yerevan",
+    "origin_country": "US",
+    "destination_country": "AM",
+    "currency": "USD",
+    "target_keyword": "flights from los angeles to yerevan"
   }
 ]

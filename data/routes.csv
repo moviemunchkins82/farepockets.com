@@ -113,3 +113,10 @@ liverpool-to-istanbul,LPL,IST,Liverpool,Istanbul,GB,TR,GBP,flights from liverpoo
 birmingham-to-baku,BHX,GYD,Birmingham,Baku,GB,AZ,GBP,flights from birmingham to baku
 edinburgh-to-yerevan,EDI,EVN,Edinburgh,Yerevan,GB,AM,GBP,flights from edinburgh to yerevan
 london-to-osh,LON,OSS,London,Osh,GB,KG,GBP,flights from london to osh
+london-to-bukhara,LON,BHK,London,Bukhara,GB,UZ,GBP,flights from london to bukhara
+london-to-urgench,LON,UGC,London,Urgench,GB,UZ,GBP,flights from london to urgench
+london-to-shymkent,LON,CIT,London,Shymkent,GB,KZ,GBP,flights from london to shymkent
+new-york-to-istanbul,NYC,IST,New York,Istanbul,US,TR,USD,flights from new york to istanbul
+new-york-to-tashkent,NYC,TAS,New York,Tashkent,US,UZ,USD,flights from new york to tashkent
+new-york-to-almaty,NYC,ALA,New York,Almaty,US,KZ,USD,flights from new york to almaty
+los-angeles-to-yerevan,LAX,EVN,Los Angeles,Yerevan,US,AM,USD,flights from los angeles to yerevan

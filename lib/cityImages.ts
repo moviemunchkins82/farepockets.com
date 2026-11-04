@@ -15,6 +15,9 @@ import washingtonDc from "@/assets/cities/washington-dc.jpg";
 import bristol from "@/assets/cities/bristol.jpg";
 import liverpool from "@/assets/cities/liverpool.jpg";
 import osh from "@/assets/cities/osh.jpg";
+import bukhara from "@/assets/cities/bukhara.jpg";
+import urgench from "@/assets/cities/urgench.jpg";
+import shymkent from "@/assets/cities/shymkent.jpg";
 import antalya from "@/assets/cities/antalya.jpg";
 import dalaman from "@/assets/cities/dalaman.jpg";
 import bodrum from "@/assets/cities/bodrum.jpg";
@@ -394,6 +397,25 @@ const CITY_IMAGES: Record<string, CityImage> = {
     alt: "Rocky mountains above a green valley near Osh, Kyrgyzstan",
     photographer: "Dastan Suiuntbekov",
     sourceUrl: "https://unsplash.com/photos/zEA5f3zSR4c",
+  },
+  Bukhara: {
+    src: bukhara,
+    alt: "Turquoise domes and the Kalyan Minaret above the old city of Bukhara",
+    photographer: "Sultonbek Ikromov",
+    sourceUrl: "https://unsplash.com/photos/v9ZBig1I_j4",
+  },
+  // Urgench's airport serves Khiva, 30 km away, which is why travellers fly there.
+  Urgench: {
+    src: urgench,
+    alt: "The tiled Kalta Minor minaret and market stalls inside Khiva's old walls, near Urgench",
+    photographer: "Farkhod Saydullaev",
+    sourceUrl: "https://unsplash.com/photos/k1pZpJLPLpI",
+  },
+  Shymkent: {
+    src: shymkent,
+    alt: "A stone gateway in the rebuilt walls of Shymkent's old citadel",
+    photographer: "Etienne Dayer",
+    sourceUrl: "https://unsplash.com/photos/HbcaMREAU6g",
   },
 };
 

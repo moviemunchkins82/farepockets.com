@@ -147,7 +147,7 @@ export default async function Home() {
           <div className="container">
             <SectionHeader
               title="Turkey & the Silk Road"
-              description="Cheap flights from the UK to Istanbul, the Turkish coast, the Caucasus and Central Asia."
+              description="Cheap flights to Istanbul, the Turkish coast, the Caucasus and Central Asia, from the UK and the US."
               href="/destinations"
               linkLabel="All destinations"
             />
