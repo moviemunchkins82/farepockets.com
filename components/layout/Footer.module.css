@@ -132,6 +132,12 @@
   font-size: 0.85rem;
 }
 
+/* Links inside a sentence need more than color to stand out. */
+.bottom a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 @media (max-width: 899px) {
   .grid {
     grid-template-columns: 1fr 1fr;

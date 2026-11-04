@@ -39,7 +39,9 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   background: linear-gradient(90deg, var(--surface-2) 25%, #fbfcfd 50%, var(--surface-2) 75%) 0 0 / 200% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
+  /* A few cycles, not forever: lower on the page the form loads only when
+     scrolled to, and an endless animation would keep repainting until then. */
+  animation: shimmer 1.4s ease-in-out 4;
 }
 
 .button {
@@ -50,7 +52,6 @@
   background: var(--accent);
   color: var(--accent-contrast);
   font-size: 1rem;
-  opacity: 0.55;
 }
 
 /* Under 390px: Origin, Destination, Depart + Return, Passengers, Search. */

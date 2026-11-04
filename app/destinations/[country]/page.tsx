@@ -6,7 +6,7 @@ import { listActiveRoutes } from "@/lib/routes/data";
 import { hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, formatShortDate, listNames } from "@/lib/format";
-import { placeOgImages } from "@/lib/seo/metadata";
+import { pageTitle, placeOgImages } from "@/lib/seo/metadata";
 import { buildCountries, buildMarkets, countryHref, countryPath, findCountry, type CountryGroup } from "@/lib/regions";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
@@ -45,10 +45,11 @@ export async function generateMetadata({ params }: PageProps<"/destinations/[cou
   const from = originLabel(group);
   const title = `Cheap flights to ${group.info.name}${from ? ` from ${from}` : ""}`;
   const price = group.cheapest && formatPrice(group.cheapest.cheapest_price, group.cheapest.cheapest_currency);
-  const description = `Compare cheap flights to ${listNames(group.cities.map((c) => c.name))}${price ? ` from ${price} one-way` : ""}, and see which city and departure airport are cheapest. Fares checked twice a day.`;
+  const lead = `Compare cheap flights to ${listNames(group.cities.map((c) => c.name))}${price ? ` from ${price} one-way` : ""}, and see which city and departure airport are cheapest.`;
+  const description = lead.length <= 133 ? `${lead} Fares checked twice a day.` : lead;
   const url = `${SITE_URL}${countryPath(group.info)}`;
   return {
-    title,
+    title: pageTitle(title),
     description,
     alternates: { canonical: url },
     openGraph: { title: `${title} | ${SITE_NAME}`, description, url, images: placeOgImages(group.info.photoCity) },

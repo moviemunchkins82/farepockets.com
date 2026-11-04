@@ -2,8 +2,8 @@
 
 const STORAGE_KEY = "fp_session_id";
 
-// Anonymous, client-generated id — no PII. Used as the correlation key across
-// click_events, GA4, and Mixpanel so the same visit can be matched across all three.
+// Anonymous, client-generated id — no PII. Identifies the visit in Mixpanel
+// (components/analytics/AnalyticsInit.tsx), once analytics are set up.
 export function getSessionId(): string {
   if (typeof window === "undefined") return "";
   try {

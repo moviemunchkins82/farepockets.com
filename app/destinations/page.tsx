@@ -5,6 +5,7 @@ import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, listNames } from "@/lib/format";
 import { buildCountries, buildMarkets, countryHref } from "@/lib/regions";
 import { byPrice, interleaveByOrigin } from "@/lib/prices";
+import { pageTitle } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import SectionHeader from "@/components/home/SectionHeader";
@@ -25,7 +26,7 @@ const DESCRIPTION =
   "Compare cheap flights to Istanbul, the Turkish coast, Tbilisi, Baku, Yerevan, Tashkent, Samarkand and Almaty from the UK and the US. Fares checked twice a day.";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: pageTitle(TITLE),
   description: DESCRIPTION,
   alternates: { canonical: "/destinations" },
 };

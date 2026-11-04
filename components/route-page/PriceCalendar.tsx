@@ -133,7 +133,8 @@ export default function PriceCalendar({ route, calendar }: { route: RouteRow; ca
                     subId={subId}
                     routeSlug={route.slug}
                     className={`${styles.cell} ${tone}`}
-                    ariaLabel={`${formatLongDate(d.date)}: ${price ? `one-way from ${price}` : "search fares"}`}
+                    // Starts with the visible text ("16 £231") so voice control users can say what they see.
+                    ariaLabel={`${price ? `${day} ${price}` : day}, ${formatLongDate(d.date)}, ${price ? "one-way" : "search fares"}`}
                   >
                     <span className={styles.day}>{day}</span>
                     {price && <span className={styles.price}>{price}</span>}

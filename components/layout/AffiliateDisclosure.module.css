@@ -3,8 +3,9 @@
   color: var(--text-3);
 }
 
+/* The darker coral: small text on grey needs 4.5:1. */
 .note a {
-  color: var(--accent);
+  color: var(--accent-hover);
   font-weight: 550;
   text-decoration: underline;
   text-underline-offset: 3px;

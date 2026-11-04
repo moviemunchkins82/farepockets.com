@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/layout/PageHeader";
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@farepockets.com";
 
 export const metadata: Metadata = {
   title: "Terms of use",
-  description: `${SITE_NAME} terms of use.`,
+  description: `The terms for using ${SITE_NAME}: what our fare information is, how booking through our travel partners works, and who to contact.`,
   alternates: { canonical: "/terms" },
 };
 
@@ -38,7 +39,8 @@ export default function TermsPage() {
           </p>
           <p>
             For anything related to an existing booking — changes, cancellations, refunds, or support — contact the
-            travel partner you booked through directly, not {SITE_NAME}.
+            travel partner you booked through directly, not {SITE_NAME}. For questions about the site itself, email{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
           </p>
           <p>
             See <a href="/disclosure">How we make money</a> and our <a href="/privacy">privacy policy</a>.

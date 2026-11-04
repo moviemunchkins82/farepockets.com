@@ -9,7 +9,7 @@
   --surface-2: #f5f7fa;
   --text: #111827;
   --text-2: #4e5562;
-  --text-3: #6c727f;
+  --text-3: #636976; /* 4.5:1+ on every light background, for WCAG AA */
   --border: #e0e5eb;
   --accent: #cc4747;
   --accent-hover: #b23a3a;

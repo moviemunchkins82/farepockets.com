@@ -23,6 +23,8 @@ import styles from "./home.module.css";
 
 
 export const metadata: Metadata = {
+  description:
+    "Find cheap flights and the cheapest days to fly, from the US and the UK to Turkey, the Caucasus, Central Asia and beyond. Fares checked twice a day.",
   alternates: { canonical: "/" },
 };
 

@@ -20,6 +20,14 @@ export function placeOgImages(city: string): NonNullable<Metadata["openGraph"]>[
 // title is bare here — the root layout's title.template appends " | {SITE_NAME}"
 // automatically for every page, so appending it here too would duplicate it.
 
+// Search results cut titles off at about 60 characters. When the " | FarePockets"
+// suffix would push a title past that, drop the suffix (Google shows the site
+// name next to the result anyway) rather than lose the end of the title.
+const MAX_TITLE = 60;
+export function pageTitle(title: string): Metadata["title"] {
+  return title.length + SITE_NAME.length + 3 <= MAX_TITLE ? title : { absolute: title };
+}
+
 export function routeMetadata(route: RouteRow): Metadata {
   const price = formatPrice(route.cheapest_price, route.cheapest_currency);
   const title = `Cheap flights from ${route.origin_city} to ${route.destination_city}${price ? ` from ${price}` : ""}`;
@@ -30,12 +38,15 @@ export function routeMetadata(route: RouteRow): Metadata {
     : nonstopPrice
       ? ` Nonstop from ${nonstopPrice}${facts.nonstop?.airline ? ` with ${facts.nonstop.airline}` : ""}.`
       : " No nonstop fares found recently.";
-  const description = price
-    ? `Compare ${route.origin_city} to ${route.destination_city} flights from ${price} one-way.${nonstop} See the cheapest days to fly and book with our travel partner.`
-    : `Compare flights from ${route.origin_city} to ${route.destination_city}.${nonstop} See the cheapest days to fly and book with our travel partner.`;
+  const lead = price
+    ? `Compare ${route.origin_city} to ${route.destination_city} flights from ${price} one-way.${nonstop}`
+    : `Compare flights from ${route.origin_city} to ${route.destination_city}.${nonstop}`;
+  // The longer ending only when it still fits in a search result (~160 characters).
+  const ending = " See the cheapest days to fly and book with our travel partner.";
+  const description = lead + (lead.length + ending.length <= 160 ? ending : " See the cheapest days to fly.");
 
   return {
-    title,
+    title: pageTitle(title),
     description,
     alternates: { canonical: `${SITE_URL}/flights/${route.slug}` },
     openGraph: {
@@ -51,7 +62,7 @@ export function guideMetadata(guide: GuideSummary): Metadata {
   const url = `${SITE_URL}/guides/${guide.slug}`;
   const photo = guide.image ? getCityImage(guide.image) : null;
   return {
-    title: guide.title,
+    title: pageTitle(guide.title),
     description: guide.description,
     authors: [{ name: guide.author }],
     alternates: { canonical: url },

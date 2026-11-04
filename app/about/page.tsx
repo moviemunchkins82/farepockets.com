@@ -10,6 +10,7 @@ import styles from "./page.module.css";
 
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@farepockets.com";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 const DESCRIPTION = `${SITE_NAME} is an independent flight comparison site. We track cheap fares, show the cheapest days to fly, and link you to our travel partner to book.`;
 
@@ -48,7 +49,7 @@ export default async function AboutPage() {
           name: `About ${SITE_NAME}`,
           url: `${SITE_URL}/about`,
           description: DESCRIPTION,
-          mainEntity: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+          mainEntity: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, email: CONTACT_EMAIL },
         }}
       />
       <PageHeader
@@ -115,6 +116,13 @@ export default async function AboutPage() {
           <p>
             {SITE_NAME} is not an airline or a travel agency, and we are not affiliated with any airline. Bookings,
             changes, refunds and support are handled by the airline or agency you book with.
+          </p>
+
+          <h2>Contact us</h2>
+          <p>
+            Spotted a wrong fare, or have a question about the site? Email us at{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. For a booking you&apos;ve already made, contact the
+            airline or agency you booked with, as we can&apos;t see or change bookings.
           </p>
         </div>
       </div>

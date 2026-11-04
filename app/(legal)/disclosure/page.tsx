@@ -5,7 +5,7 @@ const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "FarePockets";
 
 export const metadata: Metadata = {
   title: "How we make money",
-  description: `How ${SITE_NAME} earns commission and what that means for you.`,
+  description: `How ${SITE_NAME} earns commission from our travel partner when you book, and why it never changes the price you pay.`,
   alternates: { canonical: "/disclosure" },
 };
 

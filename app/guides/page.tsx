@@ -6,7 +6,8 @@ import FeaturedGuide from "@/components/guides/FeaturedGuide";
 import GuideBrowser from "@/components/guides/GuideBrowser";
 import styles from "./page.module.css";
 
-const DESCRIPTION = "Practical, data-backed tips for finding and booking cheaper flights.";
+const DESCRIPTION =
+  "Practical tips for finding and booking cheaper flights, based on our own fare data: which airport to fly from, which day to go and when to book.";
 
 export const metadata: Metadata = {
   title: "Travel guides",
