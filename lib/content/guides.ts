@@ -9,6 +9,8 @@ const WORDS_PER_MINUTE = 225;
 export interface GuideFrontmatter {
   slug: string;
   title: string;
+  // Shorter title for search results when `title` is too long to show in full.
+  seoTitle: string | null;
   description: string;
   publishedAt: string;
   // Set when a guide is meaningfully revised; shown as "Updated" and used as dateModified.
@@ -65,6 +67,7 @@ export function getGuide(slug: string): Guide | null {
   return {
     slug,
     title: data.title,
+    seoTitle: typeof data.seoTitle === "string" && data.seoTitle.trim() ? data.seoTitle.trim() : null,
     description: data.description,
     publishedAt: data.publishedAt,
     updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : null,

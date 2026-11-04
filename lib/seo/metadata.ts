@@ -62,13 +62,13 @@ export function guideMetadata(guide: GuideSummary): Metadata {
   const url = `${SITE_URL}/guides/${guide.slug}`;
   const photo = guide.image ? getCityImage(guide.image) : null;
   return {
-    title: pageTitle(guide.title),
+    title: pageTitle(guide.seoTitle ?? guide.title),
     description: guide.description,
     authors: [{ name: guide.author }],
     alternates: { canonical: url },
     openGraph: {
       type: "article",
-      title: `${guide.title} | ${SITE_NAME}`,
+      title: `${guide.seoTitle ?? guide.title} | ${SITE_NAME}`,
       description: guide.description,
       url,
       publishedTime: guide.publishedAt,
