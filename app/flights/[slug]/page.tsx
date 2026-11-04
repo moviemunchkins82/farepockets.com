@@ -23,6 +23,10 @@ import type { PriceCalendarData, RouteFacts } from "@/lib/travelpayouts/types";
 import styles from "./page.module.css";
 
 
+// Only the pages built from our data exist; any other URL gets the prebuilt 404
+// instead of a render attempt, so junk URLs cost no Worker CPU.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const routes = await listActiveRoutes();
   return routes.map((route) => ({ slug: route.slug }));

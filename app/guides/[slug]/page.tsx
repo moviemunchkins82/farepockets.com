@@ -27,6 +27,10 @@ import styles from "./page.module.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 
+// Only the pages built from our data exist; any other URL gets the prebuilt 404
+// instead of a render attempt, so junk URLs cost no Worker CPU.
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return listGuideSlugs().map((slug) => ({ slug }));
 }
