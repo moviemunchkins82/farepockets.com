@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import { listActiveRoutes } from "@/lib/routes/data";
 import { buildHubs, findHub, hubCurrency, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
-import { formatPrice } from "@/lib/format";
-import { pageTitle, placeOgImages } from "@/lib/seo/metadata";
+import { formatPrice, listNames } from "@/lib/format";
+import { DESCRIPTION_ENDING, directCount, faresByMarket, fitDescription, fitTitle, pageTitle, placeOgImages, shortList } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
 import HubFareCard from "@/components/hubs/HubFareCard";
@@ -82,13 +82,26 @@ export async function hubStaticParams(direction: HubDirection) {
 export async function hubMetadata(direction: HubDirection, slug: string): Promise<Metadata> {
   const hub = findHub(await listActiveRoutes(), direction, slug);
   if (!hub) return {};
-  const title = copy[direction].title(hub.name);
-  const price = hub.cheapest && formatPrice(hub.cheapest.cheapest_price, hub.cheapest.cheapest_currency);
-  const others = hub.routes.slice(0, 3).map(copy[direction].other).join(", ");
-  const description =
-    direction === "to"
-      ? `Compare cheap flights to ${hub.name} from ${others}${price ? `, from ${price} one-way` : ""}. Updated fare data, book with our travel partner.`
-      : `Compare cheap flights from ${hub.name} to ${others}${price ? `, from ${price} one-way` : ""}. Updated fare data, book with our travel partner.`;
+  // Search titles carry the airport code ("flights to AYT") and, for international
+  // trips from a single country, where from ("flights to Antalya from the UK").
+  // No prices: they change daily, and the description carries them.
+  const fares = faresByMarket(hub.routes);
+  const homeMarket = direction === "to" ? hub.routes[0]?.destination_country : hub.routes[0]?.origin_country;
+  const fromMarket =
+    direction === "to" && fares.length === 1 && hub.routes.every((r) => r.origin_country !== homeMarket)
+      ? ` from ${fares[0].market}`
+      : "";
+  const base = copy[direction].title(hub.name);
+  const title = fitTitle([`${base} (${hub.code})${fromMarket}`, `${base} (${hub.code})`, base]);
+
+  const places = shortList(hub.routes.map(copy[direction].other));
+  const single = fares.length === 1 ? `, from ${fares[0].price} one-way` : "";
+  const description = fitDescription(
+    `${base} ${direction === "to" ? "from" : "to"} ${places}${single}.`,
+    fares.length > 1 && `One-way fares start at ${listNames(fares.map((f) => `${f.price} from ${f.market}`))}.`,
+    directCount(hub.routes),
+    DESCRIPTION_ENDING,
+  );
   const url = `${SITE_URL}${hubPath(direction, hub.name)}`;
   return {
     title: pageTitle(title),

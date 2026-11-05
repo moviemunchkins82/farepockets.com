@@ -23,7 +23,7 @@ import styles from "./page.module.css";
 
 const TITLE = "Cheap flights to Turkey, the Caucasus and Central Asia";
 const DESCRIPTION =
-  "Compare cheap flights to Istanbul, the Turkish coast, Tbilisi, Baku, Yerevan, Tashkent, Samarkand and Almaty from the UK and the US. Fares checked twice a day.";
+  "Compare cheap flights to Istanbul, Antalya, Tbilisi, Baku, Yerevan, Tashkent, Samarkand and Almaty from the UK and US. Fares checked twice a day.";
 
 export const metadata: Metadata = {
   title: pageTitle(TITLE),

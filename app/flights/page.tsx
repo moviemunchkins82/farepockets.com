@@ -16,8 +16,9 @@ import styles from "./page.module.css";
 
 
 export const metadata: Metadata = {
-  title: "Cheap flight deals",
-  description: "Cheap one-way flight deals on popular routes, grouped by departure city and checked twice a day.",
+  title: "Cheap flight deals from the UK and US",
+  description:
+    "Cheap one-way flight deals from London, Manchester, Edinburgh, New York, Los Angeles, Chicago and more, grouped by departure city. Fares checked twice a day.",
   alternates: { canonical: "/flights" },
 };
 

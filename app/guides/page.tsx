@@ -10,8 +10,9 @@ const DESCRIPTION =
   "Practical tips for finding and booking cheaper flights, based on our own fare data: which airport to fly from, which day to go and when to book.";
 
 export const metadata: Metadata = {
-  title: "Travel guides",
-  description: DESCRIPTION,
+  title: "Cheap flight tips and travel guides",
+  description:
+    "Tips for cheaper flights from our own fare data: the cheapest day to fly, when to book and which airport to use, plus guides to Turkey and Central Asia.",
   alternates: { canonical: "/guides" },
 };
 

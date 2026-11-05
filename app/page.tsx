@@ -23,8 +23,9 @@ import styles from "./home.module.css";
 
 
 export const metadata: Metadata = {
+  title: { absolute: "FarePockets: Cheap Flights and the Cheapest Days to Fly" },
   description:
-    "Find cheap flights and the cheapest days to fly, from the US and the UK to Turkey, the Caucasus, Central Asia and beyond. Fares checked twice a day.",
+    "Compare cheap flights and find the cheapest days to fly from the UK and US to Turkey, Georgia, Uzbekistan, Europe and more. Fares checked twice a day.",
   alternates: { canonical: "/" },
 };
 

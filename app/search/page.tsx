@@ -14,8 +14,9 @@ import styles from "./page.module.css";
 
 
 export const metadata: Metadata = {
-  title: "Search flights",
-  description: "Search and compare flight prices, then book with our travel partner Aviasales.",
+  title: "Search cheap flights and compare prices",
+  description:
+    "Search cheap flights and compare prices from airlines and booking sites in one place, one-way or return, then book with our travel partner Aviasales.",
   alternates: { canonical: "/search" },
 };
 

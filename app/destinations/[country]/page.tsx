@@ -6,7 +6,7 @@ import { listActiveRoutes } from "@/lib/routes/data";
 import { hubPath } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
 import { formatPrice, formatShortDate, listNames } from "@/lib/format";
-import { pageTitle, placeOgImages } from "@/lib/seo/metadata";
+import { faresByMarket, fitDescription, fitTitle, pageTitle, placeOgImages } from "@/lib/seo/metadata";
 import { buildCountries, buildMarkets, countryHref, countryPath, findCountry, type CountryGroup } from "@/lib/regions";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import PhotoHero from "@/components/layout/PhotoHero";
@@ -42,11 +42,29 @@ function originLabel(group: CountryGroup): string | null {
 export async function generateMetadata({ params }: PageProps<"/destinations/[country]">): Promise<Metadata> {
   const group = findCountry(await listActiveRoutes(), (await params).country);
   if (!group) return {};
+  const name = group.info.name;
   const from = originLabel(group);
-  const title = `Cheap flights to ${group.info.name}${from ? ` from ${from}` : ""}`;
-  const price = group.cheapest && formatPrice(group.cheapest.cheapest_price, group.cheapest.cheapest_currency);
-  const lead = `Compare cheap flights to ${listNames(group.cities.map((c) => c.name))}${price ? ` from ${price} one-way` : ""}, and see which city and departure airport are cheapest.`;
-  const description = lead.length <= 133 ? `${lead} Fares checked twice a day.` : lead;
+  // Cities by how many routes we track (a stable order, unlike price), so the
+  // title names the main airports: it also tells Georgia the country from the US state.
+  // No prices in titles: they change daily, and the description carries them.
+  const cities = [...group.cities].sort((a, b) => b.routes.length - a.routes.length || a.name.localeCompare(b.name)).map((c) => c.name);
+  const candidates: string[] = [];
+  for (let k = cities.length; k >= 1; k--) {
+    const list = cities.slice(0, k).join(", ");
+    if (from) candidates.push(`Cheap flights to ${name} from ${from}: ${list}`);
+    candidates.push(`Cheap flights to ${name}: ${list}`);
+  }
+  candidates.push(`Cheap flights to ${name}`);
+  const title = fitTitle(candidates);
+
+  const fares = faresByMarket(group.routes);
+  const single = fares.length === 1 ? `, from ${fares[0].price} one-way` : "";
+  const description = fitDescription(
+    `Compare cheap flights to ${listNames(cities)}${from ? ` from ${from}` : ""}${single}.`,
+    fares.length > 1 && `One-way fares start at ${listNames(fares.map((f) => `${f.price} from ${f.market}`))}.`,
+    [`See which city, departure airport and month are cheapest to fly to ${name}.`, "See which city and airport are cheapest."],
+    "Fares checked twice a day.",
+  );
   const url = `${SITE_URL}${countryPath(group.info)}`;
   return {
     title: pageTitle(title),

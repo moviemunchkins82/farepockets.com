@@ -15,7 +15,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 const DESCRIPTION = `${SITE_NAME} is an independent flight comparison site. We track cheap fares, show the cheapest days to fly, and link you to our travel partner to book.`;
 
 export const metadata: Metadata = {
-  title: `About ${SITE_NAME}`,
+  title: `About ${SITE_NAME}: how we find cheap flights`,
   description: DESCRIPTION,
   alternates: { canonical: "/about" },
 };
