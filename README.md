@@ -71,10 +71,11 @@ Clicks and bookings per link are in the Travelpayouts dashboard: every affiliate
 `sub_id` (e.g. `route-london-to-istanbul`). `components/AffiliateLink.tsx` also sends clicks to GA4 and Mixpanel
 once they're set up.
 
-## Pre-launch
+## Indexing
 
-The site is public but hidden from search engines while `NEXT_PUBLIC_ALLOW_INDEXING=false` (every page sends
-`noindex` and robots.txt disallows crawling). Set it to `true` to launch. The old HTTP Basic Auth gate
+Search engines may index the site: the Cloudflare build sets `NEXT_PUBLIC_ALLOW_INDEXING=true` (since
+2026-11-05). Setting it to `false` and rebuilding hides the site again (every page sends `noindex` and robots.txt
+disallows crawling); local dev and `.env.example` keep it `false`. The old HTTP Basic Auth gate
 (`proxy.ts`) was removed: it was the only middleware, and Cloudflare's support for Node.js middleware is
 experimental and costs CPU on every request.
 
