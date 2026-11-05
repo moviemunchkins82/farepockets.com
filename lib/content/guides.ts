@@ -15,6 +15,8 @@ export interface GuideFrontmatter {
   publishedAt: string;
   // Set when a guide is meaningfully revised; shown as "Updated" and used as dateModified.
   updatedAt: string | null;
+  // Listed first among guides published the same day (the /guides featured slot).
+  featured: boolean;
   // Name from lib/content/authors.ts; defaults to the site team.
   author: string;
   // Short label shown above the title, e.g. "Fare data".
@@ -71,6 +73,7 @@ export function getGuide(slug: string): Guide | null {
     description: data.description,
     publishedAt: data.publishedAt,
     updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : null,
+    featured: data.featured === true,
     author: typeof data.author === "string" && data.author.trim() ? data.author.trim() : DEFAULT_AUTHOR,
     category: typeof data.category === "string" ? data.category : null,
     tags: Array.isArray(data.tags) ? data.tags.filter((t): t is string => typeof t === "string") : [],
@@ -84,12 +87,12 @@ export function getGuide(slug: string): Guide | null {
   };
 }
 
-// Newest first.
+// Newest first; on the same day, featured guides first.
 export function listGuides(): Guide[] {
   return listGuideSlugs()
     .map((slug) => getGuide(slug))
     .filter((g): g is Guide => g !== null)
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || Number(b.featured) - Number(a.featured));
 }
 
 export function toSummary(guide: Guide): GuideSummary {
