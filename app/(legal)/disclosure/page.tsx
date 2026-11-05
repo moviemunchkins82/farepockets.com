@@ -22,9 +22,10 @@ export default function DisclosurePage() {
       <div className="container page">
         <div className="prose">
           <p>
-            {SITE_NAME} does not sell flights directly. When you click a &quot;Search flights&quot; or booking link on
-            this site, you&apos;re taken to one of our travel partners to complete your search and booking. If you book
-            through that link, we may earn a commission from the partner — at no extra cost to you.
+            {SITE_NAME} is a free, independent flight comparison site. We don&apos;t sell flights. When you click a
+            &quot;Search flights&quot; or deal link, you&apos;re taken to our travel partner to search and book. If
+            you book through that link, the partner may pay us a commission, at no extra cost to you. Commissions never
+            change which fares we show or the order we show them in: deals are ranked by price.
           </p>
           <p>
             We never process payments, issue tickets, or handle booking changes, cancellations, or refunds. All of

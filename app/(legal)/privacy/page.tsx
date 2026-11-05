@@ -10,18 +10,17 @@ const ANALYTICS = [
   ANALYTICS_ON && process.env.NEXT_PUBLIC_GA4_ID && "Google Analytics",
   ANALYTICS_ON && process.env.NEXT_PUBLIC_MIXPANEL_TOKEN && "Mixpanel",
 ].filter((name): name is string => !!name);
-const UPDATED = "November 4, 2026";
+const UPDATED = "November 5, 2026";
 
 export const metadata: Metadata = {
   title: "Privacy policy",
-  description: `What ${SITE_NAME} collects when you use the site (no names or payment details), which tools we use and your choices.`,
+  description: `${SITE_NAME} has no accounts or sign-up forms and never asks for your name or payment details. What our partners and hosting see, and your choices.`,
   alternates: { canonical: "/privacy" },
 };
 
-// DRAFT. Describes what the site actually does (no accounts or forms; the
-// Aviasales search widget and partner links; Cloudflare hosting; analytics only
-// once configured), but it is not legal advice. Have it reviewed before launch,
-// for UK/EU GDPR and cookie rules (PECR) and US state laws such as the CCPA.
+// Describes what the site actually does: no accounts or forms; the Aviasales
+// search widget and partner links; Cloudflare hosting (including its bot-check
+// cookie); analytics only once configured. Update it when any of that changes.
 export default function PrivacyPage() {
   return (
     <main>
@@ -34,40 +33,46 @@ export default function PrivacyPage() {
       />
       <div className="container page">
         <div className="prose">
-          <p>
-            <strong>Draft — pending legal review before launch.</strong>
-          </p>
           <p>Last updated {UPDATED}.</p>
+
+          <h2>The short version</h2>
+          <ul>
+            <li>You can use {SITE_NAME} without an account, and we never ask for your name, email or payment details.</li>
+            <li>
+              Searching and booking happen on our travel partners&apos; websites, which handle your information under
+              their own privacy policies.
+            </li>
+            <li>We don&apos;t sell your data, and we don&apos;t show ads.</li>
+          </ul>
 
           <h2>Who we are</h2>
           <p>
-            {SITE_NAME} is a flight comparison site. We show recent fares and link you to our travel partner Aviasales,
-            where you search and book. Questions about this policy or your data:{" "}
+            {SITE_NAME} is an independent flight comparison and information site. We show recent fares and travel
+            guides, and link you to our travel partner Aviasales to search and book. Questions about this policy:{" "}
             <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
           </p>
 
           <h2>What we collect</h2>
           <p>
-            {SITE_NAME} has no accounts, sign-up forms or newsletters, and we never ask for your name, email address or
-            payment details. Bookings and payments happen on our partners&apos; sites, under their own privacy
-            policies.
+            Very little. There are no accounts, sign-up forms or newsletters. If you email us, we use your message and
+            email address only to reply.
           </p>
           {ANALYTICS.length > 0 ? (
             <p>
-              We use {ANALYTICS.join(" and ")} to understand how many people visit, which pages they read and which
-              deals they click. These tools use cookies or your browser&apos;s storage and an anonymous, randomly
-              generated identifier, which is not linked to your name or contact details.
+              We use {ANALYTICS.join(" and ")} to see how many people visit, which pages they read and which deals they
+              click. These tools use cookies or your browser&apos;s storage and a random identifier that isn&apos;t
+              linked to your name or contact details.
             </p>
           ) : (
             <p>We don&apos;t use analytics or advertising cookies of our own.</p>
           )}
 
-          <h2>The flight search form and partner links</h2>
+          <h2>Search forms and partner links</h2>
           <p>
             The flight search form on our pages is provided by Travelpayouts and Aviasales and loads from their
-            servers. When you click a deal or search, you go to Aviasales through a Travelpayouts link so that we can
-            be credited for any booking. Both companies may set cookies and record details such as your IP address,
-            device and the searches you make, as described in the{" "}
+            servers. When you search or click a deal, you go to Aviasales through a Travelpayouts link so that we can be
+            credited if you book. These companies may use cookies and record details such as your IP address, device
+            and searches, as explained in the{" "}
             <a href="https://support.travelpayouts.com/hc/en-us/articles/360004121052/" rel="noopener noreferrer">
               Travelpayouts privacy policy
             </a>{" "}
@@ -75,34 +80,40 @@ export default function PrivacyPage() {
             <a href="https://www.aviasales.com/privacy" rel="noopener noreferrer">
               Aviasales privacy policy
             </a>
-            . See <a href="/disclosure">How we make money</a> for how these links work.
+            . Once you leave {SITE_NAME}, the website you are on is responsible for your information, not us.
           </p>
 
-          <h2>Hosting and security</h2>
+          <h2>Hosting, security and cookies</h2>
           <p>
-            The site is hosted by Cloudflare, which processes your IP address and basic request details to deliver
-            pages and protect the site from attacks. See the{" "}
+            The site is hosted by Cloudflare, which handles your IP address and basic request details to deliver pages
+            and protect the site from attacks. Cloudflare may set a small security cookie to tell real visitors from
+            bots; it is needed for the site to work safely and isn&apos;t used for advertising. See the{" "}
             <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener noreferrer">
               Cloudflare privacy policy
             </a>
-            . Our photos and fonts are served from our own site, and the share buttons on guides are plain links that
-            load nothing from social networks until you click them.
+            .
+          </p>
+          <p>
+            Our photos and fonts are served from our own site, and the share buttons on guides are plain links that
+            load nothing from social networks unless you click them. You can block or delete cookies in your browser
+            settings; the site will still work, though partner search forms may not.
           </p>
 
-          <h2>Your rights</h2>
+          <h2>Your choices and rights</h2>
           <p>
-            Depending on where you live, you may have the right to ask what personal data is held about you, to have it
-            corrected or deleted, and to object to its use. As we hold no personal data ourselves, requests about
-            searches or bookings are best sent to Travelpayouts or Aviasales; for anything else, email us at{" "}
-            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. In the UK you can also complain to the
-            Information Commissioner&apos;s Office (ico.org.uk).
+            Depending on where you live, you may have the right to ask what personal data is held about you, and to
+            have it corrected or deleted. We hold almost none ourselves, so questions about searches or bookings are
+            best sent to Travelpayouts, Aviasales or the company you booked with. For anything else, email{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
           </p>
 
           <h2>Children</h2>
           <p>{SITE_NAME} is not aimed at children under 16, and we don&apos;t knowingly collect their data.</p>
 
           <h2>Changes</h2>
-          <p>If we change how the site handles data, we&apos;ll update this page and the date at the top.</p>
+          <p>
+            If we change how the site handles data, we&apos;ll update this page and the date at the top.
+          </p>
         </div>
       </div>
     </main>
