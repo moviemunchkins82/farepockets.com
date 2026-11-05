@@ -54,7 +54,9 @@ config in `wrangler.jsonc` and `open-next.config.ts`). Cloudflare builds it from
 fully support Windows anyway.
 
 - Build command `npx @opennextjs/cloudflare build`, deploy command `npx @opennextjs/cloudflare deploy`,
-  preview command `npx @opennextjs/cloudflare upload`. Live test URL: https://farepockets.themasculinemind82.workers.dev
+  preview command `npx @opennextjs/cloudflare upload`. Live at https://farepockets.com (custom domains
+  `farepockets.com` and `www.farepockets.com` on the Worker; a Cloudflare redirect rule sends www to the root, and
+  Always Use HTTPS upgrades http). `NEXT_PUBLIC_SITE_URL` must be `https://farepockets.com`.
 - Every page is prerendered at build and served from Workers static assets (read-only cache), which keeps requests
   well under the free plan's 10 ms CPU limit.
 - The build needs `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_ALLOW_INDEXING` and the three `TRAVELPAYOUTS_*` link settings
@@ -78,7 +80,7 @@ experimental and costs CPU on every request.
 
 ## Deploy targets
 
-- **Cloudflare Workers** — the live test site (see above).
+- **Cloudflare Workers** — the live site, https://farepockets.com (see above).
 - **Hostinger Business (Node.js)** — possible later production target: `next start` on a persistent process,
   GitHub-integration deploy. Nothing here depends on Cloudflare except `wrangler.jsonc` and `open-next.config.ts`.
 - **Vercel (Hobby)** — UI/UX review only. No custom domain attached there, default `*.vercel.app` URLs, never
