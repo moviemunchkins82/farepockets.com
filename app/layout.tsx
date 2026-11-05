@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
   description: "Compare flight prices and book with our travel partner.",
   robots: ALLOW_INDEXING ? { index: true, follow: true } : { index: false, follow: false },
+  // Google Search Console ownership check (HTML-tag method); the code is public by design.
+  verification: { google: "Xr_mf9Sh1qzUAD8Ajl7gB3jQ5iVJT_bX6IPpL97BFHY" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
