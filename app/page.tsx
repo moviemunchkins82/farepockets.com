@@ -19,7 +19,11 @@ import CountryCard from "@/components/regions/CountryCard";
 import { buildCountries } from "@/lib/regions";
 import { byPrice, interleaveByOrigin } from "@/lib/prices";
 import type { RouteRow } from "@/lib/routes/types";
+import JsonLd from "@/components/seo/JsonLd";
+import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import styles from "./home.module.css";
+
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@farepockets.com";
 
 
 export const metadata: Metadata = {
@@ -111,6 +115,8 @@ export default async function Home() {
 
   return (
     <main>
+      <JsonLd data={organizationSchema(CONTACT_EMAIL)} />
+      <JsonLd data={websiteSchema()} />
       <section className={styles.hero}>
         {heroLeft && (
           <div className={`${styles.heroPhoto} ${styles.heroPhotoLeft}`} aria-hidden="true">
@@ -125,7 +131,8 @@ export default async function Home() {
         <div className={`container ${styles.heroInner}`}>
           <h1>Find cheap flights, wherever you&apos;re going</h1>
           <p className={styles.heroLead}>
-            Compare airlines and booking sites in one search, then book with our partner Aviasales.
+            FarePockets is a free flight comparison site. We track the cheapest one-way fares on {routes.length} routes
+            from the UK and US, checked twice a day, and you book with our partner Aviasales.
           </p>
           <div className={styles.searchCard}>
             <TravelpayoutsWidget src={widgetSrc} title="Flight search" fallback={widgetFallback} eager />

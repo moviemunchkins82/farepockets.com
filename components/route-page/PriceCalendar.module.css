@@ -10,35 +10,55 @@
   letter-spacing: -0.01em;
 }
 
-.best ul {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.bestTable {
+  width: 100%;
+  max-width: 560px;
   margin-top: 10px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+  border-collapse: collapse;
   background: var(--surface);
-  font-size: 0.9rem;
-  color: var(--text-2);
-  transition: border-color 0.15s ease, color 0.15s ease;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-size: 0.925rem;
 }
 
-.chip strong {
+.bestTable th,
+.bestTable td {
+  padding: 10px 14px;
+  text-align: left;
+}
+
+.bestTable th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+
+.bestTable tbody tr + tr td {
+  border-top: 1px solid var(--border);
+}
+
+.bestTable td:last-child {
+  text-align: right;
+}
+
+.bestPrice {
   color: var(--deal);
+  font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
 
-.chip:hover {
-  color: var(--text);
-  border-color: color-mix(in srgb, var(--deal) 50%, var(--border));
+.bestLink {
+  color: var(--accent-hover);
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.bestLink:hover {
+  text-decoration: underline;
 }
 
 .months {

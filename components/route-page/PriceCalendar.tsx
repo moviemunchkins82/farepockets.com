@@ -78,17 +78,33 @@ export default function PriceCalendar({ route, calendar }: { route: RouteRow; ca
     <div className={styles.wrap}>
       {cheapestDates.length > 0 && (
         <div className={styles.best}>
-          <h3>Cheapest dates found</h3>
-          <ul>
-            {cheapestDates.map((d) => (
-              <li key={d.iso}>
-                <AffiliateLink href={link(d.date)} subId={subId} routeSlug={route.slug} className={styles.chip}>
-                  <span>{formatLongDate(d.date)?.replace(/, \d{4}$/, "")}</span>
-                  <strong>{formatPrice(d.price, route.currency)}</strong>
-                </AffiliateLink>
-              </li>
-            ))}
-          </ul>
+          <h3 id={`${subId}-best`}>Cheapest dates found</h3>
+          <table className={styles.bestTable} aria-labelledby={`${subId}-best`}>
+            <thead>
+              <tr>
+                <th scope="col">Departure date</th>
+                <th scope="col">One-way fare</th>
+                <th scope="col">
+                  <span className="sr-only">Book</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {cheapestDates.map((d) => (
+                <tr key={d.iso}>
+                  <td>
+                    <time dateTime={d.iso}>{formatLongDate(d.date)}</time>
+                  </td>
+                  <td className={styles.bestPrice}>{formatPrice(d.price, route.currency)}</td>
+                  <td>
+                    <AffiliateLink href={link(d.date)} subId={subId} routeSlug={route.slug} className={styles.bestLink}>
+                      Search fares
+                    </AffiliateLink>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 

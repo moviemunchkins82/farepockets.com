@@ -49,7 +49,7 @@ export default async function AboutPage() {
           name: `About ${SITE_NAME}`,
           url: `${SITE_URL}/about`,
           description: DESCRIPTION,
-          mainEntity: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, email: CONTACT_EMAIL },
+          mainEntity: { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, email: CONTACT_EMAIL },
         }}
       />
       <PageHeader

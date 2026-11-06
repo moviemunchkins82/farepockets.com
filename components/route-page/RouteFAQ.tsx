@@ -16,7 +16,7 @@ export default function RouteFAQ({ items }: { items: { question: string; answer:
         {items.map((item, i) => (
           <details key={item.question} className={styles.item} open={i === 0}>
             <summary>
-              {item.question}
+              <h3 className={styles.question}>{item.question}</h3>
               <CaretDown size={18} weight="bold" aria-hidden="true" />
             </summary>
             <p>{item.answer}</p>

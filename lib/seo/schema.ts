@@ -30,7 +30,37 @@ export function articleSchema(article: {
       name: article.author.name,
       ...(article.author.type === "Organization" ? { url: SITE_URL } : {}),
     },
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    publisher: { "@type": "Organization", "@id": ORGANIZATION_ID, name: SITE_NAME, url: SITE_URL },
+  };
+}
+
+// The site as an entity, so search engines and AI answers tie the brand name,
+// domain and contact together. Add `sameAs` profile links once they exist.
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+
+export function organizationSchema(email: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": ORGANIZATION_ID,
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/apple-icon.png`,
+    email,
+    description:
+      "Independent flight comparison site that tracks the cheapest one-way fares on routes from the UK and US, checked twice a day, and links to Aviasales to book.",
+  };
+}
+
+export function websiteSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    name: SITE_NAME,
+    url: SITE_URL,
+    inLanguage: "en",
+    publisher: { "@id": ORGANIZATION_ID },
   };
 }
 

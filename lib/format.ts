@@ -42,6 +42,20 @@ export function formatLongDate(value: string | Date | null): string | null {
     : null;
 }
 
+// "Thursday, December 3, 2026", for sentences meant to be quoted on their own.
+export function formatFullDate(value: string | Date | null): string | null {
+  const date = toDate(value);
+  return date
+    ? new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(date)
+    : null;
+}
+
 // "4h 55m", "45m", "12h"
 export function formatDuration(minutes: number | null): string | null {
   if (minutes === null || !Number.isFinite(minutes) || minutes <= 0) return null;

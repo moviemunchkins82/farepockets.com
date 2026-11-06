@@ -198,3 +198,64 @@
     height: 80px;
   }
 }
+
+.compare {
+  width: 100%;
+  margin-top: 28px;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-size: 0.925rem;
+}
+
+.compare caption {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.compare th,
+.compare td {
+  padding: 11px 14px;
+  text-align: left;
+}
+
+.compare thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+
+.compare tbody tr + tr > * {
+  border-top: 1px solid var(--border);
+}
+
+.compare tbody th {
+  font-weight: 600;
+}
+
+.compare tbody th a:hover {
+  color: var(--accent);
+}
+
+.comparePrice {
+  color: var(--deal);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+/* On phones the table scrolls sideways inside its own box instead of the page. */
+@media (max-width: 640px) {
+  .compare {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

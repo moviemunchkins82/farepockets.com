@@ -3,31 +3,47 @@ import { listActiveRoutes } from "@/lib/routes/data";
 import { listGuides } from "@/lib/content/guides";
 import { buildHubs, hubPath, type HubDirection } from "@/lib/cities";
 import { buildCountries, countryPath } from "@/lib/regions";
+import type { RouteRow } from "@/lib/routes/types";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://farepockets.com";
 
 
+// Pages built from fare data change when their routes' prices were last
+// refreshed, so that is their lastModified.
+function lastRefreshed(routes: RouteRow[]): Date | undefined {
+  const times = routes.map((r) => r.last_refreshed_at?.getTime()).filter((t): t is number => typeof t === "number");
+  return times.length ? new Date(Math.max(...times)) : undefined;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = await listActiveRoutes();
   const guides = listGuides();
+  const latest = lastRefreshed(routes);
+  const latestGuide = guides.map((g) => g.updatedAt ?? g.publishedAt).sort().at(-1);
   const hubs = (["to", "from"] as HubDirection[]).flatMap((direction) =>
     buildHubs(routes, direction).map((hub) => ({
       url: `${SITE_URL}${hubPath(direction, hub.name)}`,
+      lastModified: lastRefreshed(hub.routes),
       changeFrequency: "daily" as const,
       priority: 0.85,
     })),
   );
 
   return [
-    { url: SITE_URL, changeFrequency: "daily", priority: 1 },
-    { url: `${SITE_URL}/search`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${SITE_URL}/flights`, changeFrequency: "daily", priority: 0.9 },
+    { url: SITE_URL, lastModified: latest, changeFrequency: "daily", priority: 1 },
+    { url: `${SITE_URL}/search`, lastModified: latest, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/flights`, lastModified: latest, changeFrequency: "daily", priority: 0.9 },
     ...hubs,
-    { url: `${SITE_URL}/destinations`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/destinations`, lastModified: latest, changeFrequency: "daily", priority: 0.9 },
     ...buildCountries(routes)
       .filter((g) => g.hasPage)
-      .map((g) => ({ url: `${SITE_URL}${countryPath(g.info)}`, changeFrequency: "daily" as const, priority: 0.85 })),
-    { url: `${SITE_URL}/guides`, changeFrequency: "weekly", priority: 0.6 },
+      .map((g) => ({
+        url: `${SITE_URL}${countryPath(g.info)}`,
+        lastModified: lastRefreshed(g.routes),
+        changeFrequency: "daily" as const,
+        priority: 0.85,
+      })),
+    { url: `${SITE_URL}/guides`, lastModified: latestGuide, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.4 },
     ...routes.map((route) => ({
       url: `${SITE_URL}/flights/${route.slug}`,

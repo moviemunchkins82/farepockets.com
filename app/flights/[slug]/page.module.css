@@ -1,3 +1,23 @@
+/* The calendar section right after supplies the space between them. */
+.summarySection {
+  padding-bottom: 0;
+}
+
+.summary {
+  max-width: 72ch;
+}
+
+.summary h2 {
+  font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.7rem);
+  margin-bottom: 12px;
+}
+
+.summary p {
+  color: var(--text-2);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
 .hubLinks {
   display: flex;
   flex-wrap: wrap;

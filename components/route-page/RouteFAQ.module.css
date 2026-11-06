@@ -25,6 +25,15 @@
   list-style: none;
 }
 
+/* A real heading for search engines, styled like the rest of the summary row. */
+.question {
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: normal;
+  margin: 0;
+  color: inherit;
+}
+
 .item summary::-webkit-details-marker {
   display: none;
 }

@@ -18,6 +18,7 @@ import AffiliateDisclosure from "@/components/layout/AffiliateDisclosure";
 import SectionHeader from "@/components/home/SectionHeader";
 import GuideGrid from "@/components/guides/GuideGrid";
 import { listGuides } from "@/lib/content/guides";
+import { routeFacts } from "@/lib/routeFacts";
 import styles from "./page.module.css";
 
 
@@ -184,6 +185,49 @@ export default async function CountryPage({ params }: PageProps<"/destinations/[
               );
             })}
           </ul>
+
+          <table className={styles.compare}>
+            <caption>
+              {info.name} cities compared: lowest one-way fare and direct flights in recent searches
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">City</th>
+                <th scope="col">Airport</th>
+                <th scope="col">Lowest fare</th>
+                <th scope="col">From</th>
+                <th scope="col">Direct flights</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.cities.map((city) => {
+                const cheapest = city.cheapest;
+                const withFacts = city.routes.filter((r) => routeFacts(r));
+                const direct = withFacts.filter((r) => routeFacts(r)?.nonstop).length;
+                return (
+                  <tr key={city.slug}>
+                    <th scope="row">
+                      <Link href={hubPath("to", city.name)}>{city.name}</Link>
+                    </th>
+                    <td>{city.code}</td>
+                    <td className={styles.comparePrice}>
+                      {cheapest ? formatPrice(cheapest.cheapest_price, cheapest.cheapest_currency) : "–"}
+                    </td>
+                    <td>{cheapest ? cheapest.origin_city : "–"}</td>
+                    <td>
+                      {withFacts.length === 0
+                        ? "–"
+                        : direct === 0
+                          ? "None found"
+                          : withFacts.length === 1
+                            ? "Yes"
+                            : `On ${direct} of ${withFacts.length} routes`}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
 

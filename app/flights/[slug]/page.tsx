@@ -7,6 +7,7 @@ import { routeMetadata } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
 import { formatDate, formatLongDate, formatPrice, listNames } from "@/lib/format";
 import { nonstopSummary, routeFacts } from "@/lib/routeFacts";
+import { routeSummary } from "@/lib/routeSummary";
 import { buildCountries, countryPath } from "@/lib/regions";
 import RouteFactsPanel from "@/components/route-page/RouteFactsPanel";
 import { getCityImage } from "@/lib/cityImages";
@@ -132,6 +133,7 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
   );
   const calendar = calendarData(route);
   const hasCalendarFares = !!calendar?.months.some((m) => m.days.length > 0);
+  const summary = routeSummary(route, calendar, facts);
   const widgetSubId = buildSubId(`route_${route.slug}_search`);
   const widgetSrc = buildWidgetSrc(widgetSubId, route.currency);
   const widgetFallback = buildWidgetFallback(widgetSubId, route);
@@ -163,6 +165,19 @@ export default async function RoutePage({ params }: PageProps<"/flights/[slug]">
         lead="See the lowest recent fare, then compare every option and book with our partner Aviasales."
         aside={<PriceCard route={route} />}
       />
+
+      {summary.length > 0 && (
+        <section className={`section ${styles.summarySection}`} aria-labelledby="summary-heading">
+          <div className="container">
+            <div className={styles.summary}>
+              <h2 id="summary-heading">
+                {route.origin_city} to {route.destination_city} flights at a glance
+              </h2>
+              <p>{summary.join(" ")}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {calendar && hasCalendarFares && (
         <section className="section">
