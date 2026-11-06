@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { listActiveRoutes } from "@/lib/routes/data";
 import { buildHubs, findHub, hubCurrency, hubPath, type CityHub, type HubDirection } from "@/lib/cities";
 import { getCityImage } from "@/lib/cityImages";
+import { buildCountries, countryPath } from "@/lib/regions";
 import { formatPrice, listNames } from "@/lib/format";
 import { DESCRIPTION_ENDING, directCount, faresByMarket, fitDescription, fitTitle, pageTitle, placeOgImages, shortList } from "@/lib/seo/metadata";
 import { buildSubId, buildWidgetFallback, buildWidgetSrc } from "@/lib/travelpayouts/affiliateLinks";
@@ -120,6 +121,12 @@ export default async function CityHubPage({ direction, slug }: { direction: HubD
   const reverseHub = findHub(routes, reverse, hub.slug);
   const otherHubs = buildHubs(routes, direction).filter((h) => h.slug !== hub.slug);
   const title = copy[direction].title(hub.name);
+  // Cities in a country with its own page sit under it, as route pages do:
+  // Home › Destinations › Turkey › Cheap flights to Istanbul.
+  const country =
+    direction === "to"
+      ? buildCountries(routes).find((g) => g.hasPage && g.info.code === hub.routes[0]?.destination_country.trim())
+      : undefined;
   const widgetSubId = buildSubId(`hub_${direction}_${hub.slug}`);
   const widgetSrc = buildWidgetSrc(widgetSubId, hubCurrency(hub));
   const widgetFallback = buildWidgetFallback(widgetSubId);
@@ -130,6 +137,12 @@ export default async function CityHubPage({ direction, slug }: { direction: HubD
         image={getCityImage(hub.name)}
         breadcrumbs={[
           { name: "Home", url: "/" },
+          ...(country
+            ? [
+                { name: "Destinations", url: "/destinations" },
+                { name: country.info.name, url: countryPath(country.info) },
+              ]
+            : []),
           { name: title, url: hubPath(direction, hub.name) },
         ]}
         kicker={<span>{hub.code}</span>}

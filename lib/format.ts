@@ -74,11 +74,20 @@ export function formatStops(stops: number): string {
 
 // Airports whose short form would read as just the city.
 const KEEP_FULL_AIRPORT_NAME = new Set(["Istanbul Airport"]);
+// Multi-word city names, which would otherwise lose "International" like
+// one-word ones ("Los Angeles International", not "Los Angeles").
+const MULTI_WORD_CITIES = new Set(["Los Angeles", "San Francisco", "Hong Kong", "New York", "Las Vegas", "Washington"]);
 
-// "London Gatwick Airport" -> "London Gatwick", "Newark Liberty International Airport" -> "Newark Liberty"
+// "London Gatwick Airport" -> "London Gatwick", "Newark Liberty International Airport" -> "Newark Liberty".
+// "International" stays when dropping it would leave just the city name
+// ("Belfast International Airport" -> "Belfast International", not "Belfast").
 export function shortAirportName(name: string): string {
   if (KEEP_FULL_AIRPORT_NAME.has(name)) return name;
-  return name.replace(/\s+(International\s+)?Airport$/i, "") || name;
+  const withoutAirport = name.replace(/\s+Airport$/i, "");
+  const withoutInternational = withoutAirport.replace(/\s+International$/i, "");
+  const justCity = !withoutInternational.includes(" ") || MULTI_WORD_CITIES.has(withoutInternational);
+  if (withoutInternational !== withoutAirport && justCity) return withoutAirport || name;
+  return withoutInternational || name;
 }
 
 // "A", "A and B", "A, B and C"

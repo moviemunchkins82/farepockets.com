@@ -31,6 +31,8 @@ export default function CountryCard({ group, headingLevel = "h3" }: { group: Cou
         <span className={styles.cities}>{cities.join(", ")}</span>
         <span className={styles.footer}>
           <span className={styles.price}>{price ? `From ${price}` : "Checking fares"}</span>
+          {/* Laid out side by side, so without this the text reads "From £2018 routes". */}
+          <span className="sr-only">, </span>
           <span className={styles.routes}>
             {group.routes.length} {group.routes.length === 1 ? "route" : "routes"}
           </span>
